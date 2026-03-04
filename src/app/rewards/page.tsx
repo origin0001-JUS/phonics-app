@@ -35,10 +35,10 @@ export default function RewardsPage() {
                     <ArrowLeft className="h-5 w-5 text-gray-700" />
                 </button>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">
+                    <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                         나의 트로피
                     </h1>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                         {unlockedCount} / {totalCount} 획득
                     </p>
                 </div>
@@ -91,8 +91,8 @@ function RewardCard({
         <div
             className={`relative flex flex-col items-center gap-2 rounded-[2rem] border-4 p-5 text-center transition-all ${
                 isUnlocked
-                    ? "border-white/80 bg-white/90 shadow-[0_6px_0_#c8c8c8]"
-                    : "border-gray-200/60 bg-gray-100/60 opacity-60"
+                    ? "border-white/80 dark:border-slate-600/80 bg-white/90 dark:bg-slate-800/90 shadow-[0_6px_0_#c8c8c8] dark:shadow-[0_6px_0_#1e293b]"
+                    : "border-gray-200/60 dark:border-slate-600/40 bg-gray-100/60 dark:bg-slate-800/40 opacity-60"
             }`}
         >
             {/* Lock overlay */}
@@ -117,12 +117,12 @@ function RewardCard({
             </div>
 
             {/* Name */}
-            <p className="text-sm font-bold text-gray-800">
+            <p className="text-sm font-bold text-gray-800 dark:text-gray-100">
                 {isUnlocked ? reward.name : "???"}
             </p>
 
             {/* Description / Date */}
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
                 {isUnlocked
                     ? formatDate(unlockedAt!)
                     : reward.description}

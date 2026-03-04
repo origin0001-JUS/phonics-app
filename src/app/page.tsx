@@ -69,7 +69,7 @@ export default function Home() {
     <main className="flex-1 flex flex-col pt-6 pb-8 px-6 relative z-10">
       {/* Top Bar Navigation */}
       <header className="flex justify-between items-center mb-4">
-        <Link href="/settings" className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-[0_5px_0_#d1d5db] active:shadow-[0_0px_0_#d1d5db] active:translate-y-[5px] transition-all border-2 border-slate-100">
+        <Link href="/settings" className="w-12 h-12 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-[0_5px_0_#d1d5db] dark:shadow-[0_5px_0_#1e293b] active:shadow-[0_0px_0_#d1d5db] active:translate-y-[5px] transition-all border-2 border-slate-100 dark:border-slate-600">
           <Settings className="w-6 h-6 text-slate-400" />
         </Link>
 
@@ -121,12 +121,12 @@ export default function Home() {
           </button>
         </div>
 
-        <p className="text-slate-600 font-bold mb-4 opacity-80 text-sm">Tap to hear me!</p>
+        <p className="text-slate-600 dark:text-slate-400 font-bold mb-4 opacity-80 text-sm">Tap to hear me!</p>
       </div>
 
       {/* Main Action Buttons */}
       <div className="mt-auto">
-        <h2 className="text-center text-xl font-black text-[#2e5c8e] mb-3 drop-shadow-sm">Learning Through Play</h2>
+        <h2 className="text-center text-xl font-black text-[#2e5c8e] dark:text-sky-300 mb-3 drop-shadow-sm">Learning Through Play</h2>
 
         <div className="grid grid-cols-2 gap-4">
           {/* Learn Route → Units Page */}
@@ -134,7 +134,7 @@ export default function Home() {
             <div className="h-20 bg-[#ffb3c0] rounded-t-2xl flex items-center justify-center">
               <BookOpen className="w-16 h-16 text-white opacity-90 drop-shadow-md" />
             </div>
-            <div className="p-3 bg-white w-full rounded-b-2xl flex flex-col items-center">
+            <div className="p-3 bg-white dark:bg-slate-800 w-full rounded-b-2xl flex flex-col items-center">
               <p className="font-extrabold text-[#d6657a] mb-2">Learn</p>
               <div className="w-full bg-[#fcd34d] text-amber-900 font-black py-3 rounded-xl shadow-[0_6px_0_#d97706] text-center">
                 START
@@ -152,7 +152,7 @@ export default function Home() {
             <div className="h-20 bg-[#a5e2ff] rounded-t-2xl flex items-center justify-center">
               <Star className="w-16 h-16 text-yellow-300 fill-yellow-300 drop-shadow-md" />
             </div>
-            <div className="p-3 bg-white w-full rounded-b-2xl flex flex-col items-center">
+            <div className="p-3 bg-white dark:bg-slate-800 w-full rounded-b-2xl flex flex-col items-center">
               <p className="font-extrabold text-[#38bdf8] mb-2">Review</p>
               <div className="w-full bg-[#fcd34d] text-amber-900 font-black py-3 rounded-xl shadow-[0_6px_0_#d97706] text-center">
                 START

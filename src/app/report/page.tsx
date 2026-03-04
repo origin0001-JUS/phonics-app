@@ -78,12 +78,12 @@ export default function ReportPage() {
             <div className="flex-1 overflow-y-auto px-5 pb-8 space-y-5" id="report-content">
 
                 {/* Student Info Card */}
-                <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_0_#e2e8f0] border-4 border-white">
+                <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600">
                     <div className="flex items-center justify-between mb-4">
                         <div>
                             <button
                                 onClick={() => setShowNameInput(!showNameInput)}
-                                className="text-2xl font-black text-slate-800 hover:text-sky-600 transition-colors"
+                                className="text-2xl font-black text-slate-800 dark:text-slate-100 hover:text-sky-600 transition-colors"
                             >
                                 {report.studentName} 👋
                             </button>
@@ -101,7 +101,7 @@ export default function ReportPage() {
                                 value={studentName}
                                 onChange={(e) => setStudentName(e.target.value)}
                                 placeholder="이름을 입력하세요"
-                                className="flex-1 px-4 py-2 rounded-xl border-2 border-slate-200 font-bold text-slate-700 focus:outline-none focus:border-sky-400"
+                                className="flex-1 px-4 py-2 rounded-xl border-2 border-slate-200 dark:border-slate-600 dark:bg-slate-700 font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-sky-400"
                             />
                             <button
                                 onClick={() => setShowNameInput(false)}
@@ -127,7 +127,7 @@ export default function ReportPage() {
                                 />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-2xl font-black text-slate-800">{overallPct}%</span>
+                                <span className="text-2xl font-black text-slate-800 dark:text-slate-100">{overallPct}%</span>
                                 <span className="text-xs text-slate-400 font-bold">달성률</span>
                             </div>
                         </div>
@@ -142,8 +142,8 @@ export default function ReportPage() {
                 </div>
 
                 {/* ─── Unit Progress Grid ─── */}
-                <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_0_#e2e8f0] border-4 border-white">
-                    <h2 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
+                <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600">
+                    <h2 className="text-lg font-black text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
                         <BarChart3 className="w-5 h-5 text-indigo-500" />
                         유닛별 학습 현황
                     </h2>
@@ -156,15 +156,15 @@ export default function ReportPage() {
 
                 {/* ─── Recent Activity ─── */}
                 {report.recentLogs.length > 0 && (
-                    <div className="bg-white rounded-[2rem] p-6 shadow-[0_8px_0_#e2e8f0] border-4 border-white">
-                        <h2 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
+                    <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600">
+                        <h2 className="text-lg font-black text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
                             <Clock className="w-5 h-5 text-sky-500" />
                             최근 활동 기록
                         </h2>
                         <div className="space-y-2 max-h-60 overflow-y-auto">
                             {report.recentLogs.slice(-10).reverse().map((log, i) => (
-                                <div key={i} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
-                                    <span className="text-sm font-bold text-slate-600">{log.date}</span>
+                                <div key={i} className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
+                                    <span className="text-sm font-bold text-slate-600 dark:text-slate-300">{log.date}</span>
                                     <span className="text-sm font-bold text-sky-600">{log.durationMinutes}분</span>
                                 </div>
                             ))}
@@ -235,7 +235,7 @@ function UnitProgressBar({ unit }: { unit: UnitReport }) {
     return (
         <div>
             <div className="flex justify-between items-center mb-1">
-                <span className="text-sm font-bold text-slate-700">{unit.unitTitle}</span>
+                <span className="text-sm font-bold text-slate-700 dark:text-slate-200">{unit.unitTitle}</span>
                 <span className="text-xs font-bold text-slate-400">
                     {mastered}/{unit.totalWords}
                     {unit.completionRate >= 80 && <span className="ml-1">⭐</span>}

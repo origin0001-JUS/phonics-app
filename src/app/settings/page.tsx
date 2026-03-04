@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ChevronRight, FileText, GraduationCap, Trash2, AlertTriangle } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, ChevronRight, FileText, GraduationCap, Trash2, AlertTriangle, Sun, Moon } from "lucide-react";
 import { db } from "@/lib/db";
 import { useAppStore } from "@/lib/store";
-import Link from "next/link";
 
 const GRADES = [
     { grade: 1, emoji: "🌱", label: "1학년" },
@@ -33,7 +33,7 @@ function getMapping(grade: number) {
 
 export default function SettingsPage() {
     const router = useRouter();
-    const { setGradeLevel, setLevel } = useAppStore();
+    const { setGradeLevel, setLevel, theme, toggleTheme } = useAppStore();
     const [currentGrade, setCurrentGrade] = useState<number | null>(null);
     const [showGradePicker, setShowGradePicker] = useState(false);
     const [resetStep, setResetStep] = useState(0); // 0=none, 1=first confirm, 2=final confirm
@@ -96,17 +96,17 @@ export default function SettingsPage() {
             <div className="mb-6 flex items-center gap-3">
                 <button
                     onClick={() => router.back()}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border-4 border-white/60 bg-white/80 shadow-[0_4px_0_#c8c8c8] active:translate-y-[4px] active:shadow-none"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border-4 border-white/60 dark:border-slate-600 bg-white/80 dark:bg-slate-700 shadow-[0_4px_0_#c8c8c8] dark:shadow-[0_4px_0_#1e293b] active:translate-y-[4px] active:shadow-none"
                 >
                     <ArrowLeft className="h-5 w-5 text-gray-700" />
                 </button>
-                <h1 className="text-2xl font-bold text-gray-800">설정</h1>
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">설정</h1>
             </div>
 
             {/* Settings List */}
             <div className="space-y-4">
                 {/* Grade Change */}
-                <div className="rounded-[2rem] border-4 border-white/80 bg-white/90 shadow-[0_6px_0_#c8c8c8] overflow-hidden">
+                <div className="rounded-[2rem] border-4 border-white/80 dark:border-slate-600/80 bg-white/90 dark:bg-slate-800/90 shadow-[0_6px_0_#c8c8c8] dark:shadow-[0_6px_0_#1e293b] overflow-hidden">
                     <button
                         onClick={() => setShowGradePicker(!showGradePicker)}
                         className="flex w-full items-center gap-4 px-5 py-4"
@@ -115,8 +115,8 @@ export default function SettingsPage() {
                             <GraduationCap className="h-6 w-6 text-sky-600" />
                         </div>
                         <div className="flex-1 text-left">
-                            <p className="font-bold text-gray-800">학년 변경</p>
-                            <p className="text-sm text-gray-500">
+                            <p className="font-bold text-gray-800 dark:text-gray-100">학년 변경</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
                                 {gradeInfo ? `${gradeInfo.emoji} ${gradeInfo.label}` : "미설정"}
                             </p>
                         </div>
@@ -149,23 +149,49 @@ export default function SettingsPage() {
                     )}
                 </div>
 
+                {/* Theme Toggle */}
+                <div className="rounded-[2rem] border-4 border-white/80 bg-white/90 dark:bg-slate-800/90 dark:border-slate-600/80 shadow-[0_6px_0_#c8c8c8] dark:shadow-[0_6px_0_#1e293b] overflow-hidden">
+                    <button
+                        onClick={toggleTheme}
+                        className="flex w-full items-center gap-4 px-5 py-4"
+                    >
+                        <div className={`flex h-11 w-11 items-center justify-center rounded-full ${theme === 'dark' ? 'bg-indigo-100' : 'bg-amber-100'}`}>
+                            {theme === 'dark' ? (
+                                <Moon className="h-6 w-6 text-indigo-600" />
+                            ) : (
+                                <Sun className="h-6 w-6 text-amber-600" />
+                            )}
+                        </div>
+                        <div className="flex-1 text-left">
+                            <p className="font-bold text-gray-800 dark:text-gray-100">테마 변경</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {theme === 'dark' ? '🌙 다크 모드' : '☀️ 라이트 모드'}
+                            </p>
+                        </div>
+                        {/* Toggle Switch */}
+                        <div className={`relative w-14 h-8 rounded-full transition-colors ${theme === 'dark' ? 'bg-indigo-500' : 'bg-gray-300'}`}>
+                            <div className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-md transition-transform ${theme === 'dark' ? 'translate-x-7' : 'translate-x-1'}`} />
+                        </div>
+                    </button>
+                </div>
+
                 {/* Report Link */}
                 <Link
                     href="/report"
-                    className="flex items-center gap-4 rounded-[2rem] border-4 border-white/80 bg-white/90 px-5 py-4 shadow-[0_6px_0_#c8c8c8] active:translate-y-[6px] active:shadow-none transition-all"
+                    className="flex items-center gap-4 rounded-[2rem] border-4 border-white/80 dark:border-slate-600/80 bg-white/90 dark:bg-slate-800/90 px-5 py-4 shadow-[0_6px_0_#c8c8c8] dark:shadow-[0_6px_0_#1e293b] active:translate-y-[6px] active:shadow-none transition-all"
                 >
                     <div className="flex h-11 w-11 items-center justify-center rounded-full bg-green-100">
                         <FileText className="h-6 w-6 text-green-600" />
                     </div>
                     <div className="flex-1">
-                        <p className="font-bold text-gray-800">학습 리포트</p>
-                        <p className="text-sm text-gray-500">학습 현황 확인 및 내보내기</p>
+                        <p className="font-bold text-gray-800 dark:text-gray-100">학습 리포트</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">학습 현황 확인 및 내보내기</p>
                     </div>
                     <ChevronRight className="h-5 w-5 text-gray-400" />
                 </Link>
 
                 {/* Data Reset */}
-                <div className="rounded-[2rem] border-4 border-white/80 bg-white/90 shadow-[0_6px_0_#c8c8c8] overflow-hidden">
+                <div className="rounded-[2rem] border-4 border-white/80 dark:border-slate-600/80 bg-white/90 dark:bg-slate-800/90 shadow-[0_6px_0_#c8c8c8] dark:shadow-[0_6px_0_#1e293b] overflow-hidden">
                     {resetStep === 0 && (
                         <button
                             onClick={() => setResetStep(1)}
@@ -175,8 +201,8 @@ export default function SettingsPage() {
                                 <Trash2 className="h-6 w-6 text-red-500" />
                             </div>
                             <div className="flex-1 text-left">
-                                <p className="font-bold text-gray-800">진행 초기화</p>
-                                <p className="text-sm text-gray-500">모든 학습 데이터를 삭제합니다</p>
+                                <p className="font-bold text-gray-800 dark:text-gray-100">진행 초기화</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">모든 학습 데이터를 삭제합니다</p>
                             </div>
                             <ChevronRight className="h-5 w-5 text-gray-400" />
                         </button>

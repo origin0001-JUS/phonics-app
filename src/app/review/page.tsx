@@ -92,7 +92,7 @@ export default function ReviewPage() {
             <header className="flex items-center gap-3 px-5 pt-8 pb-4">
                 <Link
                     href="/"
-                    className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-[0_4px_0_#d1d5db] active:shadow-[0_0px_0_#d1d5db] active:translate-y-[4px] transition-all border-2 border-slate-100"
+                    className="w-11 h-11 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-[0_4px_0_#d1d5db] dark:shadow-[0_4px_0_#1e293b] active:shadow-[0_0px_0_#d1d5db] active:translate-y-[4px] transition-all border-2 border-slate-100 dark:border-slate-600"
                 >
                     <ChevronLeft className="w-6 h-6 text-slate-500" />
                 </Link>
@@ -115,12 +115,12 @@ export default function ReviewPage() {
                             setIsFlipped(false);
                         }
                     }}
-                    className="w-full max-w-sm bg-white rounded-[2rem] p-8 shadow-[0_10px_0_#e2e8f0] border-4 border-white flex flex-col items-center justify-center min-h-[280px] active:scale-[0.98] transition-transform"
+                    className="w-full max-w-sm bg-white dark:bg-slate-800 rounded-[2rem] p-8 shadow-[0_10px_0_#e2e8f0] dark:shadow-[0_10px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center justify-center min-h-[280px] active:scale-[0.98] transition-transform"
                 >
                     {!isFlipped ? (
                         /* Front — word */
                         <>
-                            <p className="text-5xl font-black text-slate-800 mb-4">
+                            <p className="text-5xl font-black text-slate-800 dark:text-slate-100 mb-4">
                                 {current.wordData?.word ?? current.vocabCard.id}
                             </p>
                             <div className="flex items-center gap-2 text-sky-500">
@@ -131,12 +131,12 @@ export default function ReviewPage() {
                     ) : (
                         /* Back — meaning + phonemes */
                         <>
-                            <p className="text-4xl font-black text-slate-800 mb-3">
+                            <p className="text-4xl font-black text-slate-800 dark:text-slate-100 mb-3">
                                 {current.wordData?.word ?? current.vocabCard.id}
                             </p>
                             {current.wordData && (
                                 <>
-                                    <p className="text-2xl text-slate-600 mb-3">
+                                    <p className="text-2xl text-slate-600 dark:text-slate-300 mb-3">
                                         {current.wordData.meaning}
                                     </p>
                                     <div className="flex gap-2 flex-wrap justify-center">
@@ -185,9 +185,9 @@ export default function ReviewPage() {
 function EmptyState() {
     return (
         <main className="flex-1 flex flex-col items-center justify-center px-6 relative z-10">
-            <div className="bg-white rounded-[2rem] p-10 shadow-[0_10px_0_#e2e8f0] border-4 border-white text-center max-w-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-10 shadow-[0_10px_0_#e2e8f0] dark:shadow-[0_10px_0_#1e293b] border-4 border-white dark:border-slate-600 text-center max-w-sm">
                 <p className="text-6xl mb-4">🎉</p>
-                <h2 className="text-2xl font-black text-slate-800 mb-2">All caught up!</h2>
+                <h2 className="text-2xl font-black text-slate-800 dark:text-slate-100 mb-2">All caught up!</h2>
                 <p className="text-slate-500 mb-6">No cards due today. Keep learning!</p>
                 <Link
                     href="/units"
@@ -203,11 +203,11 @@ function EmptyState() {
 function ReviewComplete({ count }: { count: number }) {
     return (
         <main className="flex-1 flex flex-col items-center justify-center px-6 relative z-10">
-            <div className="bg-white rounded-[2rem] p-10 shadow-[0_10px_0_#e2e8f0] border-4 border-white text-center max-w-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-10 shadow-[0_10px_0_#e2e8f0] dark:shadow-[0_10px_0_#1e293b] border-4 border-white dark:border-slate-600 text-center max-w-sm">
                 <p className="text-6xl mb-4">⭐</p>
-                <h2 className="text-2xl font-black text-slate-800 mb-2">Great job!</h2>
+                <h2 className="text-2xl font-black text-slate-800 dark:text-slate-100 mb-2">Great job!</h2>
                 <p className="text-slate-500 mb-6">
-                    You reviewed <span className="font-bold text-slate-800">{count}</span> card{count !== 1 ? "s" : ""}!
+                    You reviewed <span className="font-bold text-slate-800 dark:text-slate-100">{count}</span> card{count !== 1 ? "s" : ""}!
                 </p>
                 <Link
                     href="/"

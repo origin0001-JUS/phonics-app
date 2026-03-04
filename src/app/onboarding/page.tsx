@@ -119,9 +119,9 @@ function WelcomeScreen({ onNext }: { onNext: () => void }) {
       </div>
 
       {/* Speech bubble */}
-      <div className="relative bg-white rounded-3xl px-8 py-6 shadow-lg border-4 border-white mb-10 max-w-xs">
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[12px] border-b-white"></div>
-        <p className="text-center text-lg font-bold text-slate-700 leading-relaxed">
+      <div className="relative bg-white dark:bg-slate-800 rounded-3xl px-8 py-6 shadow-lg border-4 border-white dark:border-slate-600 mb-10 max-w-xs">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[12px] border-b-white dark:border-b-slate-800"></div>
+        <p className="text-center text-lg font-bold text-slate-700 dark:text-slate-200 leading-relaxed">
           안녕! 나는 <span className="text-orange-500">FOXY</span>야!
           <br />
           영어 소리를 함께 배워볼까?
@@ -163,15 +163,15 @@ function GradeSelectScreen({
             <button
               key={g.grade}
               onClick={() => onSelect(g.grade)}
-              className={`bg-white rounded-[1.5rem] p-5 border-4 transition-all flex flex-col items-center gap-2 ${
+              className={`bg-white dark:bg-slate-800 rounded-[1.5rem] p-5 border-4 transition-all flex flex-col items-center gap-2 ${
                 isSelected
                   ? "border-amber-400 scale-105 shadow-[0_8px_0_#d97706]"
-                  : "border-white shadow-[0_6px_0_#d1d5db]"
+                  : "border-white dark:border-slate-600 shadow-[0_6px_0_#d1d5db] dark:shadow-[0_6px_0_#1e293b]"
               }`}
             >
               <span className="text-4xl">{g.emoji}</span>
-              <span className="font-black text-lg text-slate-700">{g.label}</span>
-              <span className="text-xs text-slate-500 font-semibold leading-tight text-center">
+              <span className="font-black text-lg text-slate-700 dark:text-slate-100">{g.label}</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold leading-tight text-center">
                 {g.description}
               </span>
             </button>
@@ -221,21 +221,21 @@ function RecommendationScreen({
       </div>
 
       {/* Recommended level card */}
-      <div className="bg-white rounded-[1.5rem] p-5 border-4 border-amber-300 shadow-[0_6px_0_#d97706] mb-6">
+      <div className="bg-white dark:bg-slate-800 rounded-[1.5rem] p-5 border-4 border-amber-300 shadow-[0_6px_0_#d97706] mb-6">
         <div className="flex items-center gap-2 mb-1">
           <span className="bg-amber-100 text-amber-700 text-xs font-black px-3 py-1 rounded-full">
             추천 레벨
           </span>
         </div>
-        <p className="font-black text-xl text-slate-800 mb-1">{mapping.levelLabel}</p>
-        <p className="text-sm text-slate-500 font-semibold">
+        <p className="font-black text-xl text-slate-800 dark:text-slate-100 mb-1">{mapping.levelLabel}</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400 font-semibold">
           {mapping.unitCount}개 유닛이 열려요!
         </p>
       </div>
 
       {/* Roadmap */}
-      <div className="bg-white/60 rounded-2xl p-5 mb-8 flex-1 overflow-y-auto">
-        <p className="font-black text-slate-600 mb-4 text-sm">학습 로드맵</p>
+      <div className="bg-white/60 dark:bg-slate-800/60 rounded-2xl p-5 mb-8 flex-1 overflow-y-auto">
+        <p className="font-black text-slate-600 dark:text-slate-300 mb-4 text-sm">학습 로드맵</p>
         <div className="space-y-3">
           {ROADMAP.map((item) => {
             const unlocked = mapping.unitCount >= item.maxUnit;

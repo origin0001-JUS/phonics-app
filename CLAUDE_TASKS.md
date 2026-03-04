@@ -12,51 +12,41 @@
 
 ## ~~Round 2: 트로피 축하 팝업 + 홈 레이아웃 수정 — 완료~~
 
-### Task 2-A: 트로피 획득 축하 모달 추가
+## ~~Round 3: QA 및 E2E 테스트(Browser Subagent) — 완료~~
 
-**관련 파일**: `src/app/lesson/[unitId]/page.tsx` (결과 화면 부분)
+## ~~Round 4: Capacitor Android 패키징 — 완료~~
 
-**현재 상태**: `saveLessonResults()`가 `newlyUnlocked: string[]` (해금된 트로피 ID 배열)을 반환함. 하지만 결과 화면에서 이를 사용자에게 보여주지 않음.
-
-**수정 요구사항**:
-1. 결과 화면(ResultsScreen)에서 `newlyUnlocked` 배열이 비어있지 않으면 **축하 모달**을 표시
-2. 모달 UI:
-   - 반투명 오버레이 배경
-   - 중앙에 카드: 해금된 트로피의 emoji + name + description (REWARDS 데이터에서 가져옴)
-   - framer-motion으로 scale 애니메이션 (0 → 1, spring)
-   - 배경에 confetti 효과 (간단한 CSS 애니메이션이나 emoji 파티클)
-3. `playSFX('trophy')` 호출 (`src/lib/audio.ts`에서 import)
-4. 모달 닫기 버튼 또는 배경 클릭으로 닫기
-
-**참고 코드**:
-```typescript
-import { REWARDS } from '@/data/rewards';
-import { playSFX } from '@/lib/audio';
-
-// 결과 화면에서:
-const rewardDefs = newlyUnlocked.map(id => REWARDS.find(r => r.id === id)).filter(Boolean);
-if (rewardDefs.length > 0) {
-    playSFX('trophy');
-    // 모달 표시
-}
-```
+## ~~Round 5: B2B/B2G 납품 문서 (Teacher's Guide / Privacy Policy) — 완료~~
 
 ---
 
-### Task 2-B: 홈 화면 하단 잘림 수정
+## Round 6: 고도화 (Viseme 립싱크 & Dark Mode) [현재]
 
-**파일**: `src/app/page.tsx`
+### Task 6-A: 다크 모드 토글 테마 구현 (Claude Code)
 
-**문제**: 모바일 화면(375px 너비)에서 하단의 "My Trophies" 버튼이 뷰포트 아래로 잘림.
+**관련 파일**: `src/app/settings/page.tsx`, `src/app/globals.css`, `tailwind.config.ts`
 
-**수정 방법**:
-- 전체 레이아웃을 `min-h-[100dvh]`에서 스크롤 가능하게 하거나
-- 마스코트 영역(`flex-1`)의 크기를 줄여서 버튼 영역이 보이도록 패딩/간격 조정
-- 핵심: 스크롤 없이도 375×667 뷰포트에서 My Trophies까지 보여야 함
+**우선순위**: 높음
+
+**요구사항**:
+1. `tailwind.config.ts`에 `darkMode: 'class'` 설정.
+2. `src/app/settings/page.tsx`에 '테마 변경' 토글 버튼 추가.
+3. Zustand 혹은 로컬 스토리지(`localStorage` / IndexedDB)를 통해 테마 상태(`light` \| `dark`)를 전역으로 유지하고 초기 로딩 타임에 복원.
+4. 주요 화면(레슨 화면, 설정, 보상 화면)의 배경색(`bg-white` → `dark:bg-slate-900`)과 텍스트 색상(`text-slate-800` → `dark:text-slate-200`) 대응.
 
 ---
 
-### 완료 후 확인
+### Task 6-B: Viseme(입모양) 뷰 컴포넌트 셋업 (Antigravity & Claude Code 협업)
+
+**관련 파일**: `src/app/lesson/[unitId]/page.tsx`, `public/assets/visemes/`
+
+**우선순위**: 중간
+
+**요구사항 (이번 라운드에서 Claude Code의 목표)**:
+1. `Say & Check` 단계에서 STT를 통해 음색을 녹음할 때 또는 TTS 발음 시 화면 중앙 하단 쪽에 **캐릭터 입모양(Viseme)을 표시할 React 요소(Placeholder)**를 삽입.
+2. 현재는 TTS의 시간 분할(Timing) 데이터 추출이 어려우므로 **무작위 입모양(또는 단순 애니메이션 2프레임)**으로 말하는 시늉만 하는 컴포넌트 `<VisemeAvatar isSpeaking={true|false} />`를 작성하여 `Say & Check` 단계 UI에 배치.
+3. Antigravity가 추후 SVG 에셋을 제공하여 해당 컴포넌트를 고도화할 예정이므로, 상태를 `isSpeaking` prop으로 쉽게 조정할 수 있게 분리.
+
 
 ```bash
 npm run build

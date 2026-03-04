@@ -11,6 +11,7 @@ import {
     ChevronLeft, Volume2, ArrowRight, Check,
     Mic, BookOpen, Star, Trophy, CheckCircle, XCircle
 } from "lucide-react";
+import VisemeAvatar from "./VisemeAvatar";
 
 // ─── Step Types ───
 type LessonStep =
@@ -244,14 +245,14 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
             {/* Giant Sound Display */}
-            <div className="bg-white rounded-[2rem] p-8 w-full max-w-xs shadow-[0_10px_0_#e2e8f0] border-4 border-white flex flex-col items-center">
-                <p className="text-slate-400 font-bold mb-2">Today&apos;s Sound</p>
+            <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-8 w-full max-w-xs shadow-[0_10px_0_#e2e8f0] dark:shadow-[0_10px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
+                <p className="text-slate-400 dark:text-slate-500 font-bold mb-2">Today&apos;s Sound</p>
                 <div className="w-32 h-32 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
                     <span className="text-6xl font-black text-white drop-shadow-md">
                         {unit.title.split(" ").pop()}
                     </span>
                 </div>
-                <p className="text-2xl font-black text-slate-800 mb-1">{unit.title}</p>
+                <p className="text-2xl font-black text-slate-800 dark:text-slate-100 mb-1">{unit.title}</p>
                 <p className="text-slate-500 font-medium text-sm">/{unit.targetSound}/</p>
             </div>
 
@@ -307,7 +308,7 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
-            <div className="bg-white rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] border-4 border-white flex flex-col items-center">
+            <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
                 <p className="text-slate-400 font-bold mb-4 text-sm">Tap each sound! 👆</p>
                 <p className="text-lg font-bold text-slate-600 mb-1">{word.meaning}</p>
 
@@ -386,7 +387,7 @@ function DecodeWordsStep({ words, onNext, addScore }: { words: WordData[]; onNex
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
-            <div className="bg-white rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] border-4 border-white flex flex-col items-center">
+            <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
                 <p className="text-slate-400 font-bold text-sm mb-2">What does this word mean?</p>
 
                 {/* Big word display */}
@@ -436,19 +437,25 @@ function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void
     const [listening, setListening] = useState(false);
     const [result, setResult] = useState<STTResult | null>(null);
     const [sttAvailable] = useState(() => isSTTSupported());
+    const [isSpeaking, setIsSpeaking] = useState(false);
     const word = words[idx];
 
     const handleListen = () => {
+        setIsSpeaking(true);
         playTTS(word.word);
+        // Approximate TTS duration, then stop speaking animation
+        setTimeout(() => setIsSpeaking(false), 1500);
     };
 
     const handleRecord = async () => {
         if (listening) return;
         setListening(true);
+        setIsSpeaking(true);
         setResult(null);
 
         const sttResult = await listenAndCompare(word.word, 4000);
         setListening(false);
+        setIsSpeaking(false);
         setResult(sttResult);
 
         if (sttResult.matched) {
@@ -460,6 +467,7 @@ function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void
 
     const handleNext = () => {
         setResult(null);
+        setIsSpeaking(false);
         if (idx < Math.min(words.length, 4) - 1) {
             setIdx((i) => i + 1);
         } else {
@@ -469,10 +477,10 @@ function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
-            <div className="bg-white rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] border-4 border-white flex flex-col items-center">
+            <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
                 <p className="text-slate-400 font-bold text-sm mb-4">Listen, then say it! 🎤</p>
 
-                <span className="text-5xl font-black text-slate-800 mb-2">{word.word}</span>
+                <span className="text-5xl font-black text-slate-800 dark:text-slate-100 mb-2">{word.word}</span>
                 <p className="text-slate-500 font-medium mb-4">{word.meaning}</p>
 
                 <div className="flex gap-4 mb-4">
@@ -523,6 +531,9 @@ function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void
                 )}
             </div>
 
+            {/* Viseme Avatar - positioned below the card */}
+            <VisemeAvatar isSpeaking={isSpeaking} />
+
             <p className="text-white/70 font-bold text-sm">{idx + 1} / {Math.min(words.length, 4)}</p>
 
             <BigButton onClick={handleNext}>
@@ -552,7 +563,7 @@ function MicroReaderStep({ sentences, onNext }: { sentences: string[]; onNext: (
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
-            <div className="bg-white rounded-[2rem] p-8 w-full shadow-[0_8px_0_#e2e8f0] border-4 border-white flex flex-col items-center">
+            <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-8 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
                 <BookOpen className="w-10 h-10 text-indigo-400 mb-3" />
                 <p className="text-slate-400 font-bold text-sm mb-6">Read along! 📖</p>
 
@@ -613,7 +624,7 @@ function ExitTicketStep({ words, onNext, addScore }: { words: WordData[]; onNext
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
-            <div className="bg-white rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] border-4 border-white flex flex-col items-center">
+            <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
                 <p className="text-slate-400 font-bold text-sm mb-1">Exit Ticket 🎫</p>
                 <p className="text-lg font-bold text-slate-600 mb-6">Which word means &quot;{word.meaning}&quot;?</p>
 
@@ -711,9 +722,9 @@ function ResultsStep({ score, total, unitTitle, onFinish, onMount, newRewards }:
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
-            <div className="bg-white rounded-[2rem] p-8 w-full shadow-[0_10px_0_#e2e8f0] border-4 border-white flex flex-col items-center">
+            <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-8 w-full shadow-[0_10px_0_#e2e8f0] dark:shadow-[0_10px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
                 <Trophy className="w-16 h-16 text-yellow-400 mb-4" />
-                <h2 className="text-3xl font-black text-slate-800 mb-1">Lesson Done!</h2>
+                <h2 className="text-3xl font-black text-slate-800 dark:text-slate-100 mb-1">Lesson Done!</h2>
                 <p className="text-slate-500 font-medium mb-6">{unitTitle}</p>
 
                 {/* Stars */}

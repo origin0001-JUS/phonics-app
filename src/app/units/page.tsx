@@ -33,7 +33,7 @@ export default function UnitsPage() {
         <main className="flex-1 flex flex-col pb-10 relative z-10">
             {/* Header */}
             <header className="flex items-center gap-3 px-5 pt-8 pb-4">
-                <Link href="/" className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-[0_4px_0_#d1d5db] active:shadow-[0_0px_0_#d1d5db] active:translate-y-[4px] transition-all border-2 border-slate-100">
+                <Link href="/" className="w-11 h-11 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-[0_4px_0_#d1d5db] dark:shadow-[0_4px_0_#1e293b] active:shadow-[0_0px_0_#d1d5db] active:translate-y-[4px] transition-all border-2 border-slate-100 dark:border-slate-600">
                     <ChevronLeft className="w-6 h-6 text-slate-500" />
                 </Link>
                 <h1 className="text-2xl font-bold text-white drop-shadow-md">Pick a Unit!</h1>
@@ -50,7 +50,7 @@ export default function UnitsPage() {
                             <Link
                                 key={unit.id}
                                 href={isUnlocked ? `/lesson/${unit.id}` : "#"}
-                                className={`relative rounded-[1.5rem] p-1.5 pb-2 border-4 border-white flex flex-col transition-all ${isUnlocked
+                                className={`relative rounded-[1.5rem] p-1.5 pb-2 border-4 border-white dark:border-slate-600 flex flex-col transition-all ${isUnlocked
                                         ? "active:scale-95"
                                         : "opacity-60 pointer-events-none"
                                     }`}
@@ -78,9 +78,9 @@ export default function UnitsPage() {
                                 </div>
 
                                 {/* Label */}
-                                <div className="bg-white rounded-b-xl p-3 flex flex-col items-center">
-                                    <p className="font-bold text-sm text-slate-800">{unit.title}</p>
-                                    <p className="text-xs text-slate-500 mt-0.5">{unit.subtitle}</p>
+                                <div className="bg-white dark:bg-slate-800 rounded-b-xl p-3 flex flex-col items-center">
+                                    <p className="font-bold text-sm text-slate-800 dark:text-slate-100">{unit.title}</p>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{unit.subtitle}</p>
                                     {isUnlocked && (
                                         <div className="flex gap-0.5 mt-2">
                                             {[1, 2, 3].map((s) => (
