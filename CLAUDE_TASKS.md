@@ -55,7 +55,25 @@ npm run build
 
 ---
 
-## Round 4: Capacitor Android 패키징 (Round 3은 Antigravity가 수행)
+## Round 7: MVP 최종 품질 검증 (QA & 안정화) [현재]
+
+### Task 7-A: 데이터 초기화 로직 무결성 검증 (Claude Code)
+**설명**: 
+- 설정 메뉴의 `초기화(Reset Progress)` 기능 실행 시 Dexie.js DB(`cards`, `units`, `rewards`) 내용과 Zustand 전역 상태가 충돌 없이 완벽히 롤백되는지 확인하세요.
+- 필요 시, 초기화 과정 중 UI 피드백(toast나 예외처리)이 들어가 있는지 점검하고 보강하세요.
+
+### Task 7-B: Hydration Warning 및 콘솔 에러 정리 (Claude Code)
+**설명**:
+- 앱 전체 구동 중 브라우저 콘솔에 찍히는 `Hydration failed` 오류나 Warning을 식별하고 해결하세요.
+- `use client` 로드 시점과 SSR 시점 차이에서 오는 문제는 `next/dynamic` 혹은 `useEffect`를 활용해 다듬어주세요.
+
+### Task 7-C: Capacitor 빌드 커맨드 최종 검토 (Claude Code)
+**설명**:
+- `npm run build` 스크립트 실행 후 `npx cap sync` 커맨드가 에러 없이 떨어지는지(Android 플랫폼 동기화) 로컬 터미널에서 최종 점검 하세요.
+
+---
+
+## ~~Round 4: Capacitor Android 패키징 (Round 3은 Antigravity가 수행)~~
 
 ### Task 4-A: Capacitor 설치 및 초기화
 
