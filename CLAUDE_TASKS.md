@@ -20,7 +20,7 @@
 
 ---
 
-## Round 6: 고도화 (Viseme 립싱크 & Dark Mode) [현재]
+## ~~Round 6: 고도화 (Viseme 립싱크 & Dark Mode) — 완료~~
 
 ### Task 6-A: 다크 모드 토글 테마 구현 (Claude Code)
 
