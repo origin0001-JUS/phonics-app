@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#8fdfff"/>
+  <rect x="56" y="56" width="400" height="400" rx="72" fill="#fff" fill-opacity=".25"/>
+  <text x="256" y="230" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="140" fill="#1e3a5f">P300</text>
+  <text x="256" y="340" text-anchor="middle" font-family="sans-serif" font-weight="600" font-size="72" fill="#1e3a5f">소리영어</text>
+  <circle cx="400" cy="120" r="40" fill="#fcd34d" opacity=".8"/>
+  <circle cx="120" cy="400" r="28" fill="#a3da61" opacity=".8"/>
+</svg>
