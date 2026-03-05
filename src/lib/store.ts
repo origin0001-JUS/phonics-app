@@ -11,7 +11,7 @@ interface AppState {
     gradeLevel: number | null;
     theme: Theme;
     setLevel: (level: string) => void;
-    setUnit: (unitId: string) => void;
+    setUnit: (unitId: string | null) => void;
     addPlayTime: (minutes: number) => void;
     resetDaily: () => void;
     setOnboardingCompleted: (completed: boolean) => void;

@@ -4,7 +4,7 @@
 
 ### Architecture
 - **Level**: Starter (simple components/lib/types structure)
-- **DB**: Dexie.js IndexedDB, currently at schema v5 (rewards table added)
+- **DB**: Dexie.js IndexedDB, currently at schema v6 (v5 added rewards table, v6 added stage index on cards)
 - **State**: Zustand (store.ts) + Dexie for persistence
 - **Styling**: Tailwind CSS 4, kid-friendly 3D buttons, Fredoka font, rounded-[2rem] cards
 
@@ -24,6 +24,9 @@
 - **round2-trophy-home** (2026-03-03): Match Rate 98%. 16/16 plan requirements fully met (Task 2-A: trophy modal, Task 2-B: home cutoff fix). Minor gaps: import order in page.tsx (next/link after @/ imports), missing ARIA attributes on trophy modal. Implementation includes bonus animations (rotate wobble, badge shake) beyond plan scope.
 - **capacitor-android** (2026-03-04): Match Rate 92%. Config+code 100% (output:"export", capacitor.config.ts, 3 packages, page.tsx Server/Client split, generateStaticParams for 24 units). Gap: `android/` dir missing (npx cap add android not run). `out/` absent but git-ignored (expected).
 - **round6** (2026-03-05): Match Rate 99% (v2, after fixes). v1 was 92%. Task 6-A (Dark Mode) 98%: all screens now have dark: classes (80 total). Task 6-B (Viseme Avatar) 100%. Convention 100% (import order fixed). All 5 gaps from v1 resolved.
+- **round7** (2026-03-05): Match Rate 97%. 3 tasks (7-A: reset integrity, 7-B: hydration cleanup, 7-C: capacitor build). All functional requirements 100% met (33/33 items). Minor gaps: import order in LessonClient.tsx (framer-motion/lucide after @/ imports), no loading indicator during reset. CLAUDE.md still says "v5" but DB is at v6.
+- **round8-qa** (2026-03-05): Match Rate 99%. 5 tasks (8-A: level naming, 8-B: bilingual TTS, 8-C: phoneme audio, 8-D: Korean translation, 8-E: overflow fix). All 36/36 functional requirements met. Minor: import order in LessonClient.tsx persists, getMapping() still duplicated.
+- **round9** (2026-03-06): Match Rate 95%. 4 tasks (9-A: BlendTap audio delay, 9-B: quiz audio separation, 9-C: viseme close-up, 9-D: trophies overflow). All 27 items checked, 25.5 met. Tasks 9-A/B/C 100%. Task 9-D 92% (pb-12 may be thin). Import order in LessonClient.tsx persists (Round 7+).
 
 ### Patterns Observed
 - Co-located components inside page files (Starter-level pattern)
@@ -33,5 +36,5 @@
 - lesson/[unitId]/ split: page.tsx (Server, generateStaticParams) + LessonClient.tsx (Client, lesson logic)
 - Plan documents are in Korean, UI text is in English/Korean mix
 - Dark mode: Zustand `theme` state + localStorage `phonics-theme` + ThemeInitializer.tsx for DOM sync
-- VisemeAvatar: standalone component at lesson/[unitId]/VisemeAvatar.tsx with isSpeaking prop
+- VisemeAvatar: standalone component at lesson/[unitId]/VisemeAvatar.tsx with isSpeaking prop, now lip close-up (no full face), config-driven MOUTH_SHAPES for future vowel visemes
 - Dark mode coverage: ALL screens now have dark: classes (80 total across 10 files). Import order issue in settings resolved.

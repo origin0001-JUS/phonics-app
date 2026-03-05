@@ -95,15 +95,12 @@ export default function Home() {
 
         {/* Mascot Face */}
         <div className="w-36 h-36 bg-white/40 rounded-full flex items-center justify-center relative mb-2">
-          <div className="w-30 h-30 bg-orange-400 rounded-full flex flex-col items-center justify-center text-white border-4 border-white shadow-[0_10px_20px_rgba(0,0,0,0.1)] relative overflow-hidden">
-            <div className="absolute top-10 left-8 w-6 h-6 bg-slate-800 rounded-full">
-              <div className="w-2 h-2 bg-white rounded-full mt-1 ml-1"></div>
-            </div>
-            <div className="absolute top-10 right-8 w-6 h-6 bg-slate-800 rounded-full">
-              <div className="w-2 h-2 bg-white rounded-full mt-1 ml-1"></div>
-            </div>
-            <div className="absolute top-20 w-4 h-3 bg-red-400 rounded-full"></div>
-            <p className="absolute bottom-4 font-black tracking-widest opacity-80">FOXY</p>
+          <div className="w-30 h-30 rounded-full flex items-center justify-center border-4 border-white shadow-[0_10px_20px_rgba(0,0,0,0.1)] relative overflow-hidden bg-white">
+            <img
+              src="/assets/images/cute_foxy_mascot.png"
+              alt="Cute Foxy Mascot"
+              className="w-full h-full object-cover scale-110"
+            />
           </div>
 
           <button

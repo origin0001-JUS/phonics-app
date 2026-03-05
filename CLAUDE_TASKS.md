@@ -69,9 +69,69 @@ npm run build
 
 ### Task 7-C: Capacitor 빌드 커맨드 최종 검토 (Claude Code)
 **설명**:
-- `npm run build` 스크립트 실행 후 `npx cap sync` 커맨드가 에러 없이 떨어지는지(Android 플랫폼 동기화) 로컬 터미널에서 최종 점검 하세요.
+  - Capacitor Android 빌드 커맨드(`npx cap sync`) 무결성 재확인 하세요.
 
 ---
+
+## Round 8: 사용자 매뉴얼 QA 피드백 반영 [현재]
+
+### Task 8-A: 온보딩 진입 기준 명칭 변경 (Claude Code)
+**설명**: 
+- 기존 온보딩 화면에서 '몇 학년이세요?' 및 '1학년', '2학년' 등으로 표기되던 기준을 학습자의 실제 '수준(Level)' 기반으로 변경합니다.
+- `src/app/onboarding/page.tsx` 등 관련 파일에서 텍스트를 "현재 학습 수준을 선택해 주세요." 및 "Level 1 (처음 시작)", "Level 2" 등으로 자연스럽게 수정하세요. 
+
+### Task 8-B: 온보딩 안내 음성 개선 (Claude Code)
+**설명**:
+- 온보딩 화면 진입 시 나오는 음성 안내(TTS)가 영어만 나오거나 한국어만 나오지 않고, **"영어 안내 후 한국어 안내"**가 연달아 나오도록 수정하세요.
+- 예: "Choose your level! 현재 학습 수준을 선택해 주세요." 와 같이 하나의 텍스트 스트링 또는 순차적 재생 로직을 구현하세요.
+
+### Task 8-C: Blend & Tap 개별 음소 사운드 연동 (Claude Code)
+**설명**:
+- `Blend & Tap` 단계(`src/app/lesson/[unitId]/BlendTap.tsx` 또는 관련 컴포넌트)에서 개별 알파벳 박스를 누를 때 단순한 '띡(효과음)' 소리가 나는 문제를 수정합니다.
+- 각 박스를 탭할 때마다 **해당 알파벳의 정확한 파닉스 음가 오디오**가 재생되도록 로직을 추가하세요. (TTS 호출 또는 기존 오디오 파일 매핑 방식 활용) 알파벳을 다 누른 후 전체 단어 소리가 나오는 기존 로직은 유지합니다.
+
+### Task 8-D: Micro-Reader 한국어 번역 추가 (Claude Code)
+**설명**:
+- 문장 읽기 단계(`src/app/lesson/[unitId]/MicroReader.tsx` 또는 관련 컴포넌트)에서 사용자가 문장을 읽고 발음(음성)을 들은 후, 화면에 해당 문장의 **한국어 번역(뜻)**이 노출되도록 추가하세요.
+- 번역 데이터는 아마도 `units.json` 내의 `sentence.ko` 속성 등을 활용하면 됩니다.
+
+### Task 8-E: 보상(My Trophies) 화면 UI 잘림 현상 해결 (Claude Code)
+**설명**:
+- `src/app/rewards/page.tsx` 화면에서 기기 해상도나 테마에 따라 트로피 타이틀 텍스트나 날짜가 박스 영역을 벗어나거나 잘리는(Overflow) 현상을 수정하세요.
+- Tailwind CSS의 `truncate`, `whitespace-normal`, 패딩/마진 조절, 반응형 텍스트 크기 단위 등을 통해 모바일/웹 환경 모두에서 글자가 온전히 표시되도록 레이아웃을 최적화하세요.
+
+```bash
+npm run build
+```
+빌드 에러 0이면 8라운드 완료.
+
+---
+
+## Round 9: 디테일 폴리싱 및 오디오/비주얼 동기화 [진행 대기]
+
+### Task 9-A: Blend & Tap 오디오 시차 적용 (Claude Code)
+**설명**:
+- `src/app/lesson/[unitId]/BlendTap.tsx` 컴포넌트에서 사용자가 마지막 음소(음절)를 터치할 때, "해당 음소의 소리가 완전히 재생된 후"에 전체 단어 소리가 약 0.5초~1초 뒤에 재생되도록 분리하세요.
+- 마지막 음소 소리와 전체 단어 뜻 발음이 동시에 섞여 들리지 않도록 `setTimeout`을 활용하여 딜레이 처리하세요.
+
+### Task 9-B: 퀴즈 액션 오디오 분리 (Claude Code)
+**설명**:
+- `src/app/lesson/[unitId]/DecodeWords.tsx` 및 `ExitTicket.tsx`에서 정답/오답 버튼을 눌렀을 때 작동하는 사운드 오버랩 발생을 수정하세요.
+- 버튼 터치 즉시 '효과음(Correct/Wrong)'이 **먼저** 재생되고, 그로부터 약 `0.5초` 뒤에 실제 해당 단어의 발음 오디오가 이어서 나오도록 분리 연출하세요.
+
+### Task 9-C: 입모양(Viseme) 클로즈업 정밀 구현 준비 (Claude Code)
+**설명**:
+- `src/app/lesson/[unitId]/VisemeAvatar.tsx` 내에서 기존의 고정형 여우 얼굴을 걷어내고, "여우의 입술 부분만 줌인(Zoom-in) 된 UI"로 SVG 구조를 개편하세요.
+- 음원이 재생될 때 `isSpeaking` 상태에 맞춰 입술 모양 트랜지션 애니메이션 프레임워크를 잡아두세요. (단순 CSS 토글이 아닌 Framer Motion 방식 등을 사용하여, 향후 a, e, i, o, u 발음에 맞춘 SVG Path를 교체하기 쉽도록 틀을 짭니다.)
+
+### Task 9-D: My Trophies 화면 통째로 잘림 해결 (Claude Code)
+**설명**:
+- `src/app/rewards/page.tsx` 모바일 해상도에서 리스트 하단 텍스트 및 날짜가 짤리는 현상을 근원적으로 해결하세요. 스크롤 뷰(`overflow-y-auto`) 영역의 padding-bottom을 대폭 늘리거나 부모 flex 레이아웃 구조를 검토하세요.
+
+```bash
+npm run build
+```
+빌드 에러 0이면 완료.
 
 ## ~~Round 4: Capacitor Android 패키징 (Round 3은 Antigravity가 수행)~~
 

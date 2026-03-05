@@ -19,10 +19,10 @@ interface GradeOption {
 }
 
 const GRADES: GradeOption[] = [
-  { grade: 1, emoji: "🌱", label: "1학년", description: "알파벳 소리부터 시작해요!" },
-  { grade: 2, emoji: "🌿", label: "2학년", description: "짧은 모음 소리를 배워요!" },
-  { grade: 3, emoji: "🌳", label: "3학년", description: "긴 모음까지 도전해요!" },
-  { grade: 4, emoji: "🚀", label: "4학년", description: "자음 조합까지 배워요!" },
+  { grade: 1, emoji: "🌱", label: "Level 1", description: "처음 시작! 알파벳 소리부터 배워요" },
+  { grade: 2, emoji: "🌿", label: "Level 2", description: "짧은 모음 소리를 배워요!" },
+  { grade: 3, emoji: "🌳", label: "Level 3", description: "긴 모음까지 도전해요!" },
+  { grade: 4, emoji: "🚀", label: "Level 4", description: "자음 조합까지 배워요!" },
 ];
 
 interface LevelMapping {
@@ -137,6 +137,20 @@ function WelcomeScreen({ onNext }: { onNext: () => void }) {
   );
 }
 
+/* ─── Bilingual TTS Helper ─── */
+function playBilingualGuide(english: string, korean: string) {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const en = new SpeechSynthesisUtterance(english);
+  en.lang = "en-US";
+  en.rate = 0.8;
+  const ko = new SpeechSynthesisUtterance(korean);
+  ko.lang = "ko-KR";
+  ko.rate = 0.9;
+  en.onend = () => window.speechSynthesis.speak(ko);
+  window.speechSynthesis.speak(en);
+}
+
 /* ─── Screen 2: Grade Selection ─── */
 function GradeSelectScreen({
   selectedGrade,
@@ -147,13 +161,17 @@ function GradeSelectScreen({
   onSelect: (g: number) => void;
   onNext: () => void;
 }) {
+  useEffect(() => {
+    playBilingualGuide("Choose your level!", "학습 수준을 선택해 주세요.");
+  }, []);
+
   return (
     <div className="flex-1 flex flex-col px-6 py-10">
       <h2 className="text-3xl font-black text-center text-white drop-shadow-md mb-2">
-        몇 학년이에요?
+        학습 수준을 선택해 주세요
       </h2>
       <p className="text-center text-white/80 font-semibold mb-8">
-        학년에 맞는 학습을 준비해 줄게요!
+        수준에 맞는 학습을 준비해 줄게요!
       </p>
 
       <div className="grid grid-cols-2 gap-4 mb-8">
@@ -216,7 +234,7 @@ function RecommendationScreen({
           </p>
         </div>
         <h2 className="text-2xl font-black text-white drop-shadow-md">
-          {grade}학년 친구, 준비됐어!
+          Level {grade} 친구, 준비됐어!
         </h2>
       </div>
 
@@ -275,7 +293,7 @@ function RecommendationScreen({
         onClick={onBack}
         className="mt-3 text-center text-white/70 font-semibold text-sm underline underline-offset-2"
       >
-        학년 다시 선택하기
+        수준 다시 선택하기
       </button>
     </div>
   );

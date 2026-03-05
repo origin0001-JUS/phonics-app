@@ -2,10 +2,10 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import { getUnitById, curriculum, type WordData } from "@/data/curriculum";
+import { getUnitById, curriculum, microReadingKoMap, type WordData } from "@/data/curriculum";
 import { saveLessonResults, type WordResult } from "@/lib/lessonService";
 import { REWARDS } from "@/data/rewards";
-import { playWordAudio, playSentenceAudio, playSFX, listenAndCompare, isSTTSupported, type STTResult } from "@/lib/audio";
+import { playWordAudio, playSentenceAudio, playSFX, fallbackTTS, listenAndCompare, isSTTSupported, type STTResult } from "@/lib/audio";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     ChevronLeft, Volume2, ArrowRight, Check,
@@ -192,7 +192,7 @@ export default function LessonPage() {
                     <SayCheckStep words={lessonWords} onNext={goNext} />
                 )}
                 {currentStep === "micro_reader" && (
-                    <MicroReaderStep sentences={unit.microReading} onNext={goNext} />
+                    <MicroReaderStep sentences={unit.microReading} sentencesKo={microReadingKoMap[unit.id]} onNext={goNext} />
                 )}
                 {currentStep === "exit_ticket" && (
                     <ExitTicketStep words={lessonWords} onNext={goNext} addScore={addScore} />
@@ -234,6 +234,21 @@ function BigButton({ children, onClick, color = "bg-[#fcd34d]", shadow = "shadow
 
 function playTTS(text: string) {
     playWordAudio(text);
+}
+
+/** Map IPA phonemes to speakable approximations for TTS */
+const PHONEME_SPEAK_MAP: Record<string, string> = {
+    'æ': 'ah', 'ɛ': 'eh', 'ɪ': 'ih', 'ɒ': 'aw', 'ʌ': 'uh',
+    'eɪ': 'ay', 'aɪ': 'eye', 'oʊ': 'oh', 'juː': 'you', 'uː': 'oo',
+    'iː': 'ee', 'ɑːr': 'ar', 'ɔːr': 'or', 'ɜːr': 'er',
+    'ɔɪ': 'oy', 'aʊ': 'ow',
+    'ʃ': 'sh', 'tʃ': 'ch', 'θ': 'th', 'ð': 'th',
+    'dʒ': 'j', 'ŋ': 'ng',
+};
+
+function playPhonemeSound(phoneme: string) {
+    const text = PHONEME_SPEAK_MAP[phoneme] || phoneme;
+    fallbackTTS(text);
 }
 
 // ═══════════════════════════════════════
@@ -285,13 +300,13 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
     const tapPhoneme = (idx: number) => {
         if (!tappedPhonemes.includes(idx)) {
             setTappedPhonemes([...tappedPhonemes, idx]);
-            playSFX('tap');
+            playPhonemeSound(word.phonemes[idx]);
         }
 
-        // If all tapped, play full word
+        // If all tapped, wait for phoneme sound to finish, then SFX, then full word
         if (tappedPhonemes.length + 1 === word.phonemes.length) {
-            playSFX('correct');
-            setTimeout(() => playTTS(word.word), 400);
+            setTimeout(() => playSFX('correct'), 600);
+            setTimeout(() => playTTS(word.word), 1200);
         }
     };
 
@@ -372,7 +387,7 @@ function DecodeWordsStep({ words, onNext, addScore }: { words: WordData[]; onNex
         const correct = opt === word.meaning;
         addScore(word.id, correct);
         playSFX(correct ? 'correct' : 'wrong');
-        playTTS(word.word);
+        setTimeout(() => playTTS(word.word), 500);
     };
 
     const handleNext = () => {
@@ -546,14 +561,18 @@ function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void
 // ═══════════════════════════════════════
 // STEP 5: Micro-Reader (1 min)
 // ═══════════════════════════════════════
-function MicroReaderStep({ sentences, onNext }: { sentences: string[]; onNext: () => void }) {
+function MicroReaderStep({ sentences, sentencesKo, onNext }: { sentences: string[]; sentencesKo?: string[]; onNext: () => void }) {
     const [sentIdx, setSentIdx] = useState(0);
+    const [showKo, setShowKo] = useState(false);
 
     const handleTap = () => {
         playTTS(sentences[sentIdx]);
+        // Show Korean translation after hearing the sentence
+        if (!showKo) setTimeout(() => setShowKo(true), 1200);
     };
 
     const handleNext = () => {
+        setShowKo(false);
         if (sentIdx < sentences.length - 1) {
             setSentIdx((i) => i + 1);
         } else {
@@ -561,19 +580,28 @@ function MicroReaderStep({ sentences, onNext }: { sentences: string[]; onNext: (
         }
     };
 
+    const koText = sentencesKo?.[sentIdx];
+
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
             <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-8 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
                 <BookOpen className="w-10 h-10 text-indigo-400 mb-3" />
                 <p className="text-slate-400 font-bold text-sm mb-6">Read along! 📖</p>
 
-                <button onClick={handleTap} className="mb-4">
-                    <p className="text-3xl font-black text-slate-800 text-center leading-relaxed">
+                <button onClick={handleTap} className="mb-2">
+                    <p className="text-3xl font-black text-slate-800 dark:text-slate-100 text-center leading-relaxed">
                         {sentences[sentIdx]}
                     </p>
                 </button>
 
-                <button onClick={handleTap} className="flex items-center gap-2 text-sky-500 font-bold">
+                {/* Korean translation */}
+                {showKo && koText && (
+                    <p className="text-base text-slate-500 dark:text-slate-400 font-semibold mb-2 text-center">
+                        {koText}
+                    </p>
+                )}
+
+                <button onClick={handleTap} className="flex items-center gap-2 text-sky-500 font-bold mt-2">
                     <Volume2 className="w-5 h-5" /> Tap to hear
                 </button>
             </div>
@@ -609,7 +637,7 @@ function ExitTicketStep({ words, onNext, addScore }: { words: WordData[]; onNext
         setAnswered(true);
         addScore(word.id, correct);
         playSFX(correct ? 'correct' : 'wrong');
-        playTTS(word.word);
+        setTimeout(() => playTTS(word.word), 500);
     };
 
     const handleNext = () => {
@@ -673,20 +701,29 @@ function ExitTicketStep({ words, onNext, addScore }: { words: WordData[]; onNext
 const CONFETTI_EMOJIS = ["🎉", "✨", "🎊", "⭐", "🏆", "💛"];
 
 function ConfettiParticles() {
+    // Pre-compute random values to avoid hydration mismatch
+    const particles = useMemo(() =>
+        Array.from({ length: 18 }, (_, i) => ({
+            left: 5 + Math.random() * 90,
+            delay: Math.random() * 1.2,
+            size: 16 + Math.random() * 14,
+            emoji: CONFETTI_EMOJIS[i % CONFETTI_EMOJIS.length],
+        })), []);
+
     return (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {Array.from({ length: 18 }).map((_, i) => (
+            {particles.map((p, i) => (
                 <span
                     key={i}
                     className="absolute text-2xl animate-[confetti-fall_2.5s_ease-in_forwards]"
                     style={{
-                        left: `${5 + Math.random() * 90}%`,
+                        left: `${p.left}%`,
                         top: `-8%`,
-                        animationDelay: `${Math.random() * 1.2}s`,
-                        fontSize: `${16 + Math.random() * 14}px`,
+                        animationDelay: `${p.delay}s`,
+                        fontSize: `${p.size}px`,
                     }}
                 >
-                    {CONFETTI_EMOJIS[i % CONFETTI_EMOJIS.length]}
+                    {p.emoji}
                 </span>
             ))}
         </div>

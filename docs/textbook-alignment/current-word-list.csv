@@ -1,0 +1,301 @@
+unit_id,unit_number,unit_title,level,target_sound,word,phonemes,meaning
+unit_01,1,Short a,CoreA,æ,cat,"k-æ-t",고양이
+unit_01,1,Short a,CoreA,æ,bat,"b-æ-t",박쥐
+unit_01,1,Short a,CoreA,æ,hat,"h-æ-t",모자
+unit_01,1,Short a,CoreA,æ,mat,"m-æ-t",매트
+unit_01,1,Short a,CoreA,æ,rat,"r-æ-t",쥐
+unit_01,1,Short a,CoreA,æ,sat,"s-æ-t",앉았다
+unit_01,1,Short a,CoreA,æ,fan,"f-æ-n",부채
+unit_01,1,Short a,CoreA,æ,van,"v-æ-n",밴
+unit_01,1,Short a,CoreA,æ,can,"k-æ-n",캔
+unit_01,1,Short a,CoreA,æ,man,"m-æ-n",남자
+unit_01,1,Short a,CoreA,æ,map,"m-æ-p",지도
+unit_01,1,Short a,CoreA,æ,cap,"k-æ-p",모자
+unit_01,1,Short a,CoreA,æ,tap,"t-æ-p",수도꼭지
+unit_01,1,Short a,CoreA,æ,nap,"n-æ-p",낮잠
+unit_01,1,Short a,CoreA,æ,bag,"b-æ-g",가방
+unit_02,2,Short e,CoreA,ɛ,bed,"b-ɛ-d",침대
+unit_02,2,Short e,CoreA,ɛ,red,"r-ɛ-d",빨간
+unit_02,2,Short e,CoreA,ɛ,pen,"p-ɛ-n",펜
+unit_02,2,Short e,CoreA,ɛ,hen,"h-ɛ-n",암탉
+unit_02,2,Short e,CoreA,ɛ,ten,"t-ɛ-n",열
+unit_02,2,Short e,CoreA,ɛ,men,"m-ɛ-n",남자들
+unit_02,2,Short e,CoreA,ɛ,net,"n-ɛ-t",그물
+unit_02,2,Short e,CoreA,ɛ,set,"s-ɛ-t",세트
+unit_02,2,Short e,CoreA,ɛ,wet,"w-ɛ-t",젖은
+unit_02,2,Short e,CoreA,ɛ,jet,"dʒ-ɛ-t",비행기
+unit_02,2,Short e,CoreA,ɛ,leg,"l-ɛ-g",다리
+unit_02,2,Short e,CoreA,ɛ,peg,"p-ɛ-g",못
+unit_02,2,Short e,CoreA,ɛ,beg,"b-ɛ-g",빌다
+unit_02,2,Short e,CoreA,ɛ,fed,"f-ɛ-d",먹였다
+unit_02,2,Short e,CoreA,ɛ,den,"d-ɛ-n",굴
+unit_03,3,Short i,CoreA,ɪ,big,"b-ɪ-g",큰
+unit_03,3,Short i,CoreA,ɪ,pig,"p-ɪ-g",돼지
+unit_03,3,Short i,CoreA,ɪ,dig,"d-ɪ-g",파다
+unit_03,3,Short i,CoreA,ɪ,sit,"s-ɪ-t",앉다
+unit_03,3,Short i,CoreA,ɪ,hit,"h-ɪ-t",치다
+unit_03,3,Short i,CoreA,ɪ,bit,"b-ɪ-t",조금
+unit_03,3,Short i,CoreA,ɪ,fin,"f-ɪ-n",지느러미
+unit_03,3,Short i,CoreA,ɪ,pin,"p-ɪ-n",핀
+unit_03,3,Short i,CoreA,ɪ,bin,"b-ɪ-n",통
+unit_03,3,Short i,CoreA,ɪ,lip,"l-ɪ-p",입술
+unit_03,3,Short i,CoreA,ɪ,zip,"z-ɪ-p",지퍼
+unit_03,3,Short i,CoreA,ɪ,tip,"t-ɪ-p",끝
+unit_03,3,Short i,CoreA,ɪ,wig,"w-ɪ-g",가발
+unit_03,3,Short i,CoreA,ɪ,six,"s-ɪ-k-s",여섯
+unit_03,3,Short i,CoreA,ɪ,kid,"k-ɪ-d",아이
+unit_04,4,Short o,CoreA,ɒ,dog,"d-ɒ-g",개
+unit_04,4,Short o,CoreA,ɒ,hot,"h-ɒ-t",뜨거운
+unit_04,4,Short o,CoreA,ɒ,box,"b-ɒ-k-s",상자
+unit_04,4,Short o,CoreA,ɒ,fox,"f-ɒ-k-s",여우
+unit_04,4,Short o,CoreA,ɒ,pot,"p-ɒ-t",냄비
+unit_04,4,Short o,CoreA,ɒ,top,"t-ɒ-p",꼭대기
+unit_04,4,Short o,CoreA,ɒ,hop,"h-ɒ-p",깡충뛰다
+unit_04,4,Short o,CoreA,ɒ,mop,"m-ɒ-p",밀대
+unit_04,4,Short o,CoreA,ɒ,log,"l-ɒ-g",통나무
+unit_04,4,Short o,CoreA,ɒ,cot,"k-ɒ-t",간이침대
+unit_04,4,Short o,CoreA,ɒ,dot,"d-ɒ-t",점
+unit_04,4,Short o,CoreA,ɒ,got,"g-ɒ-t",얻었다
+unit_04,4,Short o,CoreA,ɒ,rod,"r-ɒ-d",막대
+unit_04,4,Short o,CoreA,ɒ,sob,"s-ɒ-b",흐느끼다
+unit_04,4,Short o,CoreA,ɒ,nod,"n-ɒ-d",끄덕이다
+unit_05,5,Short u,CoreA,ʌ,bug,"b-ʌ-g",벌레
+unit_05,5,Short u,CoreA,ʌ,cup,"k-ʌ-p",컵
+unit_05,5,Short u,CoreA,ʌ,sun,"s-ʌ-n",태양
+unit_05,5,Short u,CoreA,ʌ,run,"r-ʌ-n",달리다
+unit_05,5,Short u,CoreA,ʌ,fun,"f-ʌ-n",재미
+unit_05,5,Short u,CoreA,ʌ,bun,"b-ʌ-n",빵
+unit_05,5,Short u,CoreA,ʌ,nut,"n-ʌ-t",견과류
+unit_05,5,Short u,CoreA,ʌ,cut,"k-ʌ-t",자르다
+unit_05,5,Short u,CoreA,ʌ,hut,"h-ʌ-t",오두막
+unit_05,5,Short u,CoreA,ʌ,mud,"m-ʌ-d",진흙
+unit_05,5,Short u,CoreA,ʌ,tub,"t-ʌ-b",욕조
+unit_05,5,Short u,CoreA,ʌ,rug,"r-ʌ-g",깔개
+unit_05,5,Short u,CoreA,ʌ,bus,"b-ʌ-s",버스
+unit_05,5,Short u,CoreA,ʌ,gum,"g-ʌ-m",껌
+unit_05,5,Short u,CoreA,ʌ,jug,"dʒ-ʌ-g",주전자
+unit_07,7,Long a (a_e),CoreA,eɪ,cake,"k-eɪ-k",케이크
+unit_07,7,Long a (a_e),CoreA,eɪ,bake,"b-eɪ-k",굽다
+unit_07,7,Long a (a_e),CoreA,eɪ,lake,"l-eɪ-k",호수
+unit_07,7,Long a (a_e),CoreA,eɪ,make,"m-eɪ-k",만들다
+unit_07,7,Long a (a_e),CoreA,eɪ,take,"t-eɪ-k",가져가다
+unit_07,7,Long a (a_e),CoreA,eɪ,name,"n-eɪ-m",이름
+unit_07,7,Long a (a_e),CoreA,eɪ,game,"g-eɪ-m",게임
+unit_07,7,Long a (a_e),CoreA,eɪ,came,"k-eɪ-m",왔다
+unit_07,7,Long a (a_e),CoreA,eɪ,gate,"g-eɪ-t",문
+unit_07,7,Long a (a_e),CoreA,eɪ,late,"l-eɪ-t",늦은
+unit_07,7,Long a (a_e),CoreA,eɪ,tape,"t-eɪ-p",테이프
+unit_07,7,Long a (a_e),CoreA,eɪ,cape,"k-eɪ-p",망토
+unit_07,7,Long a (a_e),CoreA,eɪ,face,"f-eɪ-s",얼굴
+unit_07,7,Long a (a_e),CoreA,eɪ,race,"r-eɪ-s",경주
+unit_07,7,Long a (a_e),CoreA,eɪ,wave,"w-eɪ-v",파도
+unit_08,8,Long i (i_e),CoreA,aɪ,bike,"b-aɪ-k",자전거
+unit_08,8,Long i (i_e),CoreA,aɪ,like,"l-aɪ-k",좋아하다
+unit_08,8,Long i (i_e),CoreA,aɪ,hike,"h-aɪ-k",하이킹
+unit_08,8,Long i (i_e),CoreA,aɪ,time,"t-aɪ-m",시간
+unit_08,8,Long i (i_e),CoreA,aɪ,lime,"l-aɪ-m",라임
+unit_08,8,Long i (i_e),CoreA,aɪ,dime,"d-aɪ-m",10센트
+unit_08,8,Long i (i_e),CoreA,aɪ,kite,"k-aɪ-t",연
+unit_08,8,Long i (i_e),CoreA,aɪ,bite,"b-aɪ-t",물다
+unit_08,8,Long i (i_e),CoreA,aɪ,ride,"r-aɪ-d",타다
+unit_08,8,Long i (i_e),CoreA,aɪ,hide,"h-aɪ-d",숨다
+unit_08,8,Long i (i_e),CoreA,aɪ,five,"f-aɪ-v",다섯
+unit_08,8,Long i (i_e),CoreA,aɪ,nine,"n-aɪ-n",아홉
+unit_08,8,Long i (i_e),CoreA,aɪ,pine,"p-aɪ-n",소나무
+unit_08,8,Long i (i_e),CoreA,aɪ,vine,"v-aɪ-n",덩굴
+unit_08,8,Long i (i_e),CoreA,aɪ,line,"l-aɪ-n",선
+unit_09,9,Long o (o_e),CoreA,oʊ,bone,"b-oʊ-n",뼈
+unit_09,9,Long o (o_e),CoreA,oʊ,cone,"k-oʊ-n",콘
+unit_09,9,Long o (o_e),CoreA,oʊ,home,"h-oʊ-m",집
+unit_09,9,Long o (o_e),CoreA,oʊ,hope,"h-oʊ-p",희망
+unit_09,9,Long o (o_e),CoreA,oʊ,nose,"n-oʊ-z",코
+unit_09,9,Long o (o_e),CoreA,oʊ,rose,"r-oʊ-z",장미
+unit_09,9,Long o (o_e),CoreA,oʊ,hole,"h-oʊ-l",구멍
+unit_09,9,Long o (o_e),CoreA,oʊ,pole,"p-oʊ-l",기둥
+unit_09,9,Long o (o_e),CoreA,oʊ,rope,"r-oʊ-p",밧줄
+unit_09,9,Long o (o_e),CoreA,oʊ,note,"n-oʊ-t",메모
+unit_09,9,Long o (o_e),CoreA,oʊ,vote,"v-oʊ-t",투표
+unit_09,9,Long o (o_e),CoreA,oʊ,joke,"dʒ-oʊ-k",농담
+unit_09,9,Long o (o_e),CoreA,oʊ,woke,"w-oʊ-k",일어났다
+unit_09,9,Long o (o_e),CoreA,oʊ,stone,"s-t-oʊ-n",돌
+unit_09,9,Long o (o_e),CoreA,oʊ,phone,"f-oʊ-n",전화
+unit_10,10,Long u (u_e),CoreA,juː,cute,"k-juː-t",귀여운
+unit_10,10,Long u (u_e),CoreA,juː,mute,"m-juː-t",조용한
+unit_10,10,Long u (u_e),CoreA,juː,cube,"k-juː-b",정육면체
+unit_10,10,Long u (u_e),CoreA,juː,tube,"t-juː-b",관
+unit_10,10,Long u (u_e),CoreA,juː,tune,"t-juː-n",곡
+unit_10,10,Long u (u_e),CoreA,juː,dune,"d-juː-n",모래언덕
+unit_10,10,Long u (u_e),CoreA,juː,June,"dʒ-uː-n",6월
+unit_10,10,Long u (u_e),CoreA,juː,huge,"h-juː-dʒ",거대한
+unit_10,10,Long u (u_e),CoreA,juː,rude,"r-uː-d",무례한
+unit_10,10,Long u (u_e),CoreA,juː,rule,"r-uː-l",규칙
+unit_10,10,Long u (u_e),CoreA,juː,mule,"m-juː-l",노새
+unit_10,10,Long u (u_e),CoreA,juː,fuse,"f-juː-z",퓨즈
+unit_10,10,Long u (u_e),CoreA,juː,use,"j-uː-z",사용하다
+unit_10,10,Long u (u_e),CoreA,juː,flute,"f-l-uː-t",플루트
+unit_10,10,Long u (u_e),CoreA,juː,prune,"p-r-uː-n",자두
+unit_11,11,ee / ea,CoreA,iː,bee,"b-iː",벌
+unit_11,11,ee / ea,CoreA,iː,see,"s-iː",보다
+unit_11,11,ee / ea,CoreA,iː,tree,"t-r-iː",나무
+unit_11,11,ee / ea,CoreA,iː,free,"f-r-iː",자유로운
+unit_11,11,ee / ea,CoreA,iː,seed,"s-iː-d",씨앗
+unit_11,11,ee / ea,CoreA,iː,feed,"f-iː-d",먹이다
+unit_11,11,ee / ea,CoreA,iː,feet,"f-iː-t",발
+unit_11,11,ee / ea,CoreA,iː,meet,"m-iː-t",만나다
+unit_11,11,ee / ea,CoreA,iː,bead,"b-iː-d",구슬
+unit_11,11,ee / ea,CoreA,iː,read,"r-iː-d",읽다
+unit_11,11,ee / ea,CoreA,iː,sea,"s-iː",바다
+unit_11,11,ee / ea,CoreA,iː,tea,"t-iː",차
+unit_11,11,ee / ea,CoreA,iː,leaf,"l-iː-f",나뭇잎
+unit_11,11,ee / ea,CoreA,iː,team,"t-iː-m",팀
+unit_11,11,ee / ea,CoreA,iː,dream,"d-r-iː-m",꿈
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,black,"b-l-æ-k",검은
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,block,"b-l-ɒ-k",블록
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,blue,"b-l-uː",파란
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,clap,"k-l-æ-p",박수
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,clam,"k-l-æ-m",조개
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,clip,"k-l-ɪ-p",집게
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,clock,"k-l-ɒ-k",시계
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,class,"k-l-æ-s",수업
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,flag,"f-l-æ-g",깃발
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,flat,"f-l-æ-t",평평한
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,flip,"f-l-ɪ-p",뒤집다
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,flop,"f-l-ɒ-p",철퍼덕
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,flow,"f-l-oʊ",흐르다
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,blend,"b-l-ɛ-n-d",섞다
+unit_13,13,bl / cl / fl,CoreB,bl cl fl,club,"k-l-ʌ-b",클럽
+unit_14,14,br / cr / dr,CoreB,br cr dr,brick,"b-r-ɪ-k",벽돌
+unit_14,14,br / cr / dr,CoreB,br cr dr,brush,"b-r-ʌ-ʃ",솔
+unit_14,14,br / cr / dr,CoreB,br cr dr,bring,"b-r-ɪ-ŋ",가져오다
+unit_14,14,br / cr / dr,CoreB,br cr dr,broom,"b-r-uː-m",빗자루
+unit_14,14,br / cr / dr,CoreB,br cr dr,crab,"k-r-æ-b",게
+unit_14,14,br / cr / dr,CoreB,br cr dr,crop,"k-r-ɒ-p",작물
+unit_14,14,br / cr / dr,CoreB,br cr dr,crib,"k-r-ɪ-b",아기침대
+unit_14,14,br / cr / dr,CoreB,br cr dr,cross,"k-r-ɒ-s",십자가
+unit_14,14,br / cr / dr,CoreB,br cr dr,drip,"d-r-ɪ-p",방울
+unit_14,14,br / cr / dr,CoreB,br cr dr,drop,"d-r-ɒ-p",떨어지다
+unit_14,14,br / cr / dr,CoreB,br cr dr,drum,"d-r-ʌ-m",북
+unit_14,14,br / cr / dr,CoreB,br cr dr,dress,"d-r-ɛ-s",드레스
+unit_14,14,br / cr / dr,CoreB,br cr dr,drill,"d-r-ɪ-l",드릴
+unit_14,14,br / cr / dr,CoreB,br cr dr,crack,"k-r-æ-k",금
+unit_14,14,br / cr / dr,CoreB,br cr dr,grab,"g-r-æ-b",잡다
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,green,"g-r-iː-n",초록
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,grow,"g-r-oʊ",자라다
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,grip,"g-r-ɪ-p",쥐다
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,grin,"g-r-ɪ-n",방긋 웃다
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,press,"p-r-ɛ-s",누르다
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,print,"p-r-ɪ-n-t",인쇄
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,prize,"p-r-aɪ-z",상
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,price,"p-r-aɪ-s",가격
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,trip,"t-r-ɪ-p",여행
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,trick,"t-r-ɪ-k",속이다
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,truck,"t-r-ʌ-k",트럭
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,train,"t-r-eɪ-n",기차
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,grass,"g-r-æ-s",잔디
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,proud,"p-r-aʊ-d",자랑스러운
+unit_15,15,gr / pr / tr,CoreB,gr pr tr,track,"t-r-æ-k",길
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,skip,"s-k-ɪ-p",건너뛰다
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,skin,"s-k-ɪ-n",피부
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,sky,"s-k-aɪ",하늘
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,snap,"s-n-æ-p",딸깍
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,snag,"s-n-æ-g",걸림
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,snow,"s-n-oʊ",눈
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,spin,"s-p-ɪ-n",돌다
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,spot,"s-p-ɒ-t",점
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,spoon,"s-p-uː-n",숟가락
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,step,"s-t-ɛ-p",걸음
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,stop,"s-t-ɒ-p",멈추다
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,star,"s-t-ɑːr",별
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,stick,"s-t-ɪ-k",막대
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,stem,"s-t-ɛ-m",줄기
+unit_16,16,sk / sn / sp / st,CoreB,sk sn sp st,swim,"s-w-ɪ-m",수영하다
+unit_17,17,sh / ch,CoreB,ʃ tʃ,ship,"ʃ-ɪ-p",배
+unit_17,17,sh / ch,CoreB,ʃ tʃ,shop,"ʃ-ɒ-p",가게
+unit_17,17,sh / ch,CoreB,ʃ tʃ,shoe,"ʃ-uː",신발
+unit_17,17,sh / ch,CoreB,ʃ tʃ,shut,"ʃ-ʌ-t",닫다
+unit_17,17,sh / ch,CoreB,ʃ tʃ,she,"ʃ-iː",그녀
+unit_17,17,sh / ch,CoreB,ʃ tʃ,sheep,"ʃ-iː-p",양
+unit_17,17,sh / ch,CoreB,ʃ tʃ,shin,"ʃ-ɪ-n",정강이
+unit_17,17,sh / ch,CoreB,ʃ tʃ,shell,"ʃ-ɛ-l",조개껍질
+unit_17,17,sh / ch,CoreB,ʃ tʃ,chat,"tʃ-æ-t",수다
+unit_17,17,sh / ch,CoreB,ʃ tʃ,chin,"tʃ-ɪ-n",턱
+unit_17,17,sh / ch,CoreB,ʃ tʃ,chip,"tʃ-ɪ-p",칩
+unit_17,17,sh / ch,CoreB,ʃ tʃ,chop,"tʃ-ɒ-p",자르다
+unit_17,17,sh / ch,CoreB,ʃ tʃ,check,"tʃ-ɛ-k",확인
+unit_17,17,sh / ch,CoreB,ʃ tʃ,chain,"tʃ-eɪ-n",사슬
+unit_17,17,sh / ch,CoreB,ʃ tʃ,chunk,"tʃ-ʌ-ŋ-k",덩어리
+unit_19,19,th / wh,CoreB,θ ð w,this,"ð-ɪ-s",이것
+unit_19,19,th / wh,CoreB,θ ð w,that,"ð-æ-t",저것
+unit_19,19,th / wh,CoreB,θ ð w,them,"ð-ɛ-m",그들을
+unit_19,19,th / wh,CoreB,θ ð w,then,"ð-ɛ-n",그때
+unit_19,19,th / wh,CoreB,θ ð w,thin,"θ-ɪ-n",얇은
+unit_19,19,th / wh,CoreB,θ ð w,thick,"θ-ɪ-k",두꺼운
+unit_19,19,th / wh,CoreB,θ ð w,think,"θ-ɪ-ŋ-k",생각하다
+unit_19,19,th / wh,CoreB,θ ð w,three,"θ-r-iː",셋
+unit_19,19,th / wh,CoreB,θ ð w,whale,"w-eɪ-l",고래
+unit_19,19,th / wh,CoreB,θ ð w,what,"w-ɒ-t",무엇
+unit_19,19,th / wh,CoreB,θ ð w,when,"w-ɛ-n",언제
+unit_19,19,th / wh,CoreB,θ ð w,where,"w-ɛ-r",어디
+unit_19,19,th / wh,CoreB,θ ð w,white,"w-aɪ-t",하얀
+unit_19,19,th / wh,CoreB,θ ð w,wheel,"w-iː-l",바퀴
+unit_19,19,th / wh,CoreB,θ ð w,whip,"w-ɪ-p",채찍
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,car,"k-ɑːr",자동차
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,bar,"b-ɑːr",막대
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,jar,"dʒ-ɑːr",병
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,far,"f-ɑːr",먼
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,arm,"ɑːr-m",팔
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,park,"p-ɑːr-k",공원
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,dark,"d-ɑːr-k",어두운
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,farm,"f-ɑːr-m",농장
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,for,"f-ɔːr",~을 위해
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,corn,"k-ɔːr-n",옥수수
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,fork,"f-ɔːr-k",포크
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,horn,"h-ɔːr-n",뿔
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,born,"b-ɔːr-n",태어난
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,storm,"s-t-ɔːr-m",폭풍
+unit_20,20,ar / or,CoreB,ɑːr ɔːr,sort,"s-ɔːr-t",종류
+unit_21,21,er / ir / ur,CoreB,ɜːr,her,"h-ɜːr",그녀의
+unit_21,21,er / ir / ur,CoreB,ɜːr,fern,"f-ɜːr-n",고사리
+unit_21,21,er / ir / ur,CoreB,ɜːr,verb,"v-ɜːr-b",동사
+unit_21,21,er / ir / ur,CoreB,ɜːr,herd,"h-ɜːr-d",무리
+unit_21,21,er / ir / ur,CoreB,ɜːr,bird,"b-ɜːr-d",새
+unit_21,21,er / ir / ur,CoreB,ɜːr,girl,"g-ɜːr-l",소녀
+unit_21,21,er / ir / ur,CoreB,ɜːr,sir,"s-ɜːr",선생님
+unit_21,21,er / ir / ur,CoreB,ɜːr,first,"f-ɜːr-s-t",첫 번째
+unit_21,21,er / ir / ur,CoreB,ɜːr,fur,"f-ɜːr",털
+unit_21,21,er / ir / ur,CoreB,ɜːr,burn,"b-ɜːr-n",타다
+unit_21,21,er / ir / ur,CoreB,ɜːr,turn,"t-ɜːr-n",돌다
+unit_21,21,er / ir / ur,CoreB,ɜːr,hurt,"h-ɜːr-t",아프다
+unit_21,21,er / ir / ur,CoreB,ɜːr,curl,"k-ɜːr-l",곱슬
+unit_21,21,er / ir / ur,CoreB,ɜːr,nurse,"n-ɜːr-s",간호사
+unit_21,21,er / ir / ur,CoreB,ɜːr,stir,"s-t-ɜːr",젓다
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,boy,"b-ɔɪ",소년
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,joy,"dʒ-ɔɪ",기쁨
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,toy,"t-ɔɪ",장난감
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,coin,"k-ɔɪ-n",동전
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,oil,"ɔɪ-l",기름
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,boil,"b-ɔɪ-l",끓다
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,soil,"s-ɔɪ-l",흙
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,cow,"k-aʊ",소
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,now,"n-aʊ",지금
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,how,"h-aʊ",어떻게
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,town,"t-aʊ-n",마을
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,brown,"b-r-aʊ-n",갈색
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,out,"aʊ-t",밖
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,loud,"l-aʊ-d",시끄러운
+unit_22,22,Diphthongs,CoreB,ɔɪ aʊ,cloud,"k-l-aʊ-d",구름
+unit_23,23,Silent e Mix,CoreB,silent e,plate,"p-l-eɪ-t",접시
+unit_23,23,Silent e Mix,CoreB,silent e,brave,"b-r-eɪ-v",용감한
+unit_23,23,Silent e Mix,CoreB,silent e,slide,"s-l-aɪ-d",미끄럼틀
+unit_23,23,Silent e Mix,CoreB,silent e,spoke,"s-p-oʊ-k",말했다
+unit_23,23,Silent e Mix,CoreB,silent e,chase,"tʃ-eɪ-s",쫓다
+unit_23,23,Silent e Mix,CoreB,silent e,smile,"s-m-aɪ-l",미소
+unit_23,23,Silent e Mix,CoreB,silent e,froze,"f-r-oʊ-z",얼었다
+unit_23,23,Silent e Mix,CoreB,silent e,blade,"b-l-eɪ-d",칼날
+unit_23,23,Silent e Mix,CoreB,silent e,crane,"k-r-eɪ-n",두루미
+unit_23,23,Silent e Mix,CoreB,silent e,pride,"p-r-aɪ-d",자부심
+unit_23,23,Silent e Mix,CoreB,silent e,quote,"k-w-oʊ-t",인용
+unit_23,23,Silent e Mix,CoreB,silent e,stripe,"s-t-r-aɪ-p",줄무늬
+unit_23,23,Silent e Mix,CoreB,silent e,throne,"θ-r-oʊ-n",왕좌
+unit_23,23,Silent e Mix,CoreB,silent e,globe,"g-l-oʊ-b",지구본
+unit_23,23,Silent e Mix,CoreB,silent e,grape,"g-r-eɪ-p",포도

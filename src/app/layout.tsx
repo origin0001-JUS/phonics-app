@@ -37,6 +37,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem('phonics-theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}`,
+          }}
+        />
+      </head>
       <body
         suppressHydrationWarning
         className={`${fredoka.variable} antialiased font-sans bg-sky-300 dark:bg-slate-900 text-slate-800 dark:text-slate-200 touch-pan-y`}

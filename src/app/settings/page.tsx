@@ -8,10 +8,10 @@ import { db } from "@/lib/db";
 import { useAppStore } from "@/lib/store";
 
 const GRADES = [
-    { grade: 1, emoji: "🌱", label: "1학년" },
-    { grade: 2, emoji: "🌿", label: "2학년" },
-    { grade: 3, emoji: "🌳", label: "3학년" },
-    { grade: 4, emoji: "🚀", label: "4학년" },
+    { grade: 1, emoji: "🌱", label: "Level 1" },
+    { grade: 2, emoji: "🌿", label: "Level 2" },
+    { grade: 3, emoji: "🌳", label: "Level 3" },
+    { grade: 4, emoji: "🚀", label: "Level 4" },
 ];
 
 function getMapping(grade: number) {
@@ -73,17 +73,28 @@ export default function SettingsPage() {
     };
 
     const handleReset = async () => {
-        await db.progress.clear();
-        await db.cards.clear();
-        await db.logs.clear();
-        await db.rewards.clear();
+        try {
+            // Clear all Dexie.js tables
+            await db.progress.clear();
+            await db.cards.clear();
+            await db.logs.clear();
+            await db.rewards.clear();
 
-        // Reset Zustand store
-        setGradeLevel(null);
-        setLevel("CoreA");
-        useAppStore.getState().setOnboardingCompleted(false);
+            // Reset all Zustand store state (except theme preference)
+            const store = useAppStore.getState();
+            store.setGradeLevel(null);
+            store.setLevel("CoreA");
+            store.setOnboardingCompleted(false);
+            store.setStreakDays(0);
+            store.resetDaily();
+            store.setUnit(null);
 
-        router.replace("/onboarding");
+            router.replace("/onboarding");
+        } catch (err) {
+            console.error("Reset failed:", err);
+            alert("초기화에 실패했습니다. 다시 시도해주세요.");
+            setResetStep(0);
+        }
     };
 
     if (loading) return null;
@@ -115,7 +126,7 @@ export default function SettingsPage() {
                             <GraduationCap className="h-6 w-6 text-sky-600" />
                         </div>
                         <div className="flex-1 text-left">
-                            <p className="font-bold text-gray-800 dark:text-gray-100">학년 변경</p>
+                            <p className="font-bold text-gray-800 dark:text-gray-100">수준 변경</p>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
                                 {gradeInfo ? `${gradeInfo.emoji} ${gradeInfo.label}` : "미설정"}
                             </p>
