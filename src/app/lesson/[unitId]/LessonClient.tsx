@@ -13,6 +13,51 @@ import {
 } from "lucide-react";
 import VisemeAvatar from "./VisemeAvatar";
 
+// ─── Minimal Pairs Data (for Sound Focus quiz) ───
+const MINIMAL_PAIRS: { units: string[]; label: string; items: [string, string][] }[] = [
+    { units: ["unit_01", "unit_02"], label: "a vs e", items: [["bat","bet"],["hat","het"],["pan","pen"],["man","men"],["bad","bed"]] },
+    { units: ["unit_02", "unit_03"], label: "e vs i", items: [["bed","bid"],["pet","pit"],["net","nit"],["pen","pin"],["set","sit"]] },
+    { units: ["unit_03", "unit_04"], label: "i vs o", items: [["dig","dog"],["hip","hop"],["hit","hot"],["big","bog"]] },
+    { units: ["unit_04", "unit_05"], label: "o vs u", items: [["hot","hut"],["cop","cup"],["pot","put"],["dog","dug"]] },
+    { units: ["unit_07"], label: "short a vs long a", items: [["cap","cape"],["tap","tape"],["hat","hate"],["mat","mate"],["can","cane"]] },
+    { units: ["unit_08"], label: "short i vs long i", items: [["bit","bite"],["hid","hide"],["kit","kite"],["pin","pine"],["dim","dime"]] },
+    { units: ["unit_09"], label: "short o vs long o", items: [["hop","hope"],["not","note"],["rod","rode"],["cop","cope"]] },
+    { units: ["unit_10"], label: "short u vs long u", items: [["cub","cube"],["tub","tube"],["cut","cute"],["hug","huge"]] },
+    { units: ["unit_17"], label: "ch vs sh", items: [["chip","ship"],["chop","shop"],["chin","shin"],["cheap","sheep"]] },
+    { units: ["unit_19"], label: "th vs s", items: [["think","sink"],["thick","sick"],["thin","sin"]] },
+];
+
+function getMinimalPairsForUnit(unitId: string): { label: string; items: [string, string][] } | null {
+    const found = MINIMAL_PAIRS.find(mp => mp.units.includes(unitId));
+    return found ? { label: found.label, items: found.items } : null;
+}
+
+// ─── Color Coding Utility (Task 11-C) ───
+const VOWELS = new Set(['a', 'e', 'i', 'o', 'u']);
+const BLENDS_DIGRAPHS = new Set(['sh', 'ch', 'th', 'bl', 'br', 'cl', 'cr', 'dr', 'fl', 'fr', 'gl', 'gr', 'pl', 'pr', 'sc', 'sk', 'sl', 'sm', 'sn', 'sp', 'st', 'sw', 'tr', 'tw', 'wh', 'wr', 'ng', 'nk', 'ck', 'qu']);
+const IPA_VOWELS = new Set(['æ', 'ɛ', 'ɪ', 'ɒ', 'ʌ', 'eɪ', 'aɪ', 'oʊ', 'juː', 'uː', 'iː', 'ɑːr', 'ɔːr', 'ɜːr', 'ɔɪ', 'aʊ']);
+
+type PhonemeCategory = 'vowel' | 'consonant' | 'blend' | 'silent_e' | 'rime';
+
+function getPhonemeCategory(phonemeOrLetter: string, context?: { isRime?: boolean; isSilentE?: boolean }): PhonemeCategory {
+    if (context?.isRime) return 'rime';
+    if (context?.isSilentE) return 'silent_e';
+    const lower = phonemeOrLetter.toLowerCase();
+    if (BLENDS_DIGRAPHS.has(lower)) return 'blend';
+    if (VOWELS.has(lower) || IPA_VOWELS.has(lower)) return 'vowel';
+    return 'consonant';
+}
+
+function getPhonemeColorClass(category: PhonemeCategory): string {
+    switch (category) {
+        case 'vowel': return 'text-red-500';
+        case 'consonant': return 'text-blue-600';
+        case 'blend': return 'text-emerald-600';
+        case 'silent_e': return 'text-gray-300 opacity-50';
+        case 'rime': return 'text-amber-600';
+    }
+}
+
 // ─── Step Types ───
 type LessonStep =
     | "sound_focus"
@@ -254,8 +299,93 @@ function playPhonemeSound(phoneme: string) {
 // ═══════════════════════════════════════
 // STEP 1: Sound Focus (1 min)
 // ═══════════════════════════════════════
-function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; title: string }; words: WordData[]; onNext: () => void }) {
+function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; title: string; id?: string }; words: WordData[]; onNext: () => void }) {
     const exampleWord = words[0];
+    const minimalPairData = useMemo(() => unit.id ? getMinimalPairsForUnit(unit.id) : null, [unit.id]);
+    const [showQuiz, setShowQuiz] = useState(false);
+    const [quizIdx, setQuizIdx] = useState(0);
+    const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
+    const [showQuizResult, setShowQuizResult] = useState(false);
+
+    const quizItems = useMemo(() => {
+        if (!minimalPairData) return [];
+        return shuffle(minimalPairData.items).slice(0, 3);
+    }, [minimalPairData]);
+
+    const handleQuizPlay = (word: string) => {
+        playTTS(word);
+    };
+
+    const handleQuizAnswer = (chosen: string, correct: string) => {
+        if (showQuizResult) return;
+        setQuizAnswer(chosen);
+        setShowQuizResult(true);
+        playSFX(chosen === correct ? 'correct' : 'wrong');
+    };
+
+    const handleQuizNext = () => {
+        if (quizIdx < quizItems.length - 1) {
+            setQuizIdx(i => i + 1);
+            setQuizAnswer(null);
+            setShowQuizResult(false);
+        } else {
+            onNext();
+        }
+    };
+
+    // Show quiz after initial sound intro
+    if (showQuiz && quizItems.length > 0) {
+        const pair = quizItems[quizIdx];
+        const correctWord = pair[0]; // first word is the "target"
+        const options = shuffle([pair[0], pair[1]]);
+
+        return (
+            <div className="flex-1 flex flex-col items-center justify-center gap-6">
+                <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
+                    <p className="text-slate-400 font-bold text-sm mb-1">Minimal Pair Quiz</p>
+                    <p className="text-lg font-bold text-slate-600 dark:text-slate-300 mb-4">{minimalPairData!.label}</p>
+
+                    {/* Play button */}
+                    <button
+                        onClick={() => handleQuizPlay(correctWord)}
+                        className="w-20 h-20 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center mb-4 shadow-lg active:scale-95 transition-transform"
+                    >
+                        <Volume2 className="w-10 h-10 text-white" />
+                    </button>
+                    <p className="text-slate-500 font-medium text-sm mb-6">Tap to listen, then pick the word!</p>
+
+                    {/* 2-choice buttons */}
+                    <div className="flex gap-4 w-full">
+                        {options.map((opt) => {
+                            let cls = "bg-slate-50 border-slate-200 text-slate-700 shadow-[0_4px_0_#cbd5e1]";
+                            if (showQuizResult && opt === correctWord) {
+                                cls = "bg-green-100 border-green-400 text-green-800 shadow-[0_4px_0_#16a34a]";
+                            } else if (showQuizResult && opt === quizAnswer && opt !== correctWord) {
+                                cls = "bg-red-100 border-red-400 text-red-700 shadow-[0_4px_0_#dc2626]";
+                            }
+                            return (
+                                <button
+                                    key={opt}
+                                    onClick={() => handleQuizAnswer(opt, correctWord)}
+                                    className={`flex-1 py-4 rounded-2xl font-black text-xl border-4 transition-all active:scale-95 ${cls}`}
+                                >
+                                    {opt}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <p className="text-white/70 font-bold text-sm">{quizIdx + 1} / {quizItems.length}</p>
+
+                {showQuizResult && (
+                    <BigButton onClick={handleQuizNext}>
+                        {quizIdx < quizItems.length - 1 ? <>Next <ArrowRight className="w-5 h-5" /></> : <>Continue <ArrowRight className="w-5 h-5" /></>}
+                    </BigButton>
+                )}
+            </div>
+        );
+    }
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
@@ -282,7 +412,7 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
                 </button>
             )}
 
-            <BigButton onClick={onNext}>
+            <BigButton onClick={minimalPairData ? () => setShowQuiz(true) : onNext}>
                 Next <ArrowRight className="w-5 h-5" />
             </BigButton>
         </div>
@@ -295,7 +425,18 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
 function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void }) {
     const [currentIdx, setCurrentIdx] = useState(0);
     const [tappedPhonemes, setTappedPhonemes] = useState<number[]>([]);
+    const [onsetTapped, setOnsetTapped] = useState(false);
     const word = words[currentIdx];
+
+    const useOnsetRime = !!(word.onset && word.rime);
+
+    // Find words sharing the same rime in this word set
+    const wordFamily = useMemo(() => {
+        if (!word.wordFamily) return [];
+        return words
+            .filter(w => w.wordFamily === word.wordFamily && w.id !== word.id)
+            .map(w => w.word);
+    }, [word, words]);
 
     const tapPhoneme = (idx: number) => {
         if (!tappedPhonemes.includes(idx)) {
@@ -303,48 +444,86 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
             playPhonemeSound(word.phonemes[idx]);
         }
 
-        // If all tapped, wait for phoneme sound to finish, then SFX, then full word
         if (tappedPhonemes.length + 1 === word.phonemes.length) {
             setTimeout(() => playSFX('correct'), 600);
             setTimeout(() => playTTS(word.word), 1200);
         }
     };
 
+    const tapOnset = () => {
+        if (onsetTapped) return;
+        setOnsetTapped(true);
+        fallbackTTS(word.onset!);
+        setTimeout(() => playSFX('correct'), 600);
+        setTimeout(() => playTTS(word.word), 1200);
+    };
+
     const handleNext = () => {
         if (currentIdx < Math.min(words.length, 4) - 1) {
             setCurrentIdx((i) => i + 1);
             setTappedPhonemes([]);
+            setOnsetTapped(false);
         } else {
             onNext();
         }
     };
 
-    const allTapped = tappedPhonemes.length === word.phonemes.length;
+    const allTapped = useOnsetRime ? onsetTapped : tappedPhonemes.length === word.phonemes.length;
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
             <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
-                <p className="text-slate-400 font-bold mb-4 text-sm">Tap each sound! 👆</p>
-                <p className="text-lg font-bold text-slate-600 mb-1">{word.meaning}</p>
+                <p className="text-slate-400 font-bold mb-4 text-sm">
+                    {useOnsetRime ? "Tap onset to blend!" : "Tap each sound!"} 👆
+                </p>
+                <p className="text-lg font-bold text-slate-600 dark:text-slate-300 mb-1">{word.meaning}</p>
 
-                {/* Phoneme Tiles */}
-                <div className="flex gap-3 my-6">
-                    {word.phonemes.map((p, i) => {
-                        const isTapped = tappedPhonemes.includes(i);
-                        return (
-                            <button
-                                key={i}
-                                onClick={() => tapPhoneme(i)}
-                                className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black transition-all border-4 ${isTapped
-                                    ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
-                                    : "bg-slate-100 border-slate-200 text-slate-700 shadow-[0_4px_0_#cbd5e1]"
+                {useOnsetRime ? (
+                    /* Onset-Rime Mode (2 tiles) */
+                    <div className="flex gap-4 my-6 items-center">
+                        {/* Onset tile */}
+                        <button
+                            onClick={tapOnset}
+                            className={`w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-black transition-all border-4 ${onsetTapped
+                                ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
+                                : `bg-blue-50 border-blue-200 shadow-[0_4px_0_#93c5fd] ${getPhonemeColorClass(getPhonemeCategory(word.onset!, { isRime: false }))}`
+                            } active:scale-95`}
+                        >
+                            {word.onset}
+                        </button>
+
+                        <span className="text-2xl font-black text-white/60">+</span>
+
+                        {/* Rime tile (always visible) */}
+                        <div className={`w-24 h-20 rounded-2xl flex items-center justify-center text-3xl font-black border-4 ${onsetTapped
+                            ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
+                            : `bg-amber-50 border-amber-200 shadow-[0_4px_0_#fbbf24] ${getPhonemeColorClass('rime')}`
+                        }`}>
+                            {word.rime}
+                        </div>
+                    </div>
+                ) : (
+                    /* Phoneme Mode (n tiles) with color coding */
+                    <div className="flex gap-3 my-6">
+                        {word.phonemes.map((p, i) => {
+                            const isTapped = tappedPhonemes.includes(i);
+                            const category = getPhonemeCategory(p);
+                            const colorClass = getPhonemeColorClass(category);
+                            return (
+                                <button
+                                    key={i}
+                                    onClick={() => tapPhoneme(i)}
+                                    className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black transition-all border-4 ${isTapped
+                                        ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
+                                        : `bg-slate-100 border-slate-200 shadow-[0_4px_0_#cbd5e1] ${colorClass}`
                                     } active:scale-95`}
-                            >
-                                {p}
-                            </button>
-                        );
-                    })}
-                </div>
+                                >
+                                    {p}
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
 
                 {/* Blended result */}
                 {allTapped && (
@@ -353,12 +532,22 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
                         <span className="font-black text-green-700 text-xl">{word.word}</span>
                     </div>
                 )}
+
+                {/* Word Family display (onset-rime mode) */}
+                {useOnsetRime && word.wordFamily && (
+                    <div className="mt-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl px-4 py-2 text-center">
+                        <p className="text-xs font-bold text-amber-600 dark:text-amber-400 mb-1">{word.wordFamily} family</p>
+                        <p className="text-sm font-semibold text-amber-700 dark:text-amber-300">
+                            {[word.word, ...wordFamily].join(', ')}
+                        </p>
+                    </div>
+                )}
             </div>
 
             <p className="text-white/70 font-bold text-sm">{currentIdx + 1} / {Math.min(words.length, 4)}</p>
 
             <BigButton onClick={handleNext}>
-                {allTapped ? <>Next <ArrowRight className="w-5 h-5" /></> : "Tap the sounds!"}
+                {allTapped ? <>Next <ArrowRight className="w-5 h-5" /></> : useOnsetRime ? "Tap the onset!" : "Tap the sounds!"}
             </BigButton>
         </div>
     );

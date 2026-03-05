@@ -1,0 +1,227 @@
+{
+  "meta": {
+    "version": "1.0",
+    "target_app": "origin0001-JUS/phonics-app",
+    "generated": "2026-03-05",
+    "purpose": "curriculum.ts에 직접 병합 가능한 교재 분석 데이터"
+  },
+
+  "additional_words_by_unit": {
+    "description": "교과서 핵심 단어 중 앱에 없는 것. 각 유닛의 words 배열에 추가. w() 함수 포맷 준수.",
+    "unit_01": [
+      {"id": "dad", "word": "dad", "phonemes": ["d", "æ", "d"], "meaning": "아빠", "onset": "d", "rime": "ad", "wordFamily": "-ad"},
+      {"id": "sad", "word": "sad", "phonemes": ["s", "æ", "d"], "meaning": "슬픈", "onset": "s", "rime": "ad", "wordFamily": "-ad"},
+      {"id": "ham", "word": "ham", "phonemes": ["h", "æ", "m"], "meaning": "햄", "onset": "h", "rime": "am", "wordFamily": "-am"},
+      {"id": "jam", "word": "jam", "phonemes": ["dʒ", "æ", "m"], "meaning": "잼", "onset": "j", "rime": "am", "wordFamily": "-am"},
+      {"id": "ram", "word": "ram", "phonemes": ["r", "æ", "m"], "meaning": "숫양", "onset": "r", "rime": "am", "wordFamily": "-am"}
+    ],
+    "unit_02": [
+      {"id": "pet", "word": "pet", "phonemes": ["p", "ɛ", "t"], "meaning": "애완동물", "onset": "p", "rime": "et", "wordFamily": "-et"},
+      {"id": "vet", "word": "vet", "phonemes": ["v", "ɛ", "t"], "meaning": "수의사", "onset": "v", "rime": "et", "wordFamily": "-et"}
+    ],
+    "unit_03": [
+      {"id": "rib", "word": "rib", "phonemes": ["r", "ɪ", "b"], "meaning": "갈비뼈", "onset": "r", "rime": "ib", "wordFamily": "-ib"},
+      {"id": "lid", "word": "lid", "phonemes": ["l", "ɪ", "d"], "meaning": "뚜껑", "onset": "l", "rime": "id", "wordFamily": "-id"},
+      {"id": "mix", "word": "mix", "phonemes": ["m", "ɪ", "k", "s"], "meaning": "섞다", "onset": "m", "rime": "ix", "wordFamily": "-ix"},
+      {"id": "hip", "word": "hip", "phonemes": ["h", "ɪ", "p"], "meaning": "엉덩이", "onset": "h", "rime": "ip", "wordFamily": "-ip"},
+      {"id": "rip", "word": "rip", "phonemes": ["r", "ɪ", "p"], "meaning": "찢다", "onset": "r", "rime": "ip", "wordFamily": "-ip"}
+    ],
+    "unit_04": [
+      {"id": "mom", "word": "mom", "phonemes": ["m", "ɒ", "m"], "meaning": "엄마", "onset": "m", "rime": "om", "wordFamily": "-om"},
+      {"id": "cop", "word": "cop", "phonemes": ["k", "ɒ", "p"], "meaning": "경찰", "onset": "c", "rime": "op", "wordFamily": "-op"}
+    ],
+    "unit_05": [
+      {"id": "pup", "word": "pup", "phonemes": ["p", "ʌ", "p"], "meaning": "강아지", "onset": "p", "rime": "up", "wordFamily": "-up"},
+      {"id": "hug", "word": "hug", "phonemes": ["h", "ʌ", "g"], "meaning": "안다", "onset": "h", "rime": "ug", "wordFamily": "-ug"},
+      {"id": "mug", "word": "mug", "phonemes": ["m", "ʌ", "g"], "meaning": "머그컵", "onset": "m", "rime": "ug", "wordFamily": "-ug"},
+      {"id": "bud", "word": "bud", "phonemes": ["b", "ʌ", "d"], "meaning": "새싹", "onset": "b", "rime": "ud", "wordFamily": "-ud"},
+      {"id": "rub", "word": "rub", "phonemes": ["r", "ʌ", "b"], "meaning": "문지르다", "onset": "r", "rime": "ub", "wordFamily": "-ub"}
+    ],
+    "unit_07": [
+      {"id": "rake", "word": "rake", "phonemes": ["r", "eɪ", "k"], "meaning": "갈퀴", "onset": "r", "rime": "ake", "wordFamily": "-ake"},
+      {"id": "cave", "word": "cave", "phonemes": ["k", "eɪ", "v"], "meaning": "동굴", "onset": "c", "rime": "ave", "wordFamily": "-ave"},
+      {"id": "vase", "word": "vase", "phonemes": ["v", "eɪ", "z"], "meaning": "꽃병", "onset": "v", "rime": "ase", "wordFamily": "-ase"},
+      {"id": "date", "word": "date", "phonemes": ["d", "eɪ", "t"], "meaning": "날짜", "onset": "d", "rime": "ate", "wordFamily": "-ate"}
+    ],
+    "unit_17": [
+      {"id": "fish", "word": "fish", "phonemes": ["f", "ɪ", "ʃ"], "meaning": "물고기", "onset": "f", "rime": "ish", "wordFamily": "-ish"},
+      {"id": "wash", "word": "wash", "phonemes": ["w", "ɒ", "ʃ"], "meaning": "씻다", "onset": "w", "rime": "ash", "wordFamily": "-ash"},
+      {"id": "bench", "word": "bench", "phonemes": ["b", "ɛ", "n", "tʃ"], "meaning": "벤치", "onset": "b", "rime": "ench", "wordFamily": "-ench"},
+      {"id": "catch", "word": "catch", "phonemes": ["k", "æ", "tʃ"], "meaning": "잡다", "onset": "c", "rime": "atch", "wordFamily": "-atch"},
+      {"id": "lunch", "word": "lunch", "phonemes": ["l", "ʌ", "n", "tʃ"], "meaning": "점심", "onset": "l", "rime": "unch", "wordFamily": "-unch"}
+    ],
+    "unit_20": [
+      {"id": "horse", "word": "horse", "phonemes": ["h", "ɔːr", "s"], "meaning": "말", "onset": "h", "rime": "orse", "wordFamily": "-orse"},
+      {"id": "star", "word": "star", "phonemes": ["s", "t", "ɑːr"], "meaning": "별", "onset": "st", "rime": "ar", "wordFamily": "-ar"},
+      {"id": "door", "word": "door", "phonemes": ["d", "ɔːr"], "meaning": "문", "onset": "d", "rime": "oor", "wordFamily": "-oor"},
+      {"id": "card", "word": "card", "phonemes": ["k", "ɑːr", "d"], "meaning": "카드", "onset": "c", "rime": "ard", "wordFamily": "-ard"}
+    ],
+    "unit_21": [
+      {"id": "shirt", "word": "shirt", "phonemes": ["ʃ", "ɜːr", "t"], "meaning": "셔츠", "onset": "sh", "rime": "irt", "wordFamily": "-irt"},
+      {"id": "skirt", "word": "skirt", "phonemes": ["s", "k", "ɜːr", "t"], "meaning": "치마", "onset": "sk", "rime": "irt", "wordFamily": "-irt"},
+      {"id": "purse", "word": "purse", "phonemes": ["p", "ɜːr", "s"], "meaning": "지갑", "onset": "p", "rime": "urse", "wordFamily": "-urse"},
+      {"id": "turtle", "word": "turtle", "phonemes": ["t", "ɜːr", "t", "l"], "meaning": "거북이", "onset": "t", "rime": "urtle", "wordFamily": "-urtle"}
+    ]
+  },
+
+  "onset_rime_data": {
+    "description": "기존 유닛 단어에 추가할 onset/rime 매핑 (Blend & Tap 업그레이드용)",
+    "unit_01": {
+      "cat": {"onset": "c", "rime": "at"}, "bat": {"onset": "b", "rime": "at"},
+      "hat": {"onset": "h", "rime": "at"}, "mat": {"onset": "m", "rime": "at"},
+      "rat": {"onset": "r", "rime": "at"}, "sat": {"onset": "s", "rime": "at"},
+      "fan": {"onset": "f", "rime": "an"}, "van": {"onset": "v", "rime": "an"},
+      "can": {"onset": "c", "rime": "an"}, "man": {"onset": "m", "rime": "an"},
+      "map": {"onset": "m", "rime": "ap"}, "cap": {"onset": "c", "rime": "ap"},
+      "tap": {"onset": "t", "rime": "ap"}, "nap": {"onset": "n", "rime": "ap"},
+      "bag": {"onset": "b", "rime": "ag"}
+    },
+    "unit_02": {
+      "bed": {"onset": "b", "rime": "ed"}, "red": {"onset": "r", "rime": "ed"},
+      "pen": {"onset": "p", "rime": "en"}, "hen": {"onset": "h", "rime": "en"},
+      "ten": {"onset": "t", "rime": "en"}, "men": {"onset": "m", "rime": "en"},
+      "net": {"onset": "n", "rime": "et"}, "set": {"onset": "s", "rime": "et"},
+      "wet": {"onset": "w", "rime": "et"}, "jet": {"onset": "j", "rime": "et"},
+      "leg": {"onset": "l", "rime": "eg"}, "peg": {"onset": "p", "rime": "eg"},
+      "beg": {"onset": "b", "rime": "eg"}, "fed": {"onset": "f", "rime": "ed"},
+      "den": {"onset": "d", "rime": "en"}
+    },
+    "unit_03": {
+      "big": {"onset": "b", "rime": "ig"}, "pig": {"onset": "p", "rime": "ig"},
+      "dig": {"onset": "d", "rime": "ig"}, "sit": {"onset": "s", "rime": "it"},
+      "hit": {"onset": "h", "rime": "it"}, "bit": {"onset": "b", "rime": "it"},
+      "fin": {"onset": "f", "rime": "in"}, "pin": {"onset": "p", "rime": "in"},
+      "bin": {"onset": "b", "rime": "in"}, "lip": {"onset": "l", "rime": "ip"},
+      "zip": {"onset": "z", "rime": "ip"}, "tip": {"onset": "t", "rime": "ip"},
+      "wig": {"onset": "w", "rime": "ig"}, "six": {"onset": "s", "rime": "ix"},
+      "kid": {"onset": "k", "rime": "id"}
+    },
+    "unit_04": {
+      "dog": {"onset": "d", "rime": "og"}, "hot": {"onset": "h", "rime": "ot"},
+      "box": {"onset": "b", "rime": "ox"}, "fox": {"onset": "f", "rime": "ox"},
+      "pot": {"onset": "p", "rime": "ot"}, "top": {"onset": "t", "rime": "op"},
+      "hop": {"onset": "h", "rime": "op"}, "mop": {"onset": "m", "rime": "op"},
+      "log": {"onset": "l", "rime": "og"}, "cot": {"onset": "c", "rime": "ot"},
+      "dot": {"onset": "d", "rime": "ot"}, "got": {"onset": "g", "rime": "ot"},
+      "rod": {"onset": "r", "rime": "od"}, "sob": {"onset": "s", "rime": "ob"},
+      "nod": {"onset": "n", "rime": "od"}
+    },
+    "unit_05": {
+      "bug": {"onset": "b", "rime": "ug"}, "cup": {"onset": "c", "rime": "up"},
+      "sun": {"onset": "s", "rime": "un"}, "run": {"onset": "r", "rime": "un"},
+      "fun": {"onset": "f", "rime": "un"}, "bun": {"onset": "b", "rime": "un"},
+      "nut": {"onset": "n", "rime": "ut"}, "cut": {"onset": "c", "rime": "ut"},
+      "hut": {"onset": "h", "rime": "ut"}, "mud": {"onset": "m", "rime": "ud"},
+      "tub": {"onset": "t", "rime": "ub"}, "rug": {"onset": "r", "rime": "ug"},
+      "bus": {"onset": "b", "rime": "us"}, "gum": {"onset": "g", "rime": "um"},
+      "jug": {"onset": "j", "rime": "ug"}
+    }
+  },
+
+  "minimal_pairs": {
+    "description": "SoundFocusStep에 추가할 대비 퀴즈 데이터",
+    "pairs": [
+      {"units": ["unit_01", "unit_02"], "label": "a vs e", "items": [["bat","bet"],["hat","het"],["pan","pen"],["man","men"],["bad","bed"]]},
+      {"units": ["unit_02", "unit_03"], "label": "e vs i", "items": [["bed","bid"],["pet","pit"],["net","nit"],["pen","pin"],["set","sit"]]},
+      {"units": ["unit_03", "unit_04"], "label": "i vs o", "items": [["dig","dog"],["hip","hop"],["hit","hot"],["big","bog"]]},
+      {"units": ["unit_04", "unit_05"], "label": "o vs u", "items": [["hot","hut"],["cop","cup"],["pot","put"],["dog","dug"]]},
+      {"units": ["unit_07"], "label": "short a vs long a", "items": [["cap","cape"],["tap","tape"],["hat","hate"],["mat","mate"],["can","cane"]]},
+      {"units": ["unit_08"], "label": "short i vs long i", "items": [["bit","bite"],["hid","hide"],["kit","kite"],["pin","pine"],["dim","dime"]]},
+      {"units": ["unit_09"], "label": "short o vs long o", "items": [["hop","hope"],["not","note"],["rod","rode"],["cop","cope"]]},
+      {"units": ["unit_10"], "label": "short u vs long u", "items": [["cub","cube"],["tub","tube"],["cut","cute"],["hug","huge"]]},
+      {"units": ["unit_17"], "label": "ch vs sh", "items": [["chip","ship"],["chop","shop"],["chin","shin"],["cheap","sheep"]]},
+      {"units": ["unit_19"], "label": "th vs s", "items": [["think","sink"],["thick","sick"],["thin","sin"]]}
+    ]
+  },
+
+  "upgraded_micro_readings": {
+    "description": "교과서 Target Sentences를 반영한 microReading 교체 데이터",
+    "unit_01": ["A cat.", "A fat cat sat on a mat.", "The cat has a bag and a map."],
+    "unit_02": ["A red bed.", "A hen and ten eggs.", "The men set the net by the den."],
+    "unit_03": ["A big pig.", "Six kids sit and dig.", "I like the big pig!"],
+    "unit_04": ["A hot dog.", "Is it a dog? No, it is a fox.", "The dog got on top of the box."],
+    "unit_05": ["A bug in a cup.", "Can the bug run in the sun?", "The pup had fun on the rug."],
+    "unit_07": ["I bake a cake.", "My name is Kate.", "Kate came late to the lake."],
+    "unit_08": ["I ride my bike.", "I like to ride and fly a kite.", "Five kites in a line!"],
+    "unit_09": ["A bone at home.", "Where is the rose?", "The phone is by the stone."],
+    "unit_10": ["A cute cube.", "June plays a tune on the flute.", "The huge mule is cute."],
+    "unit_11": ["A bee in a tree.", "I see the sea.", "I dream of a team by the sea."],
+    "unit_13": ["A blue flag.", "Clap for the blue flag!", "The class has a black clock."],
+    "unit_14": ["A crab on a brick.", "Grab the brush!", "The dress is brown."],
+    "unit_15": ["A green tree.", "The train goes on the track.", "I am proud of the prize!"],
+    "unit_16": ["A star in the sky.", "Skip and spin in the snow!", "Stop and swim!"],
+    "unit_17": ["A big ship.", "She has a shell.", "Check the chip shop!"],
+    "unit_19": ["What is this?", "Three white whales!", "Where is the whale? Think!"],
+    "unit_20": ["A car in the park.", "The farm is not far.", "The corn is in the dark barn."],
+    "unit_21": ["A bird on a fern.", "The girl saw the first bird.", "The nurse has fur."],
+    "unit_22": ["A boy and a toy.", "The cow is in the brown town.", "A loud cloud and a coin!"],
+    "unit_23": ["A plate and a grape.", "She spoke with a brave smile.", "The globe is on the throne."]
+  },
+
+  "extended_stories": {
+    "description": "V2용 디코더블 스토리 확장 (5-8문장, microReading 교체 가능)",
+    "unit_01": [
+      "A cat sat on a mat.",
+      "The cat had a nap.",
+      "A rat ran to the mat.",
+      "The cat and the rat sat.",
+      "The cat has a cap and a bag.",
+      "Dad has a map.",
+      "The fat cat ran to Dad!"
+    ],
+    "unit_04": [
+      "A dog got a hot dog.",
+      "The fox hid in a box.",
+      "The dog ran to the top.",
+      "Mom has a pot. It is hot!",
+      "The dog and the fox hop and hop."
+    ],
+    "unit_07": [
+      "Kate can bake a cake.",
+      "She will take the cake to the lake.",
+      "It is late. Kate came to the gate.",
+      "Dave gave Kate a cape.",
+      "Kate and Dave had a race!",
+      "What a great game!"
+    ],
+    "unit_08": [
+      "Mike has a bike.",
+      "He can ride and hike.",
+      "He hid a kite by the pine.",
+      "It is time to fly the kite!",
+      "Five kites in a line.",
+      "Mike had the time of his life!"
+    ]
+  },
+
+  "textbook_sentences": {
+    "description": "교과서 단원별 주요 표현 (마케팅용 + 문장 연습 소스)",
+    "grade3": [
+      "Hello! I'm Mina.",
+      "What's this? It's a book.",
+      "Sit down, please.",
+      "How many apples? Three apples.",
+      "I like pizza. I don't like milk.",
+      "What color is it? It's red.",
+      "Is it a dog? Yes, it is.",
+      "Do you have a pencil? Yes, I do.",
+      "Can you swim? Yes, I can.",
+      "She's my mom. He's my dad.",
+      "It's sunny. It's raining."
+    ],
+    "grade4": [
+      "My name is Sally.",
+      "Where are you from? I'm from Korea.",
+      "This is my friend. He is kind.",
+      "Are you happy? I'm tired.",
+      "Let's play soccer. Good idea!",
+      "Don't run! Be careful.",
+      "What time is it? It's three o'clock.",
+      "Where is my shoe? It's under the bed.",
+      "What day is it? It's Monday.",
+      "Is this your cap? Yes, it's mine.",
+      "What are you doing? I'm cooking.",
+      "How much is it? It's five dollars."
+    ]
+  }
+}

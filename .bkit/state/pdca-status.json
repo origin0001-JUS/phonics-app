@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-03-05T15:16:28.374Z",
+  "lastUpdated": "2026-03-05T17:06:43.171Z",
   "activeFeatures": [
     "phonics-app",
     "settings",
@@ -63,9 +63,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-03-04T14:59:10.033Z",
-        "lastUpdated": "2026-03-05T15:16:28.374Z"
+        "lastUpdated": "2026-03-05T17:06:43.171Z"
       },
-      "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\lesson\\[unitId]\\VisemeAvatar.tsx"
+      "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\lesson\\[unitId]\\LessonClient.tsx"
     },
     "round6 gap analysis": {
       "phase": "act",
@@ -142,7 +142,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-03-05T14:49:10.440Z",
-        "lastUpdated": "2026-03-05T14:49:10.440Z"
+        "lastUpdated": "2026-03-05T16:05:40.303Z"
       },
       "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\data\\curriculum.ts"
     }
@@ -155,7 +155,7 @@
   "session": {
     "startedAt": "2026-03-04T14:22:09.430Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-03-05T15:16:28.374Z"
+    "lastActivity": "2026-03-05T17:06:43.171Z"
   },
   "history": [
     {
@@ -652,6 +652,30 @@
     },
     {
       "timestamp": "2026-03-05T15:16:28.374Z",
+      "feature": "[unitId]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-05T16:05:40.303Z",
+      "feature": "data",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-05T17:05:32.267Z",
+      "feature": "[unitId]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-05T17:06:03.680Z",
+      "feature": "[unitId]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-05T17:06:43.171Z",
       "feature": "[unitId]",
       "phase": "do",
       "action": "updated"

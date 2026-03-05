@@ -131,7 +131,112 @@ npm run build
 ```bash
 npm run build
 ```
+빌드 에러 0이면 9라운드 완료.
+
+---
+
+## Round 10: 교과서/교재 기반 커리큘럼 데이터 병합 [진행 대기]
+
+> 프로젝트 루트의 `phonics300_upgrade_data.json` 파일을 데이터 소스로 사용하세요.
+> 이 JSON의 구조를 먼저 읽고 아래 Task를 순서대로 진행해 주세요.
+
+### Task 10-A: microReading 문장 교체 (Claude Code) — 우선순위 1
+**설명**:
+- `src/data/curriculum.ts`의 각 유닛 오브젝트에 있는 `microReading: string[]` 배열을,
+  `phonics300_upgrade_data.json` > `upgraded_micro_readings` 섹션의 데이터로 **교체**하세요.
+- JSON에 키가 있는 유닛(unit_01, unit_02, unit_03, unit_04, unit_05, unit_07~unit_11, unit_13~unit_17, unit_19~unit_23)만 교체합니다.
+- JSON에 없는 유닛(unit_06, unit_12, unit_18, unit_24 등 리뷰 유닛)은 현재 값을 그대로 유지합니다.
+
+### Task 10-B: 교과서 추가 단어 반영 (Claude Code) — 우선순위 2
+**설명**:
+- `phonics300_upgrade_data.json` > `additional_words_by_unit` 섹션에 있는 단어들을 해당 유닛의 `words` 배열 **끝에** 추가하세요.
+- 기존 `w()` 헬퍼 함수를 사용하여 추가합니다: `w("dad", "dad", ["d", "æ", "d"], "아빠")`
+- **중복 체크**: 기존 words 배열에 이미 같은 `id`의 단어가 있다면 추가하지 마세요.
+- 영향 유닛: unit_01, unit_02, unit_03, unit_04, unit_05, unit_07, unit_17, unit_20, unit_21
+
+### Task 10-C: WordData 인터페이스에 onset/rime 필드 추가 (Claude Code) — 우선순위 3
+**설명**:
+1. `src/data/curriculum.ts` 상단의 `WordData` 인터페이스에 **optional** 필드 3개를 추가하세요:
+```typescript
+export interface WordData {
+    id: string;
+    word: string;
+    phonemes: string[];
+    meaning: string;
+    imagePath: string;
+    audioPath: string;
+    onset?: string;     // 추가
+    rime?: string;      // 추가
+    wordFamily?: string; // 추가
+}
+```
+2. `w()` 헬퍼 함수의 시그니처에도 optional 파라미터를 추가하세요:
+```typescript
+function w(id: string, word: string, phonemes: string[], meaning: string, onset?: string, rime?: string, wordFamily?: string): WordData {
+    return {
+        id, word, phonemes, meaning,
+        imagePath: `/assets/images/${id}.svg`,
+        audioPath: `/assets/audio/${id}.mp3`,
+        ...(onset && { onset }),
+        ...(rime && { rime }),
+        ...(wordFamily && { wordFamily }),
+    };
+}
+```
+3. `phonics300_upgrade_data.json` > `onset_rime_data` 섹션에 있는 **기존** 단어들의 `w()` 호출에 onset, rime 인자를 추가하세요. (기존 `w("cat", "cat", ["k","æ","t"], "고양이")` → `w("cat", "cat", ["k","æ","t"], "고양이", "c", "at", "-at")`)
+4. Task 10-B에서 추가한 새 단어들에도 JSON의 onset/rime/wordFamily 데이터를 반영하세요.
+5. `onset_rime_data`에 없는 단어는 그대로 둡니다 (optional이므로 에러 없음).
+
+```bash
+npm run build
+```
+빌드 에러 0이면 10라운드 완료.
+
+---
+
+## Round 11: 교수법 기반 게임 고도화 [진행 대기]
+
+> `phonics300_upgrade_data.json`과 `phonics300_업그레이드_데이터.md`를 참조하세요.
+
+### Task 11-A: Sound Focus에 Minimal Pair 퀴즈 삽입 (Claude Code) — 우선순위 4
+**설명**:
+- `src/app/lesson/[unitId]/LessonClient.tsx`의 `SoundFocusStep` 컴포넌트를 수정하세요.
+- 기존 소리 듣기 후 넘어가는 단순 흐름에, **Minimal Pair 대비 퀴즈**를 추가합니다.
+- `phonics300_upgrade_data.json` > `minimal_pairs` 섹션의 데이터를 활용하세요.
+- **구현 로직**:
+  1. 해당 유닛에 매핑된 minimal pair가 있으면, Sound Focus 마지막 페이지에 퀴즈 추가
+  2. 두 단어의 TTS 소리를 재생 → 사용자가 "어떤 소리인지" 선택하는 2지선다 퀴즈
+  3. 예: unit_01에서 "bat" vs "bet" 소리 재생 → 올바른 단어 터치
+- minimal pair 데이터가 없는 유닛(리뷰 유닛 등)은 기존 흐름 유지
+
+### Task 11-B: Blend & Tap에 Onset-Rime 2단계 모드 추가 (Claude Code) — 우선순위 5
+**설명**:
+- `src/app/lesson/[unitId]/LessonClient.tsx`의 `BlendTapStep` 컴포넌트를 수정하세요.
+- 현재: `[k] [æ] [t]` (phoneme 3타일) → 변경: `[c] + [at]` (onset + rime 2타일, **교재 방식**)
+- **구현 로직**:
+  1. `word.onset`과 `word.rime`이 존재하면 → **Onset-Rime 모드** (2타일)
+  2. 존재하지 않으면 → **기존 Phoneme 모드** (n타일) 폴백
+  3. Onset-Rime 모드 시 화면에 먼저 rime 타일(`[at]`)을 보여주고, onset 타일(`[c]`)을 탭하면 합쳐져서 단어가 완성되는 애니메이션 구현
+  4. 하단에 같은 rime을 공유하는 Word Family 목록을 작게 표시 (예: `-at family: bat, cat, hat, mat`)
+- 타일 색상은 Task 11-C의 컬러코딩을 따름
+
+### Task 11-C: 컬러코딩 시스템 도입 (Claude Code) — 우선순위 6
+**설명**:
+- `BlendTapStep`, `SoundFocusStep` 등 phoneme/글자 타일을 표시하는 모든 곳에 **컬러코딩**을 적용하세요.
+- **규칙** (Tailwind CSS 클래스 사용):
+  - 모음(Vowel: a, e, i, o, u): `text-red-500` (빨간 계열)
+  - 자음(Consonant): `text-blue-600` (파란 계열)
+  - 블렌드/다이그래프(sh, ch, th, bl, cr 등): `text-emerald-600` (초록 계열)
+  - Silent e: `text-gray-300 opacity-50` (흐림 처리)
+  - Rime 덩어리: `text-amber-600` (주황 계열) — Onset-Rime 모드에서 rime 타일에 적용
+- 유틸 함수를 하나 만들어서 phoneme/글자 문자열을 입력받으면 해당 Tailwind 클래스를 반환하도록 구현하세요.
+
+```bash
+npm run build
+```
 빌드 에러 0이면 완료.
+
+---
 
 ## ~~Round 4: Capacitor Android 패키징 (Round 3은 Antigravity가 수행)~~
 

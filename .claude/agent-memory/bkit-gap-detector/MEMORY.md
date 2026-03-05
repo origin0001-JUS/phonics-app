@@ -27,6 +27,8 @@
 - **round7** (2026-03-05): Match Rate 97%. 3 tasks (7-A: reset integrity, 7-B: hydration cleanup, 7-C: capacitor build). All functional requirements 100% met (33/33 items). Minor gaps: import order in LessonClient.tsx (framer-motion/lucide after @/ imports), no loading indicator during reset. CLAUDE.md still says "v5" but DB is at v6.
 - **round8-qa** (2026-03-05): Match Rate 99%. 5 tasks (8-A: level naming, 8-B: bilingual TTS, 8-C: phoneme audio, 8-D: Korean translation, 8-E: overflow fix). All 36/36 functional requirements met. Minor: import order in LessonClient.tsx persists, getMapping() still duplicated.
 - **round9** (2026-03-06): Match Rate 95%. 4 tasks (9-A: BlendTap audio delay, 9-B: quiz audio separation, 9-C: viseme close-up, 9-D: trophies overflow). All 27 items checked, 25.5 met. Tasks 9-A/B/C 100%. Task 9-D 92% (pb-12 may be thin). Import order in LessonClient.tsx persists (Round 7+).
+- **round10-curriculum-merge** (2026-03-06): Match Rate 100%. 3 tasks (10-A: microReading replace, 10-B: additional words, 10-C: onset/rime fields). 20/20 content units updated, 4/4 review units preserved, 36/36 new words added, 75 existing words got onset/rime, WordData interface + w() helper updated. Zero gaps. Total words now ~336.
+- **round11-game-upgrade** (2026-03-06): Match Rate 97%. 3 tasks (11-A: Minimal Pair Quiz, 11-B: Onset-Rime mode, 11-C: Color Coding). All functional requirements met. MINIMAL_PAIRS data 100% matches JSON source (10/10 entries). Color coding utility: getPhonemeCategory() + getPhonemeColorClass() with 5 categories. Import order in LessonClient.tsx still not fixed (Round 7+).
 
 ### Patterns Observed
 - Co-located components inside page files (Starter-level pattern)
@@ -38,3 +40,6 @@
 - Dark mode: Zustand `theme` state + localStorage `phonics-theme` + ThemeInitializer.tsx for DOM sync
 - VisemeAvatar: standalone component at lesson/[unitId]/VisemeAvatar.tsx with isSpeaking prop, now lip close-up (no full face), config-driven MOUTH_SHAPES for future vowel visemes
 - Dark mode coverage: ALL screens now have dark: classes (80 total across 10 files). Import order issue in settings resolved.
+- Color coding system: getPhonemeCategory() + getPhonemeColorClass() in LessonClient.tsx. 5 categories: vowel(red), consonant(blue), blend(emerald), silent_e(gray), rime(amber). IPA_VOWELS Set for phoneme-mode detection.
+- Minimal Pairs: 10 pair sets covering units 1-5, 7-10, 17, 19. Data hardcoded in MINIMAL_PAIRS const (matches phonics300_upgrade_data.json exactly).
+- Onset-Rime mode: BlendTapStep branches on word.onset/word.rime presence. Word Family display scoped to lesson's 6-word subset.
