@@ -31,7 +31,7 @@
 **요구사항**:
 1. `tailwind.config.ts`에 `darkMode: 'class'` 설정.
 2. `src/app/settings/page.tsx`에 '테마 변경' 토글 버튼 추가.
-3. Zustand 혹은 로컬 스토리지(`localStorage` / IndexedDB)를 통해 테마 상태(`light` \| `dark`)를 전역으로 유지하고 초기 로딩 타임에 복원.
+3. Zustand 혹은 로컬 스토리지(`localStorage` / IndexedDB)를 통해 테마 상태(`light` | `dark`)를 전역으로 유지하고 초기 로딩 타임에 복원.
 4. 주요 화면(레슨 화면, 설정, 보상 화면)의 배경색(`bg-white` → `dark:bg-slate-900`)과 텍스트 색상(`text-slate-800` → `dark:text-slate-200`) 대응.
 
 ---
@@ -226,7 +226,7 @@ npm run build
 - **규칙** (Tailwind CSS 클래스 사용):
   - 모음(Vowel: a, e, i, o, u): `text-red-500` (빨간 계열)
   - 자음(Consonant): `text-blue-600` (파란 계열)
-  - 블렌드/다이그래프(sh, ch, th, bl, cr 등): `text-emerald-600` (초록 계열)
+  - 블렌드/다이그래프(sh, 대h, th, bl, cr 등): `text-emerald-600` (초록 계열)
   - Silent e: `text-gray-300 opacity-50` (흐림 처리)
   - Rime 덩어리: `text-amber-600` (주황 계열) — Onset-Rime 모드에서 rime 타일에 적용
 - 유틸 함수를 하나 만들어서 phoneme/글자 문자열을 입력받으면 해당 Tailwind 클래스를 반환하도록 구현하세요.
@@ -234,7 +234,37 @@ npm run build
 ```bash
 npm run build
 ```
-빌드 에러 0이면 완료.
+빌드 에러 0이면 11라운드 완료.
+
+---
+
+## Round 12: V2 TTS 전면 업그레이드 (ElevenLabs 멀티 보이스) [진행 대기]
+
+### Task 12-A: ElevenLabs TTS 스크립트 실행 환경 점검 (Claude Code)
+**설명**:
+- 프로젝트 루트의 `.env.local` 파일에 `ELEVENLABS_API_KEY` 환경 변수가 설정되어 있는지 확인하세요.
+- 설정되어 있지 않다면 사용자에게 발급받은 API 키 입력을 요청하여 파일에 추가하세요.
+
+### Task 12-B: 누락된 오디오 자산 파악 (Claude Code)
+**설명**:
+- 먼저 터미널에서 `npx tsx scripts/audit-audio.ts`를 실행하여 현재 `public/assets/audio/` 폴더 내에 부족하거나 남는 MP3 파일 숫자를 파악하세요. (보고용)
+
+### Task 12-C: ElevenLabs 전체 MP3 일괄 재생성 (Claude Code)
+**설명**:
+- 기존 구글 보이스와 톤이 섞이지 않도록 전체 오디오를 덮어씁니다.
+- 터미널에서 `npx tsx scripts/generate-tts.ts --force` 명령을 실행하세요.
+- (참고: API 제한으로 시간이 몇 분 이상 걸릴 수 있습니다. 실행이 완료될 때까지 대기하세요.)
+- 완료 후 다시 `npx tsx scripts/audit-audio.ts`를 실행하여 누락된 파일이 '0'개가 되었는지 확인하세요.
+
+### Task 12-D: audio.ts 폴백 핸들링 강화 (Claude Code)
+**설명**:
+- `src/lib/audio.ts` 파일을 수정하여, `playWordAudio`와 `playSentenceAudio`에서 파일 로드 실패(404 등) 시 콘솔에 `⚠️ Missing audio: {파일이름} — falling back to browser TTS` 형식으로 명시적 경고(warning)를 출력하도록 개선하세요.
+- `fallbackTTS` 함수가 실제로는 최대한 호출되지 않아야 한다는 점을 주석으로 남기세요.
+
+### Task 12-E: 최종 빌드 및 검수 (Claude Code)
+**설명**:
+- 변경사항에 에러가 없는지 `npm run build`를 실행하여 빌드 에러 0건을 확인하세요.
+- 사용자에게 `npm run dev`를 통해 브라우저에서 ElevenLabs 오디오(단어는 Rachel, 문장은 Drew/Laura)가 잘 나오는지 확인해 달라고 안내하세요.
 
 ---
 

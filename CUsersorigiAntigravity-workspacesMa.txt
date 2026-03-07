@@ -1,0 +1,7 @@
+C:\Users\origi\Antigravity-workspaces\Main_English\mission-reward-ffc158478bed.json
+
+$env:GOOGLE_APPLICATION_CREDENTIALS="C:\Users\origi\Antigravity-workspaces\Main_English\mission-reward-ffc158478bed.json"
+
+
+구글클라우드  api키 
+AIzaSyBtI-BDW5P3u8PzE928QLpERxEObf2XHa4

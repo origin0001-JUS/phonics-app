@@ -39,7 +39,7 @@ export function playWordAudio(word: string): Promise<void> {
                 audio!.onended = () => resolve();
             })
             .catch(() => {
-                // Fallback to browser SpeechSynthesis
+                console.warn(`⚠️ Missing audio: ${word}.mp3 — falling back to browser TTS`);
                 fallbackTTS(word);
                 resolve();
             });
@@ -47,14 +47,28 @@ export function playWordAudio(word: string): Promise<void> {
 }
 
 /**
- * Play sentence TTS using pre-generated mp3 file (unit_XX_sentence_N.mp3).
+ * Convert sentence text to safe filename (must match generate-tts.ts logic).
+ */
+function getSafeFilename(text: string): string {
+    return text
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_|_$/g, '')
+        .substring(0, 50) + '.mp3';
+}
+
+/**
+ * Play sentence TTS using pre-generated mp3 file.
+ * File naming: sentence text converted to safe filename (e.g., "A fat cat." -> "a_fat_cat.mp3").
  * Falls back to browser SpeechSynthesis.
  */
 export function playSentenceAudio(unitId: string, sentenceIndex: number, sentenceText: string): Promise<void> {
     return new Promise((resolve) => {
         if (typeof window === 'undefined') { resolve(); return; }
 
-        const path = `/assets/audio/${unitId}_sentence_${sentenceIndex + 1}.mp3`;
+        const filename = getSafeFilename(sentenceText);
+        const path = `/assets/audio/${filename}`;
 
         const audio = new Audio(path);
         audio.play()
@@ -62,6 +76,7 @@ export function playSentenceAudio(unitId: string, sentenceIndex: number, sentenc
                 audio.onended = () => resolve();
             })
             .catch(() => {
+                console.warn(`⚠️ Missing audio: ${path} — falling back to browser TTS`);
                 fallbackTTS(sentenceText);
                 resolve();
             });
@@ -70,6 +85,10 @@ export function playSentenceAudio(unitId: string, sentenceIndex: number, sentenc
 
 /**
  * Browser SpeechSynthesis fallback.
+ * This should rarely be called in production — all words/sentences
+ * should have pre-generated ElevenLabs MP3 files in public/assets/audio/.
+ * If this is being called frequently, run `npx tsx scripts/audit-audio.ts`
+ * to identify missing audio files.
  */
 export function fallbackTTS(text: string): void {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
