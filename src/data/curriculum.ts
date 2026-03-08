@@ -8,6 +8,9 @@ export interface WordData {
     onset?: string;
     rime?: string;
     wordFamily?: string;
+    textbookTags?: string[];
+    isSightWord?: boolean;
+    sightWordNote?: string;
 }
 
 export interface UnitData {
@@ -24,7 +27,7 @@ export interface UnitData {
     microReading: string[];
 }
 
-function w(id: string, word: string, phonemes: string[], meaning: string, onset?: string, rime?: string, wordFamily?: string): WordData {
+function w(id: string, word: string, phonemes: string[], meaning: string, onset?: string, rime?: string, wordFamily?: string, opts?: { textbookTags?: string[]; isSightWord?: boolean; sightWordNote?: string }): WordData {
     return {
         id, word, phonemes, meaning,
         imagePath: `/assets/images/${id}.svg`,
@@ -32,6 +35,9 @@ function w(id: string, word: string, phonemes: string[], meaning: string, onset?
         ...(onset && { onset }),
         ...(rime && { rime }),
         ...(wordFamily && { wordFamily }),
+        ...(opts?.textbookTags && { textbookTags: opts.textbookTags }),
+        ...(opts?.isSightWord && { isSightWord: opts.isSightWord }),
+        ...(opts?.sightWordNote && { sightWordNote: opts.sightWordNote }),
     };
 }
 
@@ -611,4 +617,8 @@ export const microReadingKoMap: Record<string, string[]> = {
 
 export function getUnitById(id: string): UnitData | undefined {
     return curriculum.find(u => u.id === id);
+}
+
+export function getAllWords(): WordData[] {
+    return curriculum.flatMap(u => u.words);
 }

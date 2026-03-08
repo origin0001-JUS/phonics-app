@@ -76,3 +76,25 @@ export function isDueToday(card: SRSCard): boolean {
     const today = new Date().toISOString().split('T')[0];
     return card.nextReviewDate <= today;
 }
+
+/**
+ * 복습 우선순위 계산.
+ * 교과서 태그 단어는 가중치를 더해 복습 페이지에서 먼저 노출.
+ */
+export function getReviewPriority(card: SRSCard, word?: { textbookTags?: string[] }): number {
+    let priority = 0;
+
+    const now = new Date();
+    const due = new Date(card.nextReviewDate);
+    const daysOverdue = Math.max(0, (now.getTime() - due.getTime()) / (1000 * 60 * 60 * 24));
+    priority += daysOverdue;
+
+    if (word?.textbookTags && word.textbookTags.length > 0) {
+        priority += 0.5;
+        if (word.textbookTags.length >= 2) {
+            priority += 0.3;
+        }
+    }
+
+    return priority;
+}
