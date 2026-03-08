@@ -321,3 +321,32 @@ npm run build
 7. Android 프로젝트가 생성되었는지 확인
 
 > ⚠️ Round 2 완료 후에 진행할 것. Round 3은 Antigravity가 브라우저 테스트를 수행하므로 건너뜀.
+
+---
+
+## Round 15: V2 코어 로직 개발 (Track B) [진행 대기]
+
+> V2 병렬 실행 전략에 따라, 백그라운드용 코어 비즈니스 로직 및 컴포넌트 개발을 진행합니다.
+
+### Task 15-A: V2-1 Magic e 퀴즈 컴포넌트 개발 (Claude Code)
+**설명**:
+- `src/app/lesson/[unitId]/MagicEStep.tsx` (가칭) 신규 컴포넌트 생성.
+- "cap" → 하단 다이내믹 [e] 타일 → 드래그하여 끝에 붙이면 "cape"로 변환되는 UI 및 로직 구현.
+- `framer-motion`을 활용한 드래그 앤 드롭 애니메이션 프레임워크 작성.
+- (이미지는 임시 플레이스홀더를 사용. 에셋은 안티그래비티가 교체 예정)
+
+### Task 15-B: V2-2 Decodable 스토리북 엔진 구성 (Claude Code)
+**설명**:
+- `src/app/lesson/[unitId]/StoryReaderStep.tsx` 신규 컴포넌트 생성.
+- `src/data/decodableReaders.ts` 템플릿 구조를 읽어와, 5~8문장 분할 만화 패널 렌더링 로직 작성.
+- TTS 문장별 자동 순차 재생 (Karaoke 하이라이팅) 동기화 코드 작성.
+
+### Task 15-C: V2-3 Word Family Builder 기초 조립 (Claude Code)
+**설명**:
+- Rime 블록을 고정하고 여러 Onset을 터치하여 단어를 생산하는 Word Family 게임의 메인 상태 머신(Zustand 또는 로컬 state) 작성.
+- 생성된 단어들이 카드스택 형태로 쌓이는 CSS / 레이아웃 틀 구성.
+
+```bash
+npm run build
+```
+빌드 에러 0이면 15라운드 완료.

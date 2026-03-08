@@ -106,15 +106,12 @@ function WelcomeScreen({ onNext }: { onNext: () => void }) {
     <div className="flex-1 flex flex-col items-center justify-center px-6 py-10">
       {/* Mascot */}
       <div className="w-40 h-40 bg-white/40 rounded-full flex items-center justify-center mb-6">
-        <div className="w-32 h-32 bg-orange-400 rounded-full flex flex-col items-center justify-center text-white border-4 border-white shadow-[0_10px_20px_rgba(0,0,0,0.1)] relative overflow-hidden">
-          <div className="absolute top-8 left-6 w-5 h-5 bg-slate-800 rounded-full">
-            <div className="w-1.5 h-1.5 bg-white rounded-full mt-1 ml-1"></div>
-          </div>
-          <div className="absolute top-8 right-6 w-5 h-5 bg-slate-800 rounded-full">
-            <div className="w-1.5 h-1.5 bg-white rounded-full mt-1 ml-1"></div>
-          </div>
-          <div className="absolute top-16 w-3.5 h-2.5 bg-red-400 rounded-full"></div>
-          <p className="absolute bottom-3 font-black tracking-widest opacity-80 text-sm">FOXY</p>
+        <div className="w-32 h-32 rounded-full border-4 border-white shadow-[0_10px_20px_rgba(0,0,0,0.1)] relative overflow-hidden bg-white">
+          <img
+            src="/assets/images/foxy_mascot_3d.jpg"
+            alt="3D Foxy Mascot"
+            className="w-full h-full object-cover"
+          />
         </div>
       </div>
 
@@ -137,18 +134,16 @@ function WelcomeScreen({ onNext }: { onNext: () => void }) {
   );
 }
 
-/* ─── Bilingual TTS Helper ─── */
-function playBilingualGuide(english: string, korean: string) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-  window.speechSynthesis.cancel();
-  const en = new SpeechSynthesisUtterance(english);
-  en.lang = "en-US";
-  en.rate = 0.8;
-  const ko = new SpeechSynthesisUtterance(korean);
-  ko.lang = "ko-KR";
-  ko.rate = 0.9;
-  en.onend = () => window.speechSynthesis.speak(ko);
-  window.speechSynthesis.speak(en);
+/* ─── High Quality Audio Helper ─── */
+function playGreeting() {
+  if (typeof window === "undefined") return;
+  const audio = new Audio('/assets/audio/hi_im_foxy.mp3');
+  audio.play().catch(() => { });
+}
+function playLevelSelectGuide() {
+  if (typeof window === "undefined") return;
+  const audio = new Audio('/assets/audio/foxy_level_select.mp3');
+  audio.play().catch(() => { });
 }
 
 /* ─── Screen 2: Grade Selection ─── */
@@ -162,13 +157,13 @@ function GradeSelectScreen({
   onNext: () => void;
 }) {
   useEffect(() => {
-    playBilingualGuide("Choose your level!", "학습 수준을 선택해 주세요.");
+    playLevelSelectGuide();
   }, []);
 
   return (
     <div className="flex-1 flex flex-col px-6 py-10">
       <h2 className="text-3xl font-black text-center text-white drop-shadow-md mb-2">
-        학습 수준을 선택해 주세요
+        어떤 레벨로 시작할까요?
       </h2>
       <p className="text-center text-white/80 font-semibold mb-8">
         수준에 맞는 학습을 준비해 줄게요!
@@ -181,11 +176,10 @@ function GradeSelectScreen({
             <button
               key={g.grade}
               onClick={() => onSelect(g.grade)}
-              className={`bg-white dark:bg-slate-800 rounded-[1.5rem] p-5 border-4 transition-all flex flex-col items-center gap-2 ${
-                isSelected
+              className={`bg-white dark:bg-slate-800 rounded-[1.5rem] p-5 border-4 transition-all flex flex-col items-center gap-2 ${isSelected
                   ? "border-amber-400 scale-105 shadow-[0_8px_0_#d97706]"
                   : "border-white dark:border-slate-600 shadow-[0_6px_0_#d1d5db] dark:shadow-[0_6px_0_#1e293b]"
-              }`}
+                }`}
             >
               <span className="text-4xl">{g.emoji}</span>
               <span className="font-black text-lg text-slate-700 dark:text-slate-100">{g.label}</span>
@@ -222,16 +216,12 @@ function RecommendationScreen({
     <div className="flex-1 flex flex-col px-6 py-10">
       {/* Small mascot + title */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-14 h-14 bg-orange-400 rounded-full flex items-center justify-center border-3 border-white shadow-md relative overflow-hidden shrink-0">
-          <div className="absolute top-2.5 left-2.5 w-2.5 h-2.5 bg-slate-800 rounded-full">
-            <div className="w-1 h-1 bg-white rounded-full mt-0.5 ml-0.5"></div>
-          </div>
-          <div className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-slate-800 rounded-full">
-            <div className="w-1 h-1 bg-white rounded-full mt-0.5 ml-0.5"></div>
-          </div>
-          <p className="absolute bottom-1 font-black text-[6px] text-white tracking-wider opacity-80">
-            FOXY
-          </p>
+        <div className="w-14 h-14 rounded-full border-3 border-white shadow-md relative overflow-hidden shrink-0 bg-white">
+          <img
+            src="/assets/images/foxy_mascot_3d.jpg"
+            alt="3D Foxy"
+            className="w-full h-full object-cover"
+          />
         </div>
         <h2 className="text-2xl font-black text-white drop-shadow-md">
           Level {grade} 친구, 준비됐어!
@@ -270,9 +260,8 @@ function RecommendationScreen({
                 )}
                 <div className="flex-1">
                   <p
-                    className={`font-bold text-sm ${
-                      unlocked ? "text-slate-700" : "text-slate-400"
-                    }`}
+                    className={`font-bold text-sm ${unlocked ? "text-slate-700" : "text-slate-400"
+                      }`}
                   >
                     {item.label}
                   </p>
