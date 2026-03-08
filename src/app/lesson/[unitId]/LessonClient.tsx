@@ -15,16 +15,16 @@ import VisemeAvatar from "./VisemeAvatar";
 
 // ─── Minimal Pairs Data (for Sound Focus quiz) ───
 const MINIMAL_PAIRS: { units: string[]; label: string; items: [string, string][] }[] = [
-    { units: ["unit_01", "unit_02"], label: "a vs e", items: [["bat","bet"],["hat","het"],["pan","pen"],["man","men"],["bad","bed"]] },
-    { units: ["unit_02", "unit_03"], label: "e vs i", items: [["bed","bid"],["pet","pit"],["net","nit"],["pen","pin"],["set","sit"]] },
-    { units: ["unit_03", "unit_04"], label: "i vs o", items: [["dig","dog"],["hip","hop"],["hit","hot"],["big","bog"]] },
-    { units: ["unit_04", "unit_05"], label: "o vs u", items: [["hot","hut"],["cop","cup"],["pot","put"],["dog","dug"]] },
-    { units: ["unit_07"], label: "short a vs long a", items: [["cap","cape"],["tap","tape"],["hat","hate"],["mat","mate"],["can","cane"]] },
-    { units: ["unit_08"], label: "short i vs long i", items: [["bit","bite"],["hid","hide"],["kit","kite"],["pin","pine"],["dim","dime"]] },
-    { units: ["unit_09"], label: "short o vs long o", items: [["hop","hope"],["not","note"],["rod","rode"],["cop","cope"]] },
-    { units: ["unit_10"], label: "short u vs long u", items: [["cub","cube"],["tub","tube"],["cut","cute"],["hug","huge"]] },
-    { units: ["unit_17"], label: "ch vs sh", items: [["chip","ship"],["chop","shop"],["chin","shin"],["cheap","sheep"]] },
-    { units: ["unit_19"], label: "th vs s", items: [["think","sink"],["thick","sick"],["thin","sin"]] },
+    { units: ["unit_01", "unit_02"], label: "a vs e", items: [["bat", "bet"], ["hat", "het"], ["pan", "pen"], ["man", "men"], ["bad", "bed"]] },
+    { units: ["unit_02", "unit_03"], label: "e vs i", items: [["bed", "bid"], ["pet", "pit"], ["net", "nit"], ["pen", "pin"], ["set", "sit"]] },
+    { units: ["unit_03", "unit_04"], label: "i vs o", items: [["dig", "dog"], ["hip", "hop"], ["hit", "hot"], ["big", "bog"]] },
+    { units: ["unit_04", "unit_05"], label: "o vs u", items: [["hot", "hut"], ["cop", "cup"], ["pot", "put"], ["dog", "dug"]] },
+    { units: ["unit_07"], label: "short a vs long a", items: [["cap", "cape"], ["tap", "tape"], ["hat", "hate"], ["mat", "mate"], ["can", "cane"]] },
+    { units: ["unit_08"], label: "short i vs long i", items: [["bit", "bite"], ["hid", "hide"], ["kit", "kite"], ["pin", "pine"], ["dim", "dime"]] },
+    { units: ["unit_09"], label: "short o vs long o", items: [["hop", "hope"], ["not", "note"], ["rod", "rode"], ["cop", "cope"]] },
+    { units: ["unit_10"], label: "short u vs long u", items: [["cub", "cube"], ["tub", "tube"], ["cut", "cute"], ["hug", "huge"]] },
+    { units: ["unit_17"], label: "ch vs sh", items: [["chip", "ship"], ["chop", "shop"], ["chin", "shin"], ["cheap", "sheep"]] },
+    { units: ["unit_19"], label: "th vs s", items: [["think", "sink"], ["thick", "sick"], ["thin", "sin"]] },
 ];
 
 function getMinimalPairsForUnit(unitId: string): { label: string; items: [string, string][] } | null {
@@ -500,6 +500,9 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
 
     const useOnsetRime = !!(word.onset && word.rime);
 
+    // Fallback image handling
+    const [imageError, setImageError] = useState(false);
+
     // Find words sharing the same rime in this word set
     const wordFamily = useMemo(() => {
         if (!word.wordFamily) return [];
@@ -550,6 +553,7 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
             setOnsetTapped(false);
             setRimeTapped(false);
             setMerging(false);
+            setImageError(false);
         } else {
             onNext();
         }
@@ -574,7 +578,7 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
                             className={`w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-black transition-all border-4 ${onsetTapped
                                 ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
                                 : `bg-blue-50 border-blue-200 shadow-[0_4px_0_#93c5fd] ${getPhonemeColorClass(getPhonemeCategory(word.onset!, { isRime: false }))}`
-                            } active:scale-95`}
+                                } active:scale-95`}
                         >
                             {word.onset}
                         </button>
@@ -587,7 +591,7 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
                             className={`w-24 h-20 rounded-2xl flex items-center justify-center text-3xl font-black transition-all border-4 ${rimeTapped
                                 ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
                                 : `bg-amber-50 border-amber-200 shadow-[0_4px_0_#fbbf24] ${getPhonemeColorClass('rime')}`
-                            } active:scale-95`}
+                                } active:scale-95`}
                         >
                             {word.rime}
                         </button>
@@ -606,7 +610,7 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
                                     className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black transition-all border-4 ${isTapped
                                         ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
                                         : `bg-slate-100 border-slate-200 shadow-[0_4px_0_#cbd5e1] ${colorClass}`
-                                    } active:scale-95`}
+                                        } active:scale-95`}
                                 >
                                     {p}
                                 </button>
@@ -615,12 +619,31 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
                     </div>
                 )}
 
-                {/* Blended result */}
+                {/* Blended result with 3D Image Popup */}
                 {allTapped && (
-                    <div className="bg-green-50 border-2 border-green-200 rounded-xl px-6 py-3 flex items-center gap-2">
-                        <Check className="w-5 h-5 text-green-600" />
-                        <span className="font-black text-green-700 text-xl">{word.word}</span>
-                    </div>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.5, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        className="flex flex-col items-center mt-2 w-full"
+                    >
+                        {!imageError && (
+                            <div className="w-32 h-32 mb-4 bg-sky-50 rounded-3xl border-4 border-sky-100 shadow-[0_8px_20px_rgba(0,0,0,0.1)] overflow-hidden flex items-center justify-center p-2 relative">
+                                <img
+                                    src={`/assets/images/${word.id}.png`}
+                                    alt={word.word}
+                                    className="w-full h-full object-contain drop-shadow-md"
+                                    onError={() => setImageError(true)}
+                                />
+                                {/* Optional: Subtle shine effect overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-0 animate-[shine_2s_ease-in-out_infinite]" />
+                            </div>
+                        )}
+                        <div className="bg-green-50 border-4 border-green-200 shadow-[0_4px_0_#bbf7d0] rounded-2xl px-8 py-3 flex items-center gap-3">
+                            <Check className="w-6 h-6 text-green-500" strokeWidth={4} />
+                            <span className="font-black text-green-700 text-2xl tracking-wide">{word.word}</span>
+                        </div>
+                    </motion.div>
                 )}
 
                 {/* Word Family display (onset-rime mode) */}
@@ -809,8 +832,8 @@ function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void
 
                 {result && !listening && (
                     <div className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm ${result.matched
-                            ? "bg-green-50 text-green-700 border-2 border-green-200"
-                            : "bg-orange-50 text-orange-700 border-2 border-orange-200"
+                        ? "bg-green-50 text-green-700 border-2 border-green-200"
+                        : "bg-orange-50 text-orange-700 border-2 border-orange-200"
                         }`}>
                         {result.matched ? (
                             <><CheckCircle className="w-5 h-5" /> Great pronunciation! 🎉</>
