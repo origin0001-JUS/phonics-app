@@ -174,6 +174,24 @@ function playTone(
     osc.stop(ctx.currentTime + duration);
 }
 
+// ─── Audio Preload (mobile first-tap silence fix) ───
+
+/**
+ * Preload audio files in the background so they play instantly on first tap.
+ * On mobile browsers, the first Audio.play() can be silent or delayed
+ * because the file hasn't been fetched yet. This forces an early fetch.
+ */
+export function preloadAudioFiles(urls: string[]): void {
+    if (typeof window === 'undefined') return;
+    for (const url of urls) {
+        if (audioCache.has(url)) continue;
+        const audio = new Audio(url);
+        audio.preload = 'auto';
+        audio.load();
+        audioCache.set(url, audio);
+    }
+}
+
 // ─── STT (Speech-to-Text) via Web Speech API ───
 
 export interface STTResult {

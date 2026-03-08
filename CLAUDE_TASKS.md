@@ -55,7 +55,7 @@ npm run build
 
 ---
 
-## Round 7: MVP 최종 품질 검증 (QA & 안정화) [현재]
+## ~~Round 7: MVP 최종 품질 검증 (QA & 안정화) — 완료~~
 
 ### Task 7-A: 데이터 초기화 로직 무결성 검증 (Claude Code)
 **설명**: 
@@ -73,7 +73,7 @@ npm run build
 
 ---
 
-## Round 8: 사용자 매뉴얼 QA 피드백 반영 [현재]
+## ~~Round 8: 사용자 매뉴얼 QA 피드백 반영 — 완료~~
 
 ### Task 8-A: 온보딩 진입 기준 명칭 변경 (Claude Code)
 **설명**: 
@@ -107,7 +107,7 @@ npm run build
 
 ---
 
-## Round 9: 디테일 폴리싱 및 오디오/비주얼 동기화 [진행 대기]
+## ~~Round 9: 디테일 폴리싱 및 오디오/비주얼 동기화 — 완료~~
 
 ### Task 9-A: Blend & Tap 오디오 시차 적용 (Claude Code)
 **설명**:
@@ -135,7 +135,7 @@ npm run build
 
 ---
 
-## Round 10: 교과서/교재 기반 커리큘럼 데이터 병합 [진행 대기]
+## ~~Round 10: 교과서/교재 기반 커리큘럼 데이터 병합 — 완료~~
 
 > 프로젝트 루트의 `phonics300_upgrade_data.json` 파일을 데이터 소스로 사용하세요.
 > 이 JSON의 구조를 먼저 읽고 아래 Task를 순서대로 진행해 주세요.
@@ -194,7 +194,7 @@ npm run build
 
 ---
 
-## Round 11: 교수법 기반 게임 고도화 [진행 대기]
+## ~~Round 11: 교수법 기반 게임 고도화 — 완료~~
 
 > `phonics300_upgrade_data.json`과 `phonics300_업그레이드_데이터.md`를 참조하세요.
 
@@ -238,7 +238,7 @@ npm run build
 
 ---
 
-## Round 12: V2 TTS 전면 업그레이드 (ElevenLabs 멀티 보이스) [진행 대기]
+## ~~Round 12: V2 TTS 전면 업그레이드 (ElevenLabs 멀티 보이스) — 완료~~
 
 ### Task 12-A: ElevenLabs TTS 스크립트 실행 환경 점검 (Claude Code)
 **설명**:
@@ -265,6 +265,45 @@ npm run build
 **설명**:
 - 변경사항에 에러가 없는지 `npm run build`를 실행하여 빌드 에러 0건을 확인하세요.
 - 사용자에게 `npm run dev`를 통해 브라우저에서 ElevenLabs 오디오(단어는 Rachel, 문장은 Drew/Laura)가 잘 나오는지 확인해 달라고 안내하세요.
+
+---
+
+## Round 13: 모바일 기기 테스트 QA 수정 (하이브리드 R&R) [진행 대기]
+
+### Task 13-A: 홈 화면 Foxy 인사말 음성 교체 (Claude Code)
+**설명**:
+- `scripts/generate-tts.ts` (또는 수동 API 호출 등)를 사용하여 "Hi I'm Foxy! 안녕! 나는 폭시야! 같이 파닉스를 배워보자!" 라는 내용을 ElevenLabs 고음질 음성으로 변환하여 `public/assets/audio/hi_im_foxy.mp3`로 저장하세요.
+- `src/app/page.tsx` 내 Foxy 캐릭터 클릭 시 실행되는 `window.speechSynthesis` 코드를 지우고, 대신 `const audio = new Audio('/assets/audio/hi_im_foxy.mp3'); audio.play();`를 사용하도록 수정하세요.
+
+### Task 13-B: 모바일 오디오 프리로드 모듈 적용 (Claude Code)
+**설명**:
+- `src/lib/audio.ts` 파단에 여러 URL 배열을 받아 백그라운드에서 `new Audio(url).load()`를 실행해주는 유틸 함수 `preloadAudioFiles(urls: string[])`를 작성하세요.
+- `src/app/lesson/[unitId]/LessonClient.tsx`의 마운트 시점(`useEffect`)에서, 이번 레슨에 사용되는 6개 단어(`lessonWords`) 및 Minimal Pair 대상 단어들의 MP3 URL들을 모아 `preloadAudioFiles`에 넘기세요. 이를 통해 모바일 브라우저의 오디오 재생 지연(첫 탭 시 무음 현상)을 해결하세요.
+
+### Task 13-C: Onset-Rime UI 독립 버튼 2-Step 분리 (Claude Code)
+**설명**:
+- `LessonClient.tsx` 내부 `BlendTapStep` 컴포넌트의 Onset-Rime 모드를 개편하세요.
+- 현재 `<button>`(Onset) 버튼 하나만 존재하는데, `<button onClick={tapRime}>` 형태로 Rime 타일도 상호작용 가능한 버튼으로 만드세요.
+- Onset 탭 시 초성 소리 재생, Rime 탭 시 종성 소리 재생하도록 `onsetTapped`, `rimeTapped` 상태를 각각 독립 관리하세요.
+- 두 상태가 모두 `true`가 될 때에만 병합 애니메이션과 함께 전체 단어(예: Cat)가 소리나도록 타이밍 로직을 수정하세요.
+
+### Task 13-D: 레슨 진행 상태 Session Storage 백업 (Claude Code)
+**설명**:
+- `LessonClient.tsx`의 `stepIndex`, `score`, `totalQuestions` 등 진단 상태를 로컬 `useState`로만 관리하지 말고, 렌더링 후 `useEffect`에서 `sessionStorage.getItem('lesson_state_' + unitId)`를 읽어 복원하는 로직을 추가하세요.
+- 사용자가 진행할 때마다 해당 상태를 `sessionStorage.setItem`으로 저장하세요. (모바일 브라우저 메모리 회수에 의한 강제 새로고침 방어)
+- `ResultsStep`으로 진입하여 레슨이 정상 종료되면, `sessionStorage.removeItem`으로 해당 세션을 파기하여 깔끔하게 정리하세요.
+
+### Task 13-E: Minimal Pair 퀴즈 로직 고도화 (Claude Code)
+**설명**:
+- `LessonClient.tsx` 내 `SoundFocusStep` 컴포넌트의 퀴즈 로직을 대대적으로 수정하세요.
+- 첫째, 현재 접속 중인 레슨 유닛의 소리가 들어간 단어만 무조건 정답이 되지 않도록 퀴즈 데이터를 섞은 뒤 정답을 무작위로 1개 선택하세요 (예: a vs e 학습에서 e 단어가 정답으로 스피커에서 나올 수도 있음).
+- 둘째, 사용자가 정답/오답을 고른 후 하단에 "Compare Sounds" 명목으로 두 대비쌍 단어를 나란히 `<button>`으로 배치하여, 각각 탭하면 소리(`playWordAudio`)가 나오게 만들어 직접 차이를 귀로 습득하게 설계하세요.
+
+```bash
+npm run build
+```
+빌드 에러 0이면 13라운드 완료.
+
 
 ---
 

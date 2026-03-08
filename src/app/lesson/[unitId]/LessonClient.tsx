@@ -5,7 +5,7 @@ import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { getUnitById, curriculum, microReadingKoMap, type WordData } from "@/data/curriculum";
 import { saveLessonResults, type WordResult } from "@/lib/lessonService";
 import { REWARDS } from "@/data/rewards";
-import { playWordAudio, playSentenceAudio, playSFX, fallbackTTS, listenAndCompare, isSTTSupported, type STTResult } from "@/lib/audio";
+import { playWordAudio, playSentenceAudio, playSFX, fallbackTTS, listenAndCompare, isSTTSupported, preloadAudioFiles, type STTResult } from "@/lib/audio";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     ChevronLeft, Volume2, ArrowRight, Check,
@@ -106,6 +106,30 @@ export default function LessonPage() {
         lessonStartRef.current = Date.now();
     }, []);
 
+    // ─── Task 13-D: Restore lesson state from sessionStorage ───
+    const sessionKey = `lesson_state_${unitId}`;
+    const [sessionRestored, setSessionRestored] = useState(false);
+    useEffect(() => {
+        try {
+            const saved = sessionStorage.getItem(sessionKey);
+            if (saved) {
+                const state = JSON.parse(saved);
+                if (typeof state.stepIndex === 'number') setStepIndex(state.stepIndex);
+                if (typeof state.score === 'number') setScore(state.score);
+                if (typeof state.totalQuestions === 'number') setTotalQuestions(state.totalQuestions);
+            }
+        } catch { /* ignore */ }
+        setSessionRestored(true);
+    }, [sessionKey]);
+
+    // ─── Task 13-D: Save lesson state to sessionStorage on change ───
+    useEffect(() => {
+        if (!sessionRestored) return;
+        try {
+            sessionStorage.setItem(sessionKey, JSON.stringify({ stepIndex, score, totalQuestions }));
+        } catch { /* ignore */ }
+    }, [stepIndex, score, totalQuestions, sessionKey, sessionRestored]);
+
     const currentStep = STEP_ORDER[stepIndex];
     const progress = ((stepIndex) / (STEP_ORDER.length - 1)) * 100;
 
@@ -156,8 +180,28 @@ export default function LessonPage() {
         return [];
     }, [unit]);
 
+    // ─── Task 13-B: Preload audio for lesson words + minimal pairs ───
+    useEffect(() => {
+        const urls: string[] = [];
+        for (const w of lessonWords) {
+            urls.push(`/assets/audio/${w.id}.mp3`);
+        }
+        // Also preload minimal pair words if available
+        const mpData = unit?.id ? getMinimalPairsForUnit(unit.id) : null;
+        if (mpData) {
+            for (const [a, b] of mpData.items) {
+                urls.push(`/assets/audio/${a.toLowerCase()}.mp3`);
+                urls.push(`/assets/audio/${b.toLowerCase()}.mp3`);
+            }
+        }
+        preloadAudioFiles(urls);
+    }, [lessonWords, unit]);
+
     // Save lesson results when entering Results step
     const handleLessonComplete = useCallback(() => {
+        // Task 13-D: Clear session storage on lesson completion
+        try { sessionStorage.removeItem(sessionKey); } catch { /* ignore */ }
+
         // Ensure all lesson words have at least an entry (even without quiz)
         for (const word of lessonWords) {
             if (!wordResultsRef.current.has(word.id)) {
@@ -177,7 +221,7 @@ export default function LessonPage() {
         }, isPerfect).then((unlocked) => {
             if (unlocked.length > 0) setNewRewards(unlocked);
         }).catch(console.error);
-    }, [unitId, lessonWords, score, totalQuestions]);
+    }, [unitId, lessonWords, score, totalQuestions, sessionKey]);
 
     if (!unit) {
         return (
@@ -333,10 +377,15 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
         }
     };
 
+    // Task 13-E: Pre-compute random correct word per quiz item (stable across re-renders)
+    const quizCorrectIndices = useMemo(() => {
+        return quizItems.map(() => Math.random() < 0.5 ? 0 : 1);
+    }, [quizItems]);
+
     // Show quiz after initial sound intro
     if (showQuiz && quizItems.length > 0) {
         const pair = quizItems[quizIdx];
-        const correctWord = pair[0]; // first word is the "target"
+        const correctWord = pair[quizCorrectIndices[quizIdx]];
         const options = shuffle([pair[0], pair[1]]);
 
         return (
@@ -374,6 +423,25 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
                             );
                         })}
                     </div>
+
+                    {/* Task 13-E: Compare Sounds — shown after answering */}
+                    {showQuizResult && (
+                        <div className="mt-5 w-full">
+                            <p className="text-slate-400 font-bold text-xs text-center mb-2">Compare Sounds</p>
+                            <div className="flex gap-3 w-full">
+                                {[pair[0], pair[1]].map((w) => (
+                                    <button
+                                        key={w}
+                                        onClick={() => playTTS(w)}
+                                        className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-bold active:scale-95 transition-transform"
+                                    >
+                                        <Volume2 className="w-4 h-4" />
+                                        {w}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <p className="text-white/70 font-bold text-sm">{quizIdx + 1} / {quizItems.length}</p>
@@ -426,6 +494,8 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
     const [currentIdx, setCurrentIdx] = useState(0);
     const [tappedPhonemes, setTappedPhonemes] = useState<number[]>([]);
     const [onsetTapped, setOnsetTapped] = useState(false);
+    const [rimeTapped, setRimeTapped] = useState(false);
+    const [merging, setMerging] = useState(false);
     const word = words[currentIdx];
 
     const useOnsetRime = !!(word.onset && word.rime);
@@ -450,31 +520,48 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
         }
     };
 
+    // Task 13-C: Independent onset tap — plays onset sound only
     const tapOnset = () => {
         if (onsetTapped) return;
         setOnsetTapped(true);
         fallbackTTS(word.onset!);
-        setTimeout(() => playSFX('correct'), 600);
-        setTimeout(() => playTTS(word.word), 1200);
     };
+
+    // Task 13-C: Independent rime tap — plays rime sound only
+    const tapRime = () => {
+        if (rimeTapped) return;
+        setRimeTapped(true);
+        fallbackTTS(word.rime!);
+    };
+
+    // Task 13-C: When both onset and rime are tapped, merge and play full word
+    useEffect(() => {
+        if (onsetTapped && rimeTapped && !merging) {
+            setMerging(true);
+            setTimeout(() => playSFX('correct'), 400);
+            setTimeout(() => playTTS(word.word), 800);
+        }
+    }, [onsetTapped, rimeTapped, merging, word.word]);
 
     const handleNext = () => {
         if (currentIdx < Math.min(words.length, 4) - 1) {
             setCurrentIdx((i) => i + 1);
             setTappedPhonemes([]);
             setOnsetTapped(false);
+            setRimeTapped(false);
+            setMerging(false);
         } else {
             onNext();
         }
     };
 
-    const allTapped = useOnsetRime ? onsetTapped : tappedPhonemes.length === word.phonemes.length;
+    const allTapped = useOnsetRime ? (onsetTapped && rimeTapped) : tappedPhonemes.length === word.phonemes.length;
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
             <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
                 <p className="text-slate-400 font-bold mb-4 text-sm">
-                    {useOnsetRime ? "Tap onset to blend!" : "Tap each sound!"} 👆
+                    {useOnsetRime ? "Tap both parts to blend!" : "Tap each sound!"} 👆
                 </p>
                 <p className="text-lg font-bold text-slate-600 dark:text-slate-300 mb-1">{word.meaning}</p>
 
@@ -494,13 +581,16 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
 
                         <span className="text-2xl font-black text-white/60">+</span>
 
-                        {/* Rime tile (always visible) */}
-                        <div className={`w-24 h-20 rounded-2xl flex items-center justify-center text-3xl font-black border-4 ${onsetTapped
-                            ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
-                            : `bg-amber-50 border-amber-200 shadow-[0_4px_0_#fbbf24] ${getPhonemeColorClass('rime')}`
-                        }`}>
+                        {/* Rime tile (interactive button) */}
+                        <button
+                            onClick={tapRime}
+                            className={`w-24 h-20 rounded-2xl flex items-center justify-center text-3xl font-black transition-all border-4 ${rimeTapped
+                                ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
+                                : `bg-amber-50 border-amber-200 shadow-[0_4px_0_#fbbf24] ${getPhonemeColorClass('rime')}`
+                            } active:scale-95`}
+                        >
                             {word.rime}
-                        </div>
+                        </button>
                     </div>
                 ) : (
                     /* Phoneme Mode (n tiles) with color coding */
@@ -547,7 +637,7 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
             <p className="text-white/70 font-bold text-sm">{currentIdx + 1} / {Math.min(words.length, 4)}</p>
 
             <BigButton onClick={handleNext}>
-                {allTapped ? <>Next <ArrowRight className="w-5 h-5" /></> : useOnsetRime ? "Tap the onset!" : "Tap the sounds!"}
+                {allTapped ? <>Next <ArrowRight className="w-5 h-5" /></> : useOnsetRime ? "Tap both parts!" : "Tap the sounds!"}
             </BigButton>
         </div>
     );

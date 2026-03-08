@@ -105,11 +105,9 @@ export default function Home() {
 
           <button
             onClick={() => {
-              if (typeof window !== "undefined" && "speechSynthesis" in window) {
-                const u = new SpeechSynthesisUtterance("Hi! I'm Foxy! Let's learn phonics together!");
-                u.lang = "en-US";
-                u.rate = 0.8;
-                window.speechSynthesis.speak(u);
+              if (typeof window !== "undefined") {
+                const audio = new Audio('/assets/audio/hi_im_foxy.mp3');
+                audio.play().catch(() => {});
               }
             }}
             className="absolute -bottom-2 right-4 w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-[0_6px_0_#d1d5db] active:shadow-[0_0px_0_#d1d5db] active:translate-y-[6px] transition-all border-4 border-[#d8f4ff] z-20"

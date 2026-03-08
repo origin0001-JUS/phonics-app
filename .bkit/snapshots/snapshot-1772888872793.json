@@ -1,0 +1,732 @@
+{
+  "timestamp": "2026-03-07T13:07:52.791Z",
+  "reason": "compaction",
+  "status": {
+    "version": "2.0",
+    "lastUpdated": "2026-03-06T16:02:36.406Z",
+    "activeFeatures": [
+      "phonics-app",
+      "settings",
+      "rewards",
+      "[unitId]",
+      "round6 gap analysis",
+      "units",
+      "review",
+      "onboarding",
+      "report",
+      "data",
+      "scripts"
+    ],
+    "primaryFeature": "phonics-app",
+    "features": {
+      "phonics-app": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-03-04T14:56:09.806Z",
+          "lastUpdated": "2026-03-06T16:02:36.406Z"
+        },
+        "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\lib\\audio.ts"
+      },
+      "settings": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-03-04T14:56:59.188Z",
+          "lastUpdated": "2026-03-05T14:48:26.368Z"
+        },
+        "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\settings\\page.tsx"
+      },
+      "rewards": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-03-04T14:58:49.271Z",
+          "lastUpdated": "2026-03-05T15:16:02.092Z"
+        },
+        "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\rewards\\page.tsx"
+      },
+      "[unitId]": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-03-04T14:59:10.033Z",
+          "lastUpdated": "2026-03-05T17:06:43.171Z"
+        },
+        "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\lesson\\[unitId]\\LessonClient.tsx"
+      },
+      "round6 gap analysis": {
+        "phase": "act",
+        "phaseNumber": 5,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-03-04T16:10:05.444Z",
+          "lastUpdated": "2026-03-04T16:10:05.445Z"
+        },
+        "previousPhase": "check",
+        "autoAdvanced": true
+      },
+      "units": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-03-04T23:23:58.231Z",
+          "lastUpdated": "2026-03-04T23:24:31.543Z"
+        },
+        "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\units\\page.tsx"
+      },
+      "review": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-03-04T23:24:37.881Z",
+          "lastUpdated": "2026-03-04T23:25:12.846Z"
+        },
+        "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\review\\page.tsx"
+      },
+      "onboarding": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-03-04T23:25:20.731Z",
+          "lastUpdated": "2026-03-05T14:48:44.663Z"
+        },
+        "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\onboarding\\page.tsx"
+      },
+      "report": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-03-04T23:25:48.466Z",
+          "lastUpdated": "2026-03-04T23:26:21.783Z"
+        },
+        "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\report\\page.tsx"
+      },
+      "data": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-03-05T14:49:10.440Z",
+          "lastUpdated": "2026-03-05T16:05:40.303Z"
+        },
+        "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\data\\curriculum.ts"
+      },
+      "scripts": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-03-06T15:53:11.780Z",
+          "lastUpdated": "2026-03-06T15:53:11.780Z"
+        },
+        "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\scripts\\generate-tts.ts"
+      }
+    },
+    "pipeline": {
+      "currentPhase": 1,
+      "level": "Dynamic",
+      "phaseHistory": []
+    },
+    "session": {
+      "startedAt": "2026-03-04T14:22:09.430Z",
+      "onboardingCompleted": false,
+      "lastActivity": "2026-03-06T16:02:36.406Z"
+    },
+    "history": [
+      {
+        "timestamp": "2026-03-04T14:56:09.806Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:56:16.761Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:56:23.129Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:56:30.101Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:56:37.434Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:56:45.028Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:56:53.330Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:56:59.188Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:57:05.768Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:57:19.649Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:57:26.805Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:57:34.030Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:57:42.838Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:57:51.838Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:58:00.528Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:58:23.778Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:58:29.858Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:58:36.098Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:58:42.180Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:58:49.271Z",
+        "feature": "rewards",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:58:58.025Z",
+        "feature": "rewards",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:59:03.868Z",
+        "feature": "rewards",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:59:10.033Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:59:15.519Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:59:20.858Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:59:25.286Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:59:30.306Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:59:36.050Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T14:59:41.592Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T15:00:03.998Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T15:00:12.518Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T15:00:46.831Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T16:10:05.445Z",
+        "feature": "round6 gap analysis",
+        "phase": "act",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:23:58.231Z",
+        "feature": "units",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:24:26.020Z",
+        "feature": "units",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:24:31.543Z",
+        "feature": "units",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:24:37.881Z",
+        "feature": "review",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:24:43.592Z",
+        "feature": "review",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:24:47.710Z",
+        "feature": "review",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:24:51.526Z",
+        "feature": "review",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:24:55.169Z",
+        "feature": "review",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:25:04.071Z",
+        "feature": "review",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:25:07.704Z",
+        "feature": "review",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:25:12.846Z",
+        "feature": "review",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:25:20.731Z",
+        "feature": "onboarding",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:25:28.721Z",
+        "feature": "onboarding",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:25:36.370Z",
+        "feature": "onboarding",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:25:42.392Z",
+        "feature": "onboarding",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:25:48.466Z",
+        "feature": "report",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:25:53.404Z",
+        "feature": "report",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:25:57.272Z",
+        "feature": "report",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:26:01.794Z",
+        "feature": "report",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:26:07.241Z",
+        "feature": "report",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:26:16.545Z",
+        "feature": "report",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:26:21.783Z",
+        "feature": "report",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-04T23:26:31.809Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T03:01:17.764Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T03:01:22.851Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T03:02:25.861Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T03:02:32.542Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T03:02:46.634Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:48:09.788Z",
+        "feature": "onboarding",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:48:11.939Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:48:25.086Z",
+        "feature": "rewards",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:48:26.368Z",
+        "feature": "settings",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:48:32.778Z",
+        "feature": "onboarding",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:48:34.538Z",
+        "feature": "onboarding",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:48:35.538Z",
+        "feature": "onboarding",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:48:44.663Z",
+        "feature": "onboarding",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:49:10.440Z",
+        "feature": "data",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:49:16.938Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:49:19.123Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:49:28.778Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:49:36.342Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:49:42.809Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T14:50:00.095Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T15:15:48.041Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T15:15:50.469Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T15:15:52.865Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T15:15:54.417Z",
+        "feature": "rewards",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T15:16:00.529Z",
+        "feature": "rewards",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T15:16:02.092Z",
+        "feature": "rewards",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T15:16:28.374Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T16:05:40.303Z",
+        "feature": "data",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T17:05:32.267Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T17:06:03.680Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-05T17:06:43.171Z",
+        "feature": "[unitId]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-06T15:51:35.363Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-06T15:51:40.529Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-06T15:51:46.070Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-06T15:53:11.780Z",
+        "feature": "scripts",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-06T16:02:36.406Z",
+        "feature": "phonics-app",
+        "phase": "do",
+        "action": "updated"
+      }
+    ]
+  }
+}

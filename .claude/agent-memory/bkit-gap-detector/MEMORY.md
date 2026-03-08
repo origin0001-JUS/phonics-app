@@ -30,6 +30,7 @@
 - **round10-curriculum-merge** (2026-03-06): Match Rate 100%. 3 tasks (10-A: microReading replace, 10-B: additional words, 10-C: onset/rime fields). 20/20 content units updated, 4/4 review units preserved, 36/36 new words added, 75 existing words got onset/rime, WordData interface + w() helper updated. Zero gaps. Total words now ~336.
 - **round11-game-upgrade** (2026-03-06): Match Rate 97%. 3 tasks (11-A: Minimal Pair Quiz, 11-B: Onset-Rime mode, 11-C: Color Coding). All functional requirements met. MINIMAL_PAIRS data 100% matches JSON source (10/10 entries). Color coding utility: getPhonemeCategory() + getPhonemeColorClass() with 5 categories. Import order in LessonClient.tsx still not fixed (Round 7+).
 - **round12-tts-upgrade** (2026-03-07): Match Rate 99%. 5 tasks (12-A: env check, 12-B: audit script, 12-C: ElevenLabs batch gen, 12-D: fallback handling, 12-E: build verify). All 16/16 items met. getSafeFilename() synchronized across audio.ts, generate-tts.ts, audit-audio.ts. Multi-voice: Rachel(words), Drew/Laura alternating(sentences). Minor: unused unitId/sentenceIndex params in playSentenceAudio, typo env.local (non-blocking).
+- **round13-mobile-qa** (2026-03-07): Match Rate 98%. 5 tasks (13-A: Foxy audio, 13-B: audio preload, 13-C: onset-rime 2-step, 13-D: sessionStorage backup, 13-E: minimal pair randomize + compare). All 18/18 functional items met. Minor: import order in LessonClient.tsx and page.tsx persists (Round 7+). Audio file existence unverifiable via static analysis.
 
 ### Patterns Observed
 - Co-located components inside page files (Starter-level pattern)
@@ -46,3 +47,7 @@
 - Onset-Rime mode: BlendTapStep branches on word.onset/word.rime presence. Word Family display scoped to lesson's 6-word subset.
 - TTS: ElevenLabs multi-voice (Round 12). Rachel=words, Drew/Laura=sentences (alternating by unit parity). SDK: @elevenlabs/elevenlabs-js v2.38+, stream API. Model: eleven_turbo_v2_5. getSafeFilename() shared across 3 files for sentence filename consistency.
 - audio.ts: fallbackTTS has JSDoc noting it should rarely fire. Both playWordAudio and playSentenceAudio log console.warn on 404.
+- audio.ts: preloadAudioFiles() added (Round 13-B). Uses shared audioCache Map, sets preload='auto' and calls .load(). Called from LessonClient.tsx on mount.
+- BlendTapStep onset-rime: Now 2-step independent buttons (Round 13-C). onsetTapped/rimeTapped states, useEffect merges when both true.
+- sessionStorage backup: lesson_state_{unitId} key stores stepIndex/score/totalQuestions (Round 13-D). Cleared on ResultsStep.
+- Minimal Pair quiz: correctWord randomly selected from pair (Round 13-E). "Compare Sounds" section shown post-answer with 2 audio buttons.
