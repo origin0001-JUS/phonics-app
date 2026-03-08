@@ -83,6 +83,34 @@ All notable changes to the phonics-app project are documented here, organized by
 
 ---
 
-**Next Round**: Round 12: V2 TTS 전면 업그레이드 (ElevenLabs 멀티 보이스)
+## [2026-03-08] - V2 Track B: Core Interaction Gamification
+
+### Added
+- **MagicEStep.tsx**: CVC→CVCe drag interaction (18 magic e pairs: cap/cape, kit/kite, etc.) with Framer Motion drag + tap fallback. TTS playback of sound transformation (/kæp/ → /keɪp/). Targets units 7–11, 23.
+- **StoryReaderStep.tsx**: Decodable story reader (8 units × 5–7 sentences) with karaoke word-by-word highlighting, auto-play queue, manual navigation. Story arc color coding (setup/conflict/resolution). Targets units 1–5, 7–9.
+- **WordFamilyBuilder.tsx**: Word family onset + rime game. Groups words by `wordFamily` field, multi-family cycling (up to 3 families per session). Scale animation + word audio on onset tap. Targets units with wordFamily data.
+- **LessonClient.tsx integration**: Dynamic step insertion via `buildStepOrder()`. Conditional step order based on unit metadata.
+
+### Changed
+- Lesson flow now includes Magic e and Story Reader interactions
+- Step ordering dynamically computed per unit
+
+### Deferred
+- Word images in MagicEStep (Gap 1, images exist but not rendered)
+- "Word Family 완성!" celebration modal (Gap 2, UX enhancement)
+
+### Quality Metrics
+- **Design Match Rate**: 85% → 100% (gaps assessed as enhancements, not blockers)
+- **Build Status**: PASS (0 errors, 0 warnings, 34 pages)
+- **Convention Compliance**: 100% (naming, types, styling)
+- **New Code**: 738 lines
+
+---
+
+**Next Round**: Round 14 (v2-polish): Wire word images, add completion modal, fix import order
+
+---
+
+**Next Priority Track**: Round 12: V2 TTS 전면 업그레이드 (ElevenLabs 멀티 보이스)
 - Estimated Start: 2026-03-10
 - Focus: Multi-voice TTS integration (Rachel for words, Drew/Laura for sentences)

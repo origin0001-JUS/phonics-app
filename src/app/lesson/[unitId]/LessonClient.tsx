@@ -12,6 +12,9 @@ import {
     Mic, BookOpen, Star, Trophy, CheckCircle, XCircle
 } from "lucide-react";
 import VisemeAvatar from "./VisemeAvatar";
+import MagicEStep from "./MagicEStep";
+import StoryReaderStep from "./StoryReaderStep";
+import WordFamilyBuilder from "./WordFamilyBuilder";
 
 // ─── Minimal Pairs Data (for Sound Focus quiz) ───
 const MINIMAL_PAIRS: { units: string[]; label: string; items: [string, string][] }[] = [
@@ -62,28 +65,41 @@ function getPhonemeColorClass(category: PhonemeCategory): string {
 type LessonStep =
     | "sound_focus"
     | "blend_tap"
+    | "magic_e"
     | "decode_words"
+    | "word_family"
     | "say_check"
     | "micro_reader"
+    | "story_reader"
     | "exit_ticket"
     | "results";
 
-const STEP_ORDER: LessonStep[] = [
-    "sound_focus",
-    "blend_tap",
-    "decode_words",
-    "say_check",
-    "micro_reader",
-    "exit_ticket",
-    "results",
-];
+// Long vowel units that get the Magic E step
+const MAGIC_E_UNITS = new Set(["unit_07", "unit_08", "unit_09", "unit_10", "unit_11", "unit_23"]);
+
+// Units that have decodable stories
+const STORY_READER_UNITS = new Set(["unit_01", "unit_02", "unit_03", "unit_04", "unit_05", "unit_07", "unit_08", "unit_09"]);
+
+function buildStepOrder(unitId: string, hasWordFamilies: boolean): LessonStep[] {
+    const steps: LessonStep[] = ["sound_focus", "blend_tap"];
+    if (MAGIC_E_UNITS.has(unitId)) steps.push("magic_e");
+    steps.push("decode_words");
+    if (hasWordFamilies) steps.push("word_family");
+    steps.push("say_check", "micro_reader");
+    if (STORY_READER_UNITS.has(unitId)) steps.push("story_reader");
+    steps.push("exit_ticket", "results");
+    return steps;
+}
 
 const STEP_LABELS: Record<LessonStep, string> = {
     sound_focus: "Sound Focus",
     blend_tap: "Blend & Tap",
+    magic_e: "Magic e",
     decode_words: "Decode Words",
+    word_family: "Word Family",
     say_check: "Say & Check",
     micro_reader: "Micro-Reader",
+    story_reader: "Story Time",
     exit_ticket: "Exit Ticket",
     results: "Results",
 };
@@ -94,6 +110,21 @@ export default function LessonPage() {
     const router = useRouter();
     const unitId = params.unitId as string;
     const unit = useMemo(() => getUnitById(unitId), [unitId]);
+
+    // Check if unit has word families (for conditional Word Family step)
+    const hasWordFamilies = useMemo(() => {
+        if (!unit) return false;
+        const familyMap = new Map<string, number>();
+        for (const w of unit.words) {
+            if (w.wordFamily && w.onset && w.rime) {
+                familyMap.set(w.wordFamily, (familyMap.get(w.wordFamily) || 0) + 1);
+            }
+        }
+        // Need at least one family with 2+ members
+        return Array.from(familyMap.values()).some(count => count >= 2);
+    }, [unit]);
+
+    const stepOrder = useMemo(() => buildStepOrder(unitId, hasWordFamilies), [unitId, hasWordFamilies]);
 
     const [stepIndex, setStepIndex] = useState(0);
     const [score, setScore] = useState(0);
@@ -130,8 +161,8 @@ export default function LessonPage() {
         } catch { /* ignore */ }
     }, [stepIndex, score, totalQuestions, sessionKey, sessionRestored]);
 
-    const currentStep = STEP_ORDER[stepIndex];
-    const progress = ((stepIndex) / (STEP_ORDER.length - 1)) * 100;
+    const currentStep = stepOrder[stepIndex];
+    const progress = ((stepIndex) / (stepOrder.length - 1)) * 100;
 
     const recordWordAttempt = useCallback((wordId: string, correct: boolean) => {
         const map = wordResultsRef.current;
@@ -145,7 +176,7 @@ export default function LessonPage() {
     }, [unitId]);
 
     const goNext = useCallback(() => {
-        if (stepIndex < STEP_ORDER.length - 1) {
+        if (stepIndex < stepOrder.length - 1) {
             setStepIndex((i) => i + 1);
         }
     }, [stepIndex]);
@@ -217,7 +248,7 @@ export default function LessonPage() {
             unitId,
             wordResults: wordResultsRef.current,
             durationMinutes,
-            completedSteps: STEP_ORDER.filter((_, i) => i < STEP_ORDER.length - 1),
+            completedSteps: stepOrder.filter((_, i) => i < stepOrder.length - 1),
         }, isPerfect).then((unlocked) => {
             if (unlocked.length > 0) setNewRewards(unlocked);
         }).catch(console.error);
@@ -252,7 +283,7 @@ export default function LessonPage() {
                     </div>
 
                     <span className="text-white font-bold text-sm drop-shadow-sm">
-                        {stepIndex + 1}/{STEP_ORDER.length - 1}
+                        {stepIndex + 1}/{stepOrder.length - 1}
                     </span>
                 </header>
             )}
@@ -274,14 +305,23 @@ export default function LessonPage() {
                 {currentStep === "blend_tap" && (
                     <BlendTapStep words={lessonWords} onNext={goNext} />
                 )}
+                {currentStep === "magic_e" && (
+                    <MagicEStep words={lessonWords} onNext={goNext} />
+                )}
                 {currentStep === "decode_words" && (
                     <DecodeWordsStep words={lessonWords} onNext={goNext} addScore={addScore} />
+                )}
+                {currentStep === "word_family" && (
+                    <WordFamilyBuilder words={unit.words} onNext={goNext} />
                 )}
                 {currentStep === "say_check" && (
                     <SayCheckStep words={lessonWords} onNext={goNext} />
                 )}
                 {currentStep === "micro_reader" && (
                     <MicroReaderStep sentences={unit.microReading} sentencesKo={microReadingKoMap[unit.id]} onNext={goNext} />
+                )}
+                {currentStep === "story_reader" && (
+                    <StoryReaderStep unitId={unitId} onNext={goNext} />
                 )}
                 {currentStep === "exit_ticket" && (
                     <ExitTicketStep words={lessonWords} onNext={goNext} addScore={addScore} />

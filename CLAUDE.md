@@ -84,12 +84,25 @@ src/
 - Audio utility (audio.ts): TTS mp3 + SpeechSynthesis fallback + procedural SFX
 - Build verified: `npm run build` passes (Next.js 16.1.6, Turbopack)
 
-### ⬜ Remaining
-- **이미지 에셋 생성**: 300개 단어 일러스트 (SVG 또는 AI 생성)
-- **Capacitor 통합**: Android APK 패키징
-- **입모양(Viseme) 애니메이션**: SVG 벡터 스와핑 방식
-- **S2B 납품 문서**: 교사용 가이드, 개인정보처리방침, 서비스 설계서
-- **전체 플로우 QA**: 브라우저 테스트 녹화
+### 🚀 V2 Hybrid Execution (Current Focus)
+**Claude Code의 주 개발 영역은 Track B와 Track C입니다. Antigravity와 협업하여 병렬 진행합니다.**
+
+- **[Track A] UI/UX (Antigravity 주도)**
+  - 온보딩 3D Foxy & V3 TTS 인트로 (✅ 완료)
+  - 300개 단어 3D 이미지 일괄 생성 및 UI 배치 (🔄 스크립트 백그라운드 구동 중)
+  - 홈 화면 이중 언어(Bilingual) 인사말 및 Viseme(입모양) 정밀 동기화 (⏳ 대기)
+
+- **[Track B] Core Interaction (Claude Code & Antigravity 하이브리드)**
+  - `V2-1`: Magic e 전용 인터랙션 (CVC -> CVCe 드래그 퀴즈) (✅ 완료)
+  - `V2-2`: Decodable Stories 확장 (Micro-Reader를 5~8문장 만화 패널 뷰로 교체)
+  - `V2-3`: Word Family Builder 미니게임 (Rime 고정, Onset 버튼 조작 조합)
+  - `V2-11`: 발음 시각화 듀얼 뷰 (MouthVisualizer) 업그레이드 (`upgrade_guide.md` 참조)
+
+- **[Track C] Infra & Curriculum Expansion (중장기 목표)**
+  - `V2-4`: WebAssembly(Wasm) 기반 AI 발음 평가 엔진 (MFCC/DTW)
+  - `V2-5`: B2G 대시보드 연동 (Supabase, 익명 코드 매칭)
+  - `V2-6`: 주간/월간 리포트 및 취약 Phoneme 차트 생성
+  - `V2-7`: L3/L4 커리큘럼 무한 확장 (`textbook_data.json` 기반 자음군/이중모음 유닛 연동)
 
 ## DB Schema (Dexie v5)
 - `progress`: id, currentLevel, unlockedUnits[], completedUnits[], lastPlayedDate, onboardingCompleted, gradeLevel
