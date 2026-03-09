@@ -2,14 +2,61 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import {
-    ChevronLeft, Download, Printer, BarChart3,
-    Clock, Flame, BookOpen, TrendingUp
+    ChevronLeft, Download, FileDown, BarChart3,
+    Clock, Flame, BookOpen, TrendingUp, AlertTriangle
 } from "lucide-react";
 import {
-    gatherReportData, downloadCSV, printReport,
-    type OverallReport, type UnitReport
+    gatherReportData, downloadCSV, generatePDF,
+    type OverallReport, type UnitReport, type PhonemeWeakness, type WeeklyStats
 } from "@/lib/exportReport";
+
+// ─── Lazy-loaded Recharts (tree-shake friendly) ───
+const LazyBarChart = dynamic(() => import("recharts").then(m => {
+    const { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } = m;
+    return {
+        default: ({ data }: { data: PhonemeWeakness[] }) => (
+            <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
+                    <XAxis dataKey="displayLabel" tick={{ fontSize: 11, fontWeight: 700 }} interval={0} angle={-30} textAnchor="end" height={60} />
+                    <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} unit="%" />
+                    <Tooltip
+                        formatter={(value) => [`${value}%`, "취약률"]}
+                        labelFormatter={(label) => `음소: ${label}`}
+                    />
+                    <Bar dataKey="weaknessRate" radius={[6, 6, 0, 0]}>
+                        {data.map((entry, i) => (
+                            <Cell
+                                key={i}
+                                fill={entry.weaknessRate >= 60 ? "#ef4444" : entry.weaknessRate >= 30 ? "#f59e0b" : "#10b981"}
+                            />
+                        ))}
+                    </Bar>
+                </BarChart>
+            </ResponsiveContainer>
+        ),
+    };
+}), { ssr: false, loading: () => <div className="h-[250px] flex items-center justify-center text-slate-400 font-bold">차트 로딩...</div> });
+
+const LazyLineChart = dynamic(() => import("recharts").then(m => {
+    const { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } = m;
+    return {
+        default: ({ data }: { data: WeeklyStats[] }) => (
+            <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="weekLabel" tick={{ fontSize: 11, fontWeight: 700 }} />
+                    <YAxis yAxisId="left" tick={{ fontSize: 11 }} unit="분" />
+                    <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} unit="개" />
+                    <Tooltip />
+                    <Line yAxisId="left" type="monotone" dataKey="totalMinutes" stroke="#3b82f6" strokeWidth={3} name="학습 시간(분)" dot={{ r: 4 }} />
+                    <Line yAxisId="right" type="monotone" dataKey="wordsLearned" stroke="#10b981" strokeWidth={3} name="학습 단어" dot={{ r: 4 }} />
+                </LineChart>
+            </ResponsiveContainer>
+        ),
+    };
+}), { ssr: false, loading: () => <div className="h-[200px] flex items-center justify-center text-slate-400 font-bold">차트 로딩...</div> });
 
 export default function ReportPage() {
     const router = useRouter();
@@ -17,6 +64,7 @@ export default function ReportPage() {
     const [loading, setLoading] = useState(true);
     const [studentName, setStudentName] = useState("학생");
     const [showNameInput, setShowNameInput] = useState(false);
+    const [pdfLoading, setPdfLoading] = useState(false);
 
     useEffect(() => {
         const loadReport = async () => {
@@ -29,14 +77,15 @@ export default function ReportPage() {
             }
             setLoading(false);
         };
-        
+
         void loadReport();
     }, [studentName]);
+
     if (loading) {
         return (
             <main className="flex-1 flex items-center justify-center z-10 relative">
                 <div className="text-white font-bold text-xl animate-pulse">
-                    📊 리포트 생성 중...
+                    리포트 생성 중...
                 </div>
             </main>
         );
@@ -59,6 +108,16 @@ export default function ReportPage() {
     const overallPct = report.totalWords > 0
         ? Math.round((report.masteredWords / report.totalWords) * 100) : 0;
 
+    const handlePDF = async () => {
+        setPdfLoading(true);
+        try {
+            await generatePDF(report);
+        } catch (err) {
+            console.error("PDF generation failed:", err);
+        }
+        setPdfLoading(false);
+    };
+
     return (
         <main className="flex-1 flex flex-col relative z-10 print:bg-white print:text-black">
             {/* ─── Header ─── */}
@@ -70,7 +129,7 @@ export default function ReportPage() {
                     <ChevronLeft className="w-5 h-5 text-white" />
                 </button>
                 <h1 className="text-2xl font-black text-white drop-shadow-sm flex-1">
-                    📊 학습 리포트
+                    학습 리포트
                 </h1>
             </header>
 
@@ -83,9 +142,9 @@ export default function ReportPage() {
                         <div>
                             <button
                                 onClick={() => setShowNameInput(!showNameInput)}
-                                className="text-2xl font-black text-slate-800 dark:text-slate-100 hover:text-sky-600 transition-colors"
+                                className="text-2xl font-black text-slate-800 dark:text-slate-100 hover:text-sky-600 transition-colors print:text-black"
                             >
-                                {report.studentName} 👋
+                                {report.studentName}
                             </button>
                             <p className="text-slate-400 font-medium text-sm">{report.reportDate}</p>
                         </div>
@@ -141,6 +200,31 @@ export default function ReportPage() {
                     </div>
                 </div>
 
+                {/* ─── Phoneme Weakness Chart ─── */}
+                {report.phonemeWeaknesses.length > 0 && (
+                    <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600">
+                        <h2 className="text-lg font-black text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                            <AlertTriangle className="w-5 h-5 text-amber-500" />
+                            취약 음소 분석
+                        </h2>
+                        <p className="text-xs text-slate-400 font-medium mb-3">
+                            가장 어려워하는 소리를 집중 연습해 보세요!
+                        </p>
+                        <LazyBarChart data={report.phonemeWeaknesses} />
+                    </div>
+                )}
+
+                {/* ─── Weekly Study Chart ─── */}
+                {report.weeklyStats.some(w => w.totalMinutes > 0) && (
+                    <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600">
+                        <h2 className="text-lg font-black text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                            <TrendingUp className="w-5 h-5 text-blue-500" />
+                            주간 학습 추이
+                        </h2>
+                        <LazyLineChart data={report.weeklyStats} />
+                    </div>
+                )}
+
                 {/* ─── Unit Progress Grid ─── */}
                 <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600">
                     <h2 className="text-lg font-black text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
@@ -174,7 +258,7 @@ export default function ReportPage() {
 
                 {/* ─── Summary Stats (print-only) ─── */}
                 <div className="hidden print:block bg-white p-6 rounded-xl border">
-                    <h2 className="text-lg font-bold mb-2">📊 종합 통계</h2>
+                    <h2 className="text-lg font-bold mb-2">종합 통계</h2>
                     <table className="w-full text-sm">
                         <tbody>
                             <tr><td className="py-1 font-medium">총 학습 횟수</td><td className="text-right font-bold">{report.totalSessions}회</td></tr>
@@ -195,11 +279,12 @@ export default function ReportPage() {
                         CSV 다운로드
                     </button>
                     <button
-                        onClick={() => printReport()}
-                        className="flex-1 bg-indigo-400 text-white font-black py-4 rounded-2xl shadow-[0_6px_0_#4338ca] active:shadow-none active:translate-y-[6px] transition-all flex items-center justify-center gap-2"
+                        onClick={handlePDF}
+                        disabled={pdfLoading}
+                        className="flex-1 bg-indigo-400 text-white font-black py-4 rounded-2xl shadow-[0_6px_0_#4338ca] active:shadow-none active:translate-y-[6px] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                     >
-                        <Printer className="w-5 h-5" />
-                        PDF 인쇄
+                        <FileDown className="w-5 h-5" />
+                        {pdfLoading ? "생성 중..." : "PDF 다운로드"}
                     </button>
                 </div>
             </div>
@@ -238,7 +323,7 @@ function UnitProgressBar({ unit }: { unit: UnitReport }) {
                 <span className="text-sm font-bold text-slate-700 dark:text-slate-200">{unit.unitTitle}</span>
                 <span className="text-xs font-bold text-slate-400">
                     {mastered}/{unit.totalWords}
-                    {unit.completionRate >= 80 && <span className="ml-1">⭐</span>}
+                    {unit.completionRate >= 80 && <span className="ml-1">*</span>}
                 </span>
             </div>
             <div className="h-4 bg-slate-100 rounded-full overflow-hidden flex">

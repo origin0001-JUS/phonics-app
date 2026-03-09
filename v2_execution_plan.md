@@ -284,17 +284,17 @@ gantt
 
 #### V2-5: B2G 대시보드 & 클라우드 동기화
 - [ ] **[Antigravity]** Supabase 프로젝트 초기화 및 DB 스키마(익명 학생 `student_profile`, `lesson_logs`) 설정, 엣지 펑션 설계
-- [ ] **[Claude Code]** `src/lib/supabaseClient.ts` 연동 (Client Key 사용)
-- [ ] **[Claude Code]** 선생님용 URL(`src/app/teacher/page.tsx`) 및 익명 코드 발급 메커니즘 생성
-- [ ] **[Claude Code]** `src/lib/lessonService.ts`에 클라우드 Sync 로직 추가: 학생이 로컬 IndexedDB에 저장한 학습 결과를 주기적으로(혹은 레슨 완료 시) Supabase로 백그라운드 전송
-- [ ] **[Claude Code]** 대시보드 화면에 `recharts` 라이브러리를 활용해 반 전체의 진도율 및 정답률 시각화
+- [x] **[Claude Code]** `src/lib/supabaseClient.ts` 연동 (Client Key 사용)
+- [x] **[Claude Code]** 선생님용 URL(`src/app/teacher/page.tsx`) 및 익명 코드 발급 메커니즘 생성
+- [x] **[Claude Code]** `src/lib/lessonService.ts`에 클라우드 Sync 로직 추가: 학생이 로컬 IndexedDB에 저장한 학습 결과를 주기적으로(혹은 레슨 완료 시) Supabase로 백그라운드 전송
+- [x] **[Claude Code]** 대시보드 화면에 `recharts` 라이브러리를 활용해 반 전체의 진도율 및 정답률 시각화
 
 #### V2-6: 리포트 고도화 & 내보내기
-- [ ] **[Claude Code]** `src/app/report/page.tsx`에 취약 음소(Phoneme) 분석 로직 및 시각화 차트 추가 (가장 많이 틀린 모음/자음 랭킹)
-- [ ] **[Claude Code]** `jspdf` 및 `html2canvas` 패키지 설치 및 연동하여 "리포트 PDF로 다운로드" 버튼 동작 구현
-- [ ] **[Claude Code]** "알림장용 CSV 추출" 기능 완성 및 CSV 헤더/포맷 최적화
+- [x] **[Claude Code]** `src/app/report/page.tsx`에 취약 음소(Phoneme) 분석 로직 및 시각화 차트 추가 (가장 많이 틀린 모음/자음 랭킹)
+- [x] **[Claude Code]** `jspdf` 및 `html2canvas` 패키지 설치 및 연동하여 "리포트 PDF로 다운로드" 버튼 동작 구현
+- [x] **[Claude Code]** "알림장용 CSV 추출" 기능 완성 및 CSV 헤더/포맷 최적화
 
 #### V2-7: L3/L4 커리큘럼 데이터 연동
-- [ ] **[Claude Code]** `phonics300_upgrade_data.json` 내부의 `textbook_categories` 및 L3, L4 단어 데이터 리스트 확인
-- [ ] **[Claude Code]** 해당 단어 170개 쌍을 구문 분석하여 `curriculum.ts`에 Unit 25~37 (혹은 기존 유닛 확장) 형태로 매핑 및 병합 스크립트 실행
-- [ ] **[Claude Code]** 유닛 맵(`src/app/units/page.tsx`)에 새로운 L3/L4 카드들이 올바른 잠금(Lock) 상태와 조건 하에 렌더링되는지 확인
+- [x] **[Claude Code]** `phonics300_upgrade_data.json` 내부의 `textbook_categories` 및 L3, L4 단어 데이터 리스트 확인
+- [x] **[Claude Code]** 해당 단어 170개 쌍을 구문 분석하여 `curriculum.ts`에 Unit 25~37 (혹은 기존 유닛 확장) 형태로 매핑 및 병합 스크립트 실행
+- [x] **[Claude Code]** 유닛 맵(`src/app/units/page.tsx`)에 새로운 L3/L4 카드들이 올바른 잠금(Lock) 상태와 조건 하에 렌더링되는지 확인

@@ -100,9 +100,9 @@ src/
 
 - **[Track C] Infra & Curriculum Expansion (중장기 목표)**
   - `V2-4`: WebAssembly(Wasm) 기반 AI 발음 평가 엔진 (MFCC/DTW) (✅ 완료)
-  - `V2-5`: B2G 대시보드 연동 (Supabase, 익명 코드 매칭)
-  - `V2-6`: 주간/월간 리포트 및 취약 Phoneme 차트 생성
-  - `V2-7`: L3/L4 커리큘럼 무한 확장 (`textbook_data.json` 기반 자음군/이중모음 유닛 연동)
+  - `V2-5`: B2G 대시보드 연동 (Supabase, 익명 코드 매칭) (✅ 완료)
+  - `V2-6`: 주간/월간 리포트 및 취약 Phoneme 차트 생성 (✅ 완료)
+  - `V2-7`: L3/L4 커리큘럼 무한 확장 (`textbook_data.json` 기반 자음군/이중모음 유닛 연동) (✅ 완료)
 
 ## DB Schema (Dexie v5)
 - `progress`: id, currentLevel, unlockedUnits[], completedUnits[], lastPlayedDate, onboardingCompleted, gradeLevel

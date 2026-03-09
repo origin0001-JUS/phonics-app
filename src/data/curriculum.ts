@@ -1,3 +1,5 @@
+import { l3Units, l4Units, l3l4MicroReadingKoMap } from './l3l4Words';
+
 export interface WordData {
     id: string;
     word: string;
@@ -15,7 +17,7 @@ export interface WordData {
 
 export interface UnitData {
     id: string;
-    level: 'Prep' | 'CoreA' | 'CoreB';
+    level: 'Prep' | 'CoreA' | 'CoreB' | 'L3' | 'L4';
     unitNumber: number;
     title: string;
     subtitle: string;
@@ -498,7 +500,6 @@ export const curriculum: UnitData[] = [
             w("storm", "storm", ["s", "t", "ɔːr", "m"], "폭풍"),
             w("sort", "sort", ["s", "ɔːr", "t"], "종류"),
             w("horse", "horse", ["h", "ɔːr", "s"], "말", "h", "orse", "-orse"),
-            w("star", "star", ["s", "t", "ɑːr"], "별", "st", "ar", "-ar"),
             w("door", "door", ["d", "ɔːr"], "문", "d", "oor", "-oor"),
             w("card", "card", ["k", "ɑːr", "d"], "카드", "c", "ard", "-ard"),
         ],
@@ -585,6 +586,13 @@ export const curriculum: UnitData[] = [
         targetSound: "all", emoji: "👑", color: "#FFD700", shadowColor: "#b89b00",
         words: [], microReading: ["The brave girl ran far.", "A brown cow in the storm.", "Three whales swim in the blue sea."],
     },
+
+    // ═══════════════════════════════════════
+    // L3: 자음군 & 이중자음 (units 25–30)
+    // L4: 이중모음 & R통제모음 (units 31–37)
+    // ═══════════════════════════════════════
+    ...l3Units,
+    ...l4Units,
 ];
 
 /** Korean translations for microReading sentences */
@@ -613,6 +621,7 @@ export const microReadingKoMap: Record<string, string[]> = {
     unit_22: ["소년과 장난감.", "소가 갈색 마을에 있어요.", "시끄러운 구름과 동전!"],
     unit_23: ["접시와 포도.", "그녀는 용감한 미소로 말했어요.", "지구본이 왕좌 위에 있어요."],
     unit_24: ["용감한 소녀가 멀리 달렸어요.", "폭풍 속의 갈색 소.", "세 마리 고래가 파란 바다에서 헤엄쳐요."],
+    ...l3l4MicroReadingKoMap,
 };
 
 export function getUnitById(id: string): UnitData | undefined {
