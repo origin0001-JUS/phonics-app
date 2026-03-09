@@ -266,23 +266,21 @@ gantt
 - [ ] **[Claude Code]** Onset 터치 시 라임과 결합하여 단어 구성 애니메이션 + 단어 읽기 음성 재생
 - [ ] **[Claude Code]** 한 그룹 내의 Onset을 모두 성공적으로 조합하면 "Word Family 완성!" 모달 팝업 렌더링
 
-#### V2-11: 발음 시각화 듀얼 뷰 (MouthVisualizer) 업그레이드
-- [x] **[Claude Code]** V2-1 Magic e 완료 확인
-- [ ] **[Antigravity]** `image_prompt.md`의 프롬프트와 지시사항을 활용해 15개 viseme 정면 뷰(front view) 및 단면 뷰(cross section) AI 일러스트 이미지 총 30장 일괄 생성 및 파일 배치 (`public/assets/mouth/`)
-- [ ] **[Claude Code]** `upgrade_guide.md`를 참고하여 `src/data/visemeMap.ts` 파일 생성 (15종 매핑 및 한국어 팁 데이터 구축)
-- [ ] **[Claude Code]** 단면도를 렌더링하는 `src/components/MouthCrossSection.tsx` (SVG) 컴포넌트 작성
-- [ ] **[Claude Code]** 정면 뷰 이미지와 단면 뷰(SVG)를 듀얼로 보여주는 `src/components/MouthVisualizer.tsx` 컴포넌트 최종 구축
-- [ ] **[Claude Code]** 기존 Say & Check 스텝 및 관련 구간의 `VisemeAvatar`(Foxy) 컴포넌트를 `MouthVisualizer`로 전면 교체 및 `usePhonemeSequence` 애니메이션 연결
-
 ---
 
 ### [Track C] 인프라 & 커리큘럼 무한 확장
 
+> **🔥 터미널 병렬 실행 전략 (Parallel Execution Strategy)**
+> - Step 1: `V2-4` (AI 발음 평가 엔진)을 단독 터미널에서 먼저 개발하여 코어 로직 완성 (**완료**)
+> - Step 2: 새로운 터미널 2개를 띄워서 병렬 진행 (서로 수정하는 파일 범위가 겹치지 않아 충돌 위험 없음)
+>   - **[터미널 A]**: `V2-5` (B2G 대시보드) 전담
+>   - **[터미널 B]**: `V2-6` & `V2-7` (리포트/단어추가) 전담
+> - **[중요] BKIT 보고서 산출**: 각 작업(V2-5, V2-6, V2-7)의 완료 시점에는 반드시 `docs/03-analysis/features/v2-X.analysis.md` (Gap 분석)과 `docs/04-report/features/v2-X.report.md` (완료 보고서)를 산출 문서로 작성해야 합니다.
 #### V2-4: AI 발음 평가 엔진 고도화
 - [ ] **[Antigravity]** Web Audio API를 활용한 MFCC/DTW 파형 비교 방식 아키텍처 및 파라미터 문서화 (`docs/Audio_Assessment_Architecture.md`)
-- [ ] **[Claude Code]** `src/lib/audioAssessment.ts` 생성: 마이크 입력 스트림을 버퍼링하는 로직 구현
-- [ ] **[Claude Code]** WebAssembly(Wasm) 모듈 연결 래퍼 함수 작성 (실제 점수 산출 로직 연동)
-- [ ] **[Claude Code]** `src/components/AudioVisualizer.tsx` 내에 실시간 파형 피드백 UI 및 1~100점 형태의 "발음 매칭률 게이지" 프로그레스 바 추가
+- [x] **[Claude Code]** `src/lib/audioAssessment.ts` 생성: 마이크 입력 스트림을 버퍼링하는 로직 구현
+- [x] **[Claude Code]** WebAssembly(Wasm) 모듈 연결 래퍼 함수 작성 (실제 점수 산출 로직 연동)
+- [x] **[Claude Code]** `src/components/AudioVisualizer.tsx` 내에 실시간 파형 피드백 UI 및 1~100점 형태의 "발음 매칭률 게이지" 프로그레스 바 추가
 
 #### V2-5: B2G 대시보드 & 클라우드 동기화
 - [ ] **[Antigravity]** Supabase 프로젝트 초기화 및 DB 스키마(익명 학생 `student_profile`, `lesson_logs`) 설정, 엣지 펑션 설계

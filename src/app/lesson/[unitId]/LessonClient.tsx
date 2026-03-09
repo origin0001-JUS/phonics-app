@@ -11,7 +11,7 @@ import {
     ChevronLeft, Volume2, ArrowRight, Check,
     Mic, BookOpen, Star, Trophy, CheckCircle, XCircle
 } from "lucide-react";
-import VisemeAvatar from "./VisemeAvatar";
+import MouthVisualizer, { usePhonemeSequence } from "./MouthVisualizer";
 import MagicEStep from "./MagicEStep";
 import StoryReaderStep from "./StoryReaderStep";
 import WordFamilyBuilder from "./WordFamilyBuilder";
@@ -796,6 +796,7 @@ function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void
     const [sttAvailable] = useState(() => isSTTSupported());
     const [isSpeaking, setIsSpeaking] = useState(false);
     const word = words[idx];
+    const currentPhoneme = usePhonemeSequence(word.phonemes, isSpeaking);
 
     const handleListen = () => {
         setIsSpeaking(true);
@@ -888,8 +889,12 @@ function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void
                 )}
             </div>
 
-            {/* Viseme Avatar - positioned below the card */}
-            <VisemeAvatar isSpeaking={isSpeaking} />
+            {/* Mouth Visualizer - dual view (front + cross-section) */}
+            <MouthVisualizer
+                currentPhoneme={currentPhoneme}
+                currentWord={word.word}
+                isSpeaking={isSpeaking}
+            />
 
             <p className="text-white/70 font-bold text-sm">{idx + 1} / {Math.min(words.length, 4)}</p>
 
