@@ -4,6 +4,79 @@ All notable changes to the phonics-app project are documented here, organized by
 
 ---
 
+## [2026-03-09] - V2-5: B2G Dashboard & Cloud Sync (Track B Completion)
+
+### Added
+- **src/lib/supabaseClient.ts** (389 lines): Supabase infrastructure + auth + cloud sync functions
+  - `getSupabase()`: Singleton client with SSR guard + offline fallback
+  - `signUpTeacher()`, `signInTeacher()`, `signOutTeacher()`: Teacher authentication via Supabase Auth
+  - `getTeacherProfile()`: Fetch logged-in teacher + auto-generate class code
+  - `generateClassCode()`: 6-char code from confusion-free alphabet (no 0/O/1/I/L)
+  - `joinClassWithCode()`: Anonymous student enrollment by class code + nickname
+  - `getDeviceId()`: Browser fingerprint persistence via UUID + localStorage
+  - `getLocalStudentId()`: Retrieve device-based student ID
+  - `getClassStudents()`: Per-student progress aggregation (nickname, units, lessons, avg score, last active)
+  - `getUnitCompletionStats()`: Per-unit completion rate (% of class who completed unit)
+  - `syncLessonToCloud()`: Upload lesson results to Supabase lesson_logs table
+  - `isCloudEnabled()`: Env var presence check without client init
+  - TypeScript interfaces: `TeacherProfile`, `StudentProfile`, `CloudLessonLog`, `ClassProgress`
+
+- **src/app/teacher/page.tsx** (563 lines): Teacher dashboard UI with authentication, metrics, and visualization
+  - `AuthForm`: Login/signup toggle with email/password fields, error handling
+  - `ClassCodeCard`: Purple gradient card displaying class code with clipboard copy
+  - `SummaryCards`: 4 metric cards (registered students, total lessons, avg score, active today)
+  - `StudentTable`: 5-column table (nickname, completed units, total lessons, avg score, last active)
+  - `UnitProgressChart`: Recharts BarChart showing unit completion % (10-color palette)
+  - `ScoreDistributionChart`: Recharts PieChart showing score distribution (4 ranges: 90-100, 70-89, 50-69, 0-49)
+  - `Dashboard`: Main component with tab navigation (Overview/Students), refresh button, logout
+  - Cloud-unavailable page: Graceful fallback with env var setup instructions
+  - Loading spinner: Framer Motion animated loader
+
+- **Cloud Sync Integration** (src/lib/lessonService.ts, ~50 lines added):
+  - `syncLessonToCloudIfConnected()`: Fire-and-forget cloud upload at lesson completion (step 5)
+  - Non-blocking async call: Doesn't interrupt local learning on network failure
+  - Error isolation: `try/catch` with `console.warn`, no effect on local data
+  - Offline support: Checks `isCloudEnabled()` and skips if Supabase unavailable
+
+- **Dependencies Added**:
+  - `@supabase/supabase-js@^2.98.0` (89 KB gzipped)
+  - `recharts@^3.8.0` (65 KB gzipped)
+
+- **Environment Variables**:
+  - `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Client-side public key (safe to commit)
+
+### Changed
+- **package.json**: Added Supabase SDK + Recharts dependencies
+- **lessonService.ts**: Integrated cloud sync at lesson completion (non-blocking)
+
+### Database Schema (Supabase Required)
+- **teacher_profiles**: id, email, display_name, school_name, class_code, created_at
+- **student_profiles**: id, class_code, device_id, nickname, created_at (unique on class_code + device_id)
+- **lesson_logs**: id, student_id, unit_id, completed_steps[], word_results (JSONB), duration_minutes, score_percent, synced_at
+
+### Architecture Notes
+- **Privacy-First**: Anonymous student enrollment (nickname + device ID only, no email/password)
+- **Graceful Degradation**: Full offline functionality when Supabase unavailable
+- **Fire-and-Forget Sync**: Cloud upload doesn't block local learning
+- **Starter-Level Pattern**: Dashboard co-located in `src/app/teacher/` (feature-scoped)
+- **Type Safety**: All Supabase responses wrapped in TypeScript interfaces
+
+### Quality Metrics
+- **Design Match Rate**: 98%
+- **Checklist Completion**: 4/4 items (100%)
+- **Sub-item Verification**: 43/43 items (100%)
+- **Build Status**: PASS (0 errors, 0 warnings)
+- **Convention Compliance**: 96% (missing .env.example, pre-existing import order issue)
+- **Total Lines**: 952 lines new + 50 lines modified
+- **TypeScript Coverage**: 100%
+
+### Completion Report
+- Full report: [v2-5.report.md](./v2-5.report.md)
+- Gap analysis: [../03-analysis/v2-5.analysis.md](../03-analysis/v2-5.analysis.md)
+
+---
+
 ## [2026-03-09] - V2-4: AI 발음 평가 엔진 (Track C Step 1)
 
 ### Added

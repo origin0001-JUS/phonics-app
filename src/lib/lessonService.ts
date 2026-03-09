@@ -2,6 +2,7 @@ import { db, type VocabularyCard } from './db';
 import { calculateNextReview, createNewCard, type SRSCard, type Rating } from './srs';
 import { curriculum } from '@/data/curriculum';
 import { REWARDS } from '@/data/rewards';
+import { syncLessonToCloud, getLocalStudentId, isCloudEnabled, type CloudLessonLog } from './supabaseClient';
 
 export interface WordResult {
     wordId: string;
@@ -197,5 +198,56 @@ export async function saveLessonResults(outcome: LessonOutcome, isPerfectLesson 
 
     // 4. Check and unlock rewards
     const newlyUnlocked = await checkAndUnlockRewards(isPerfectLesson);
+
+    // 5. Cloud sync (background — non-blocking)
+    syncLessonToCloudIfConnected(outcome);
+
     return newlyUnlocked;
+}
+
+// ─── Cloud Sync (V2-5) ───
+
+/**
+ * 레슨 결과를 Supabase에 백그라운드 전송.
+ * 클라우드 미연결 시 조용히 스킵. 실패해도 로컬 데이터에 영향 없음.
+ */
+async function syncLessonToCloudIfConnected(outcome: LessonOutcome): Promise<void> {
+    if (!isCloudEnabled()) return;
+
+    const studentId = getLocalStudentId();
+    if (!studentId) return; // 연결코드 미입력 — 클라우드 동기화 대상 아님
+
+    try {
+        const wordResultsObj: Record<string, { attempts: number; correct: number }> = {};
+        let totalAttempts = 0;
+        let totalCorrect = 0;
+
+        for (const [wordId, result] of outcome.wordResults) {
+            wordResultsObj[wordId] = {
+                attempts: result.attempts,
+                correct: result.correct,
+            };
+            totalAttempts += result.attempts;
+            totalCorrect += result.correct;
+        }
+
+        const scorePercent = totalAttempts > 0
+            ? Math.round((totalCorrect / totalAttempts) * 100)
+            : 100; // 퀴즈 없는 레슨은 100%로 기록
+
+        const cloudLog: CloudLessonLog = {
+            student_id: studentId,
+            unit_id: outcome.unitId,
+            completed_steps: outcome.completedSteps,
+            word_results: wordResultsObj,
+            duration_minutes: outcome.durationMinutes,
+            score_percent: scorePercent,
+            synced_at: new Date().toISOString(),
+        };
+
+        await syncLessonToCloud(cloudLog);
+    } catch (err) {
+        // 동기화 실패는 무시 — 로컬 학습에 영향 없음
+        console.warn('☁️ Cloud sync skipped:', err);
+    }
 }
