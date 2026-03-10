@@ -258,14 +258,14 @@ gantt
 - [x] **[Claude Code]** `src/app/onboarding/page.tsx` 내부 텍스트 수정 및 ElevenLabs V3(Solo) 통합 완료
 
 #### V2-9: 시각적 단어 학습 (Word Images) UI 연동
-- [x] **[Antigravity]** 300단어에 대한 3D 이미지 에셋 생성 스크립트 작성 및 백그라운드 구동 중 (`public/assets/images/` 적재 중)
-- [ ] **[Claude Code]** `src/app/lesson/[unitId]/LessonClient.tsx`의 `BlendTapStep` 등 단어 의미를 배우는 핵심 구간에 생성된 이미지를 부드럽게 팝업(Scale-in)되도록 UI 개편 (Framer Motion 활용)
-- [ ] **[Claude Code]** 이미지가 없을 경우(예기치 못한 404)를 대비한 Fallback UI(예: 기존 글자만 표시) 안전장치 로직 작성
+- [x] **[Antigravity]** 300단어에 대한 3D 이미지 에셋 생성 스크립트 작성 및 백그라운드 구동 완료 (`public/assets/images/` 적재 완료)
+- [x] **[Claude Code]** `src/app/lesson/[unitId]/LessonClient.tsx`의 `BlendTapStep` 등 단어 의미를 배우는 핵심 구간에 생성된 이미지를 부드럽게 팝업(Scale-in)되도록 UI 개편 (Framer Motion 활용)
+- [x] **[Claude Code]** 이미지가 없을 경우(예기치 못한 404)를 대비한 Fallback UI(예: 기존 글자만 표시) 안전장치 로직 작성
 
 #### V2-8: 홈 화면 고도화 & 이중 언어 음성 (Bilingual Narration)
-- [ ] **[Antigravity]** Foxy 캐릭터의 Idle, Talking 상태 애니메이션 에셋(SVG) 교체 준비
-- [ ] **[Claude Code]** `src/app/page.tsx` 및 관련 오디오 훅을 수정하여 영어 인사말 직후 한국어 인사말이 지연 없이 재생되는 오디오 시퀀서(Stitching 또는 onEnded 체이닝) 로직 구현
-- [ ] **[Claude Code]** 음성 재생 상태(재생 중/대기 중)에 따라 Foxy 애니메이션 상태를 제어하는 Zustand 또는 로컬 State 연동 로직 작성
+- [x] **[Antigravity]** Foxy 캐릭터의 Idle, Talking 상태 애니메이션 에셋(SVG) 교체 완료 (`public/assets/foxy-idle.svg`, `foxy-talking.svg`)
+- [x] **[Claude Code]** `src/app/page.tsx` 및 관련 오디오 훅을 수정하여 영어 인사말 직후 한국어 인사말이 지연 없이 재생되는 오디오 시퀀서 로직 구현
+- [x] **[Claude Code]** 음성 재생 상태(재생 중/대기 중)에 따라 Foxy 애니메이션 상태를 제어하는 Zustand 또는 로컬 State 연동 로직 작성
 
 ---
 

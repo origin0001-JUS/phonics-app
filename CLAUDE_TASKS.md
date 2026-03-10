@@ -307,6 +307,65 @@ npm run build
 
 ---
 
+## Round 14: AI 립싱크 영상 재생 통합 (하이브리드 R&R) [진행 대기]
+
+> 프로젝트 루트의 `AI_avatar_guide.md.md` 파일을 참고 자료로 사용하세요.
+> 영상 파일(MP4)은 `public/assets/video/`에 들어갈 예정이지만 **아직 없습니다**.
+> 따라서 영상이 없을 때 기존 SVG로 100% 정상 동작하는 폴백 로직이 필수입니다.
+
+### Task 14-A: representativeWords.ts 신규 생성 (Claude Code)
+**설명**:
+- `src/data/representativeWords.ts` 파일을 새로 만드세요.
+- `AI_avatar_guide.md.md` 파일의 `src/data/representativeWords.ts` 코드 블록을 **그대로** 사용하세요.
+- 포함 내용:
+  - `representativeWords`: unit_01~unit_37 전체 대표 단어 맵 (Record<string, string[]>)
+  - `allVideoWords`: Set으로 중복 제거된 전체 대표 단어
+  - `hasLipSyncVideo(word: string): boolean`
+  - `getLipSyncVideoPath(word: string): string | null` → `/assets/video/{word}.mp4`
+  - `getSoundFocusVideoPath(unitId: string): string | null` → `/assets/video/sound_XX.mp4`
+
+### Task 14-B: MouthVisualizer.tsx 비디오 레이어 추가 (Claude Code)
+**설명**:
+- `src/app/lesson/[unitId]/MouthVisualizer.tsx`를 수정하세요.
+- 상단에 `import { getLipSyncVideoPath } from '@/data/representativeWords';` 추가
+- `MouthVisualizer` 컴포넌트 내부에서:
+  1. `const videoPath = currentWord ? getLipSyncVideoPath(currentWord) : null;` 계산
+  2. `const [videoError, setVideoError] = useState(false);` 상태 추가
+  3. `currentWord`가 바뀔 때마다 `setVideoError(false)` 리셋하는 `useEffect` 추가
+  4. 프론트 뷰 컨테이너(Line 135~141) 내부를 조건부 렌더링으로 교체:
+     - `videoPath && isSpeaking && !videoError` 이면 → `<video src={videoPath} autoPlay playsInline muted={false} className="w-full h-full object-cover rounded-2xl" onError={() => setVideoError(true)} />` 재생
+     - 그 외 → 기존 `<FrontViewPlaceholder viseme={viseme} isSpeaking={isSpeaking} />` 유지
+- **기존 MouthCrossSection(단면도)은 영상 옆에 그대로 유지**하세요. 절대 제거하지 마세요.
+
+### Task 14-C: LessonClient.tsx에 MouthVisualizer 삽입 (Claude Code)
+**설명**:
+- `src/app/lesson/[unitId]/LessonClient.tsx`를 수정하세요.
+- 상단 import에 `import { getSoundFocusVideoPath } from '@/data/representativeWords';` 추가
+
+**sound_focus 스텝 수정:**
+- `SoundFocusStep` 컴포넌트 내부(퀴즈 전 메인 화면)에서 소리 소개 영상을 추가하세요.
+- `getSoundFocusVideoPath(unit.id)`가 null이 아니면:
+  - `<video>` 태그로 재생 (autoPlay, playsInline, loop, className="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg")
+  - `onError` 시 해당 `<video>`를 숨기는 폴백 처리
+- 영상이 null이면 기존 UI 그대로 유지
+
+**blend_tap 스텝 수정:**
+- `BlendTapStep` 컴포넌트에서 현재 단어 표시 영역 근처(예: 타일들 위)에 `<MouthVisualizer currentWord={word.word} currentPhoneme={...} isSpeaking={...} compact />` 삽입
+- 대표 단어이면 자동으로 영상이 나오고, 아니면 기존 SVG가 표시됩니다.
+
+**say_check 스텝:**
+- 이미 MouthVisualizer를 사용 중이므로 `currentWord` prop이 전달되고 있는지만 확인하세요. 전달되고 있다면 자동으로 영상이 적용됩니다.
+
+**변경하지 않을 스텝:**
+- magic_e, decode_words, word_family, micro_reader, story_reader, exit_ticket → 아바타 추가 금지
+
+```bash
+npm run build
+```
+빌드 에러 0이면 14라운드 완료.
+
+---
+
 ## ~~Round 4: Capacitor Android 패키징 (Round 3은 Antigravity가 수행)~~
 
 ### Task 4-A: Capacitor 설치 및 초기화

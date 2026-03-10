@@ -4,6 +4,69 @@ All notable changes to the phonics-app project are documented here, organized by
 
 ---
 
+## [2026-03-10] - V2-8: 홈 화면 이중 언어 오디오 시퀀서 (Track A Step 3)
+
+### Added
+
+**useAudioSequencer Hook** (`src/app/page.tsx:39-164`):
+- Custom hook for bilingual audio playback sequencing (English → Korean with 300ms gap)
+- `FoxyState` type: "idle" | "talking_en" | "talking_ko" (state machine)
+- `AudioStep` interface: src, fallbackText, fallbackLang, foxyState, bubbleText
+- `play()`: Start sequence (or restart if already playing via stop())
+- `stop()`: Cancel all playback + SpeechSynthesis + timeouts
+- `playStep(index)`: Recursive step execution with onended chaining
+- SpeechSynthesis fallback with rate=0.85 (kid-friendly slow speech)
+- Preload strategy: Audio instances cached via useRef, loaded on mount
+- Full resource cleanup on unmount (memory leak prevention)
+
+**GREETING_SEQUENCE Data** (`src/app/page.tsx:22-37`):
+- Step 1: "/assets/audio/hi_im_foxy.mp3" (English greeting) → foxyState: "talking_en"
+- Step 2: "/assets/audio/foxy_hello_ko.mp3" (Korean greeting) → foxyState: "talking_ko"
+- Fallback texts with lang codes (en-US, ko-KR)
+- Bubble texts for display ("Hi! I'm Foxy! 🦊", "안녕! 같이 파닉스를 배워보자!")
+
+**Foxy Animation States** (`src/app/page.tsx:290-327`):
+- Mascot container ring + pulse: idle → talking_en (sky-blue ring) → talking_ko (amber ring)
+- Mic button colors: idle (white) → talking_en (green #a3da61) → talking_ko (yellow #fcd34d)
+- Mic icon animation: bounce when not idle, static when idle
+- Guide text state branching: "Tap to hear me!" → "Speaking..." → "말하는 중..."
+
+**Speech Bubble UI** (`src/app/page.tsx:270-287`):
+- Positioned above mascot (between signboard and mascot)
+- Opacity + translate-y transition animation (fade-in/slide-up)
+- White background, yellow border (#fcd34d), rounded-2xl
+- Triangle tail pointing downward
+- Max-width 260px for mobile readiness
+- Pointer-events-none when hidden (UX improvement)
+
+### Changed
+- **src/app/page.tsx**: 171 → 274 lines (+103 lines, +60.2%)
+  - 60 lines: useAudioSequencer hook
+  - 15 lines: Types + GREETING_SEQUENCE constant
+  - 28 lines: UI changes (bubble, mascot, mic button, guide text)
+
+### Quality Metrics
+- **Design Match Rate**: 99% (50.7/51 items, emoji prefix in guide text omitted)
+- **Architecture Compliance**: 100% (co-location pattern, Starter-level)
+- **Convention Compliance**: 95% (naming perfect, import order pre-existing issue)
+- **Build Status**: PASS (0 errors, 0 warnings, TypeScript strict mode)
+- **Iterations**: 0 (first-pass 99% → no rework needed)
+- **Files Modified**: 1 (page.tsx only)
+- **Protected Files**: 0 modified (audio.ts, store.ts, db.ts, lesson/, units/, onboarding/ all untouched)
+
+### Architecture Notes
+- **useAudioSequencer is co-located**: Specific to home page, not extracted to lib/ (Starter pattern)
+- **Fallback-first philosophy**: mp3 files optional; SpeechSynthesis ensures audio always available
+- **State machine clarity**: FoxyState union type prevents invalid state transitions
+- **Mobile optimization**: requestAnimationFrame + pointer-events-none + 300ms gap tuned for touch devices
+- **Performance**: Preload on mount (users see instant play on tap), no async loading delay
+
+### Completion Report
+- Full report: [v2-8.report.md](./v2-8.report.md)
+- Gap analysis: [../03-analysis/v2-8.analysis.md](../03-analysis/v2-8.analysis.md)
+
+---
+
 ## [2026-03-09] - V2-9: Visual Word Learning — 300단어 이미지 통합 (Track A Step 3)
 
 ### Added

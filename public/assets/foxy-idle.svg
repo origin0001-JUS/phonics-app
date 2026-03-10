@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <radialGradient id="fur" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#FF8C42"/>
+      <stop offset="100%" stop-color="#E86A17"/>
+    </radialGradient>
+    <radialGradient id="cheek" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFB3B3" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#FFB3B3" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Body -->
+  <ellipse cx="100" cy="155" rx="45" ry="30" fill="#FF8C42"/>
+  <!-- Scarf -->
+  <path d="M60,130 Q100,145 140,130 Q140,148 100,155 Q60,148 60,130Z" fill="#4ECDC4"/>
+  <circle cx="90" cy="142" r="4" fill="#45B7AA"/>
+  <circle cx="110" cy="142" r="4" fill="#45B7AA"/>
+  <!-- Head -->
+  <ellipse cx="100" cy="90" rx="42" ry="38" fill="url(#fur)"/>
+  <!-- Ears -->
+  <path d="M62,65 L50,25 L78,55Z" fill="#FF8C42" stroke="#E86A17" stroke-width="1"/>
+  <path d="M138,65 L150,25 L122,55Z" fill="#FF8C42" stroke="#E86A17" stroke-width="1"/>
+  <path d="M65,60 L55,30 L77,54Z" fill="#FFD4A8"/>
+  <path d="M135,60 L145,30 L123,54Z" fill="#FFD4A8"/>
+  <!-- Face patch -->
+  <ellipse cx="100" cy="100" rx="28" ry="22" fill="#FFD4A8"/>
+  <!-- Eyes -->
+  <ellipse cx="82" cy="82" rx="7" ry="8" fill="white"/>
+  <ellipse cx="118" cy="82" rx="7" ry="8" fill="white"/>
+  <circle cx="84" cy="82" r="4" fill="#2D1B00"/>
+  <circle cx="120" cy="82" r="4" fill="#2D1B00"/>
+  <circle cx="85.5" cy="80.5" r="1.5" fill="white"/>
+  <circle cx="121.5" cy="80.5" r="1.5" fill="white"/>
+  <!-- Nose -->
+  <ellipse cx="100" cy="95" rx="5" ry="3.5" fill="#2D1B00"/>
+  <!-- Mouth - closed smile -->
+  <path d="M92,102 Q100,108 108,102" stroke="#2D1B00" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Cheek blush -->
+  <circle cx="70" cy="95" r="8" fill="url(#cheek)"/>
+  <circle cx="130" cy="95" r="8" fill="url(#cheek)"/>
+  <!-- Whiskers -->
+  <line x1="58" y1="88" x2="40" y2="84" stroke="#E86A17" stroke-width="1" opacity="0.5"/>
+  <line x1="58" y1="95" x2="38" y2="96" stroke="#E86A17" stroke-width="1" opacity="0.5"/>
+  <line x1="142" y1="88" x2="160" y2="84" stroke="#E86A17" stroke-width="1" opacity="0.5"/>
+  <line x1="142" y1="95" x2="162" y2="96" stroke="#E86A17" stroke-width="1" opacity="0.5"/>
+  <!-- Blink animation -->
+  <style>
+    @keyframes blink { 0%,96%,100%{ry:8} 98%{ry:1} }
+    .eye { animation: blink 4s infinite; }
+  </style>
+  <ellipse class="eye" cx="82" cy="82" rx="7" ry="8" fill="white"/>
+  <ellipse class="eye" cx="118" cy="82" rx="7" ry="8" fill="white"/>
+</svg>

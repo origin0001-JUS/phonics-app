@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <radialGradient id="fur2" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#FF8C42"/>
+      <stop offset="100%" stop-color="#E86A17"/>
+    </radialGradient>
+    <radialGradient id="cheek2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFB3B3" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#FFB3B3" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Body -->
+  <ellipse cx="100" cy="155" rx="45" ry="30" fill="#FF8C42"/>
+  <!-- Scarf -->
+  <path d="M60,130 Q100,145 140,130 Q140,148 100,155 Q60,148 60,130Z" fill="#4ECDC4"/>
+  <circle cx="90" cy="142" r="4" fill="#45B7AA"/>
+  <circle cx="110" cy="142" r="4" fill="#45B7AA"/>
+  <!-- Head -->
+  <ellipse cx="100" cy="90" rx="42" ry="38" fill="url(#fur2)"/>
+  <!-- Ears -->
+  <path d="M62,65 L50,25 L78,55Z" fill="#FF8C42" stroke="#E86A17" stroke-width="1"/>
+  <path d="M138,65 L150,25 L122,55Z" fill="#FF8C42" stroke="#E86A17" stroke-width="1"/>
+  <path d="M65,60 L55,30 L77,54Z" fill="#FFD4A8"/>
+  <path d="M135,60 L145,30 L123,54Z" fill="#FFD4A8"/>
+  <!-- Face patch -->
+  <ellipse cx="100" cy="100" rx="28" ry="22" fill="#FFD4A8"/>
+  <!-- Eyes - wider, energetic -->
+  <ellipse cx="82" cy="80" rx="8" ry="9" fill="white"/>
+  <ellipse cx="118" cy="80" rx="8" ry="9" fill="white"/>
+  <circle cx="84" cy="80" r="4.5" fill="#2D1B00"/>
+  <circle cx="120" cy="80" r="4.5" fill="#2D1B00"/>
+  <circle cx="86" cy="78" r="2" fill="white"/>
+  <circle cx="122" cy="78" r="2" fill="white"/>
+  <!-- Nose -->
+  <ellipse cx="100" cy="95" rx="5" ry="3.5" fill="#2D1B00"/>
+  <!-- Mouth - OPEN talking animation -->
+  <ellipse cx="100" cy="106" rx="8" ry="6" fill="#8B1A1A">
+    <animate attributeName="ry" values="6;3;6;8;6" dur="0.4s" repeatCount="indefinite"/>
+    <animate attributeName="rx" values="8;6;8;10;8" dur="0.4s" repeatCount="indefinite"/>
+  </ellipse>
+  <!-- Tongue -->
+  <ellipse cx="100" cy="110" rx="5" ry="3" fill="#D4547A">
+    <animate attributeName="ry" values="3;1;3;4;3" dur="0.4s" repeatCount="indefinite"/>
+  </ellipse>
+  <!-- Teeth hint -->
+  <rect x="95" y="100" width="10" height="3" rx="1" fill="white" opacity="0.8"/>
+  <!-- Cheek blush (bigger when talking) -->
+  <circle cx="68" cy="95" r="10" fill="url(#cheek2)"/>
+  <circle cx="132" cy="95" r="10" fill="url(#cheek2)"/>
+  <!-- Whiskers -->
+  <line x1="58" y1="88" x2="38" y2="82" stroke="#E86A17" stroke-width="1" opacity="0.5"/>
+  <line x1="58" y1="95" x2="36" y2="94" stroke="#E86A17" stroke-width="1" opacity="0.5"/>
+  <line x1="142" y1="88" x2="162" y2="82" stroke="#E86A17" stroke-width="1" opacity="0.5"/>
+  <line x1="142" y1="95" x2="164" y2="94" stroke="#E86A17" stroke-width="1" opacity="0.5"/>
+  <!-- Bounce animation for excitement -->
+  <style>
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+    @keyframes ear-wiggle { 0%,100%{transform:rotate(0deg)} 25%{transform:rotate(-3deg)} 75%{transform:rotate(3deg)} }
+    svg { animation: bounce 0.6s ease-in-out infinite; }
+  </style>
+</svg>
