@@ -243,6 +243,32 @@ gantt
 
 본 체크리스트는 사용자, Antigravity(시각/인프라/QA), Claude Code(내부 구조/로직)가 완벽히 분업하여 V2를 완성하기 위한 구체적인 작업 지시서입니다. Claude Code에게 특정 작업을 지시할 때 이 섹션을 활용하세요.
 
+### [Track A] 즉각적인 UI/UX 업그레이드
+
+> **🔥 터미널 병렬 실행 전략 (Parallel Execution Strategy)**
+> - Step 1: `V2-10` (온보딩 및 TTS 교체)는 이미 완료되었습니다.
+> - Step 2: `V2-9`의 에셋 생성 스크립트는 백그라운드에서 구동 중입니다.
+> - Step 3: Claude Code를 2개의 병렬 터미널로 나누어 작업을 지시하세요.
+>   - **[터미널 A]**: `V2-8` (이중 언어 오디오 시퀀서 및 홈 화면 로직) 전담
+>   - **[터미널 B]**: `V2-9` (단어 3D 이미지를 앱 요소 곳곳에 배치하는 뷰 로직) 전담
+> - **[중요] BKIT 보고서 산출**: 각 작업(V2-8, V2-9)의 완료 시점에는 반드시 `docs/03-analysis/features/v2-X.analysis.md` (Gap 분석)과 `docs/04-report/features/v2-X.report.md` (완료 보고서)를 산출 문서로 작성해야 합니다.
+
+#### V2-10: 온보딩 UI 및 TTS 전면 교체 (✅ 완료)
+- [x] **[Antigravity]** 3D Foxy 에셋 교체 및 VQA 검수 완료
+- [x] **[Claude Code]** `src/app/onboarding/page.tsx` 내부 텍스트 수정 및 ElevenLabs V3(Solo) 통합 완료
+
+#### V2-9: 시각적 단어 학습 (Word Images) UI 연동
+- [x] **[Antigravity]** 300단어에 대한 3D 이미지 에셋 생성 스크립트 작성 및 백그라운드 구동 중 (`public/assets/images/` 적재 중)
+- [ ] **[Claude Code]** `src/app/lesson/[unitId]/LessonClient.tsx`의 `BlendTapStep` 등 단어 의미를 배우는 핵심 구간에 생성된 이미지를 부드럽게 팝업(Scale-in)되도록 UI 개편 (Framer Motion 활용)
+- [ ] **[Claude Code]** 이미지가 없을 경우(예기치 못한 404)를 대비한 Fallback UI(예: 기존 글자만 표시) 안전장치 로직 작성
+
+#### V2-8: 홈 화면 고도화 & 이중 언어 음성 (Bilingual Narration)
+- [ ] **[Antigravity]** Foxy 캐릭터의 Idle, Talking 상태 애니메이션 에셋(SVG) 교체 준비
+- [ ] **[Claude Code]** `src/app/page.tsx` 및 관련 오디오 훅을 수정하여 영어 인사말 직후 한국어 인사말이 지연 없이 재생되는 오디오 시퀀서(Stitching 또는 onEnded 체이닝) 로직 구현
+- [ ] **[Claude Code]** 음성 재생 상태(재생 중/대기 중)에 따라 Foxy 애니메이션 상태를 제어하는 Zustand 또는 로컬 State 연동 로직 작성
+
+---
+
 ### [Track B] 코어 인터랙션 게임화
 
 #### V2-1: Magic e 전용 인터랙션

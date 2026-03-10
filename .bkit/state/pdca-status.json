@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-03-09T08:27:11.757Z",
+  "lastUpdated": "2026-03-10T04:39:31.571Z",
   "activeFeatures": [
     "phonics-app",
     "settings",
@@ -14,14 +14,34 @@
     "data",
     "scripts",
     "teacher",
-    "v2-5"
+    "v2-5",
+    "V2-8 Gap Analysis"
   ],
-  "primaryFeature": "v2-6-v2-7",
+  "primaryFeature": "v2-9",
   "features": {
+    "v2-9": {
+      "phase": "completed",
+      "phaseNumber": 5,
+      "matchRate": 97,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {
+        "analysis": "docs/03-analysis/v2-9.analysis.md",
+        "report": "docs/04-report/v2-9.report.md"
+      },
+      "timestamps": {
+        "started": "2026-03-04T00:00:00.000Z",
+        "doCompleted": "2026-03-09T13:47:20.830Z",
+        "checkCompleted": "2026-03-09T14:00:00.000Z",
+        "reportCompleted": "2026-03-09T15:00:00.000Z",
+        "lastUpdated": "2026-03-09T15:00:00.000Z"
+      },
+      "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\docs\\04-report\\v2-9.report.md"
+    },
     "v2-6-v2-7": {
-      "phase": "design",
-      "phaseNumber": 2,
-      "matchRate": null,
+      "phase": "check",
+      "phaseNumber": 4,
+      "matchRate": 98,
       "iterationCount": 0,
       "requirements": [
         "recharts",
@@ -30,15 +50,18 @@
       ],
       "documents": {
         "plan": "docs/01-plan/features/v2-6-v2-7-report-curriculum.plan.md",
-        "design": "docs/02-design/features/v2-6-v2-7-report-curriculum.design.md"
+        "design": "docs/02-design/features/v2-6-v2-7-report-curriculum.design.md",
+        "analysis": "docs/03-analysis/v2-6-v2-7.analysis.md"
       },
       "timestamps": {
         "started": "2026-03-09T09:00:00.000Z",
         "planCompleted": "2026-03-09T09:00:00.000Z",
         "designCompleted": "2026-03-09T09:30:00.000Z",
-        "lastUpdated": "2026-03-09T09:30:00.000Z"
+        "doCompleted": "2026-03-09T10:00:00.000Z",
+        "checkCompleted": "2026-03-09T10:30:00.000Z",
+        "lastUpdated": "2026-03-09T10:30:00.000Z"
       },
-      "lastFile": "docs/02-design/features/v2-6-v2-7-report-curriculum.design.md"
+      "lastFile": "docs/03-analysis/v2-6-v2-7.analysis.md"
     },
     "v2-4": {
       "phase": "completed",
@@ -70,9 +93,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-03-04T14:56:09.806Z",
-        "lastUpdated": "2026-03-09T08:13:02.580Z"
+        "lastUpdated": "2026-03-09T14:36:51.439Z"
       },
-      "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\lib\\lessonService.ts"
+      "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\page.tsx"
     },
     "settings": {
       "phase": "do",
@@ -109,9 +132,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-03-04T14:59:10.033Z",
-        "lastUpdated": "2026-03-09T06:57:34.386Z"
+        "lastUpdated": "2026-03-09T13:47:20.830Z"
       },
-      "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\lesson\\[unitId]\\AudioVisualizer.tsx"
+      "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\lesson\\[unitId]\\LessonClient.tsx"
     },
     "round6 gap analysis": {
       "phase": "act",
@@ -175,7 +198,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-03-04T23:25:48.466Z",
-        "lastUpdated": "2026-03-04T23:26:21.783Z"
+        "lastUpdated": "2026-03-09T08:30:20.476Z"
       },
       "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\report\\page.tsx"
     },
@@ -188,7 +211,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-03-05T14:49:10.440Z",
-        "lastUpdated": "2026-03-09T08:27:11.757Z"
+        "lastUpdated": "2026-03-09T08:31:11.425Z"
       },
       "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\data\\curriculum.ts"
     },
@@ -201,9 +224,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-03-06T15:53:11.780Z",
-        "lastUpdated": "2026-03-08T09:39:19.839Z"
+        "lastUpdated": "2026-03-09T08:27:49.237Z"
       },
-      "lastFile": "C:/Users/origi/Antigravity-workspaces/Main_English/phonics-app/scripts/generate-vocab-csv.ts"
+      "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\scripts\\merge-l3l4.ts"
     },
     "v2-5": {
       "phase": "completed",
@@ -239,6 +262,41 @@
         "lastUpdated": "2026-03-09T08:13:30.553Z"
       },
       "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\src\\app\\teacher\\page.tsx"
+    },
+    "v2-8": {
+      "phase": "check",
+      "phaseNumber": 4,
+      "matchRate": 99,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {
+        "plan": "docs/01-plan/features/v2-8-bilingual-audio.plan.md",
+        "design": "docs/02-design/features/v2-8-bilingual-audio.design.md",
+        "analysis": "docs/03-analysis/v2-8.analysis.md"
+      },
+      "timestamps": {
+        "started": "2026-03-09T12:00:00.000Z",
+        "planCompleted": "2026-03-09T12:00:00.000Z",
+        "lastUpdated": "2026-03-10T04:39:28.286Z",
+        "designCompleted": "2026-03-09T12:15:00.000Z",
+        "doCompleted": "2026-03-09T12:30:00.000Z",
+        "checkCompleted": "2026-03-10T04:39:28.285Z"
+      },
+      "lastFile": "docs/03-analysis/v2-8.analysis.md"
+    },
+    "V2-8 Gap Analysis": {
+      "phase": "act",
+      "phaseNumber": 5,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-03-10T04:39:31.570Z",
+        "lastUpdated": "2026-03-10T04:39:31.571Z"
+      },
+      "previousPhase": "check",
+      "autoAdvanced": true
     }
   },
   "pipeline": {
@@ -249,7 +307,7 @@
   "session": {
     "startedAt": "2026-03-04T14:22:09.430Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-03-09T08:27:11.757Z"
+    "lastActivity": "2026-03-10T04:39:31.571Z"
   },
   "history": [
     {
@@ -1180,6 +1238,96 @@
       "timestamp": "2026-03-09T08:27:11.757Z",
       "feature": "data",
       "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T08:27:20.131Z",
+      "feature": "data",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T08:27:29.660Z",
+      "feature": "data",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T08:27:35.827Z",
+      "feature": "data",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T08:27:49.237Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T08:28:50.615Z",
+      "feature": "phonics-app",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T08:29:58.165Z",
+      "feature": "report",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T08:30:20.476Z",
+      "feature": "report",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T08:31:11.425Z",
+      "feature": "data",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T13:46:47.482Z",
+      "feature": "[unitId]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T13:46:54.627Z",
+      "feature": "[unitId]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T13:47:01.673Z",
+      "feature": "[unitId]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T13:47:09.074Z",
+      "feature": "[unitId]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T13:47:20.830Z",
+      "feature": "[unitId]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-09T14:36:51.439Z",
+      "feature": "phonics-app",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-10T04:39:31.571Z",
+      "feature": "V2-8 Gap Analysis",
+      "phase": "act",
       "action": "updated"
     }
   ]

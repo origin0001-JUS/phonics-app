@@ -24,7 +24,7 @@ function loadEnv() {
 loadEnv();
 
 const API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-const MAX_CONCURRENT = 1; // Heavy constraint for free-tier limits
+const MAX_CONCURRENT = 5; // Increased for faster generation with older key
 
 async function generateImageForWord(wordId: string, prompt: string, retries = 5, backoffMs = 15000): Promise<'skipped' | 'generated' | 'failed'> {
     const outputPath = path.join(__dirname, `../public/assets/images/${wordId}.png`);

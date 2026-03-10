@@ -16,6 +16,54 @@ import MagicEStep from "./MagicEStep";
 import StoryReaderStep from "./StoryReaderStep";
 import WordFamilyBuilder from "./WordFamilyBuilder";
 
+// ─── WordImage: Reusable word illustration with fallback (V2-9) ───
+
+function WordImage({
+    wordId,
+    alt,
+    size = "md",
+    animate = true,
+}: {
+    wordId: string;
+    alt: string;
+    size?: "sm" | "md" | "lg";
+    animate?: boolean;
+}) {
+    const [error, setError] = useState(false);
+
+    const sizeClasses = {
+        sm: "w-20 h-20",
+        md: "w-28 h-28",
+        lg: "w-32 h-32",
+    };
+
+    if (error) return null;
+
+    const img = (
+        <div className={`${sizeClasses[size]} bg-sky-50 rounded-3xl border-4 border-sky-100 shadow-[0_6px_16px_rgba(0,0,0,0.08)] overflow-hidden flex items-center justify-center p-2 relative`}>
+            <img
+                src={`/assets/images/${wordId}.png`}
+                alt={alt}
+                className="w-full h-full object-contain drop-shadow-md"
+                onError={() => setError(true)}
+            />
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent pointer-events-none" />
+        </div>
+    );
+
+    if (!animate) return img;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.6, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+        >
+            {img}
+        </motion.div>
+    );
+}
+
 // ─── Minimal Pairs Data (for Sound Focus quiz) ───
 const MINIMAL_PAIRS: { units: string[]; label: string; items: [string, string][] }[] = [
     { units: ["unit_01", "unit_02"], label: "a vs e", items: [["bat", "bet"], ["hat", "het"], ["pan", "pen"], ["man", "men"], ["bad", "bed"]] },
@@ -473,10 +521,10 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
                                     <button
                                         key={w}
                                         onClick={() => playTTS(w)}
-                                        className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-bold active:scale-95 transition-transform"
+                                        className="flex-1 flex flex-col items-center gap-2 py-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-bold active:scale-95 transition-transform"
                                     >
-                                        <Volume2 className="w-4 h-4" />
-                                        {w}
+                                        <WordImage wordId={w} alt={w} size="sm" />
+                                        <span className="flex items-center gap-1"><Volume2 className="w-4 h-4" />{w}</span>
                                     </button>
                                 ))}
                             </div>
@@ -509,15 +557,18 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
                 <p className="text-slate-500 font-medium text-sm">/{unit.targetSound}/</p>
             </div>
 
-            {/* Listen Button */}
+            {/* Example word with image (V2-9) */}
             {exampleWord && (
-                <button
-                    onClick={() => playTTS(exampleWord.word)}
-                    className="flex items-center gap-3 bg-white/40 px-6 py-3 rounded-full"
-                >
-                    <Volume2 className="w-6 h-6 text-white" />
-                    <span className="text-white font-bold">Listen: &quot;{exampleWord.word}&quot;</span>
-                </button>
+                <div className="flex flex-col items-center gap-3">
+                    <WordImage wordId={exampleWord.id} alt={exampleWord.word} size="md" />
+                    <button
+                        onClick={() => playTTS(exampleWord.word)}
+                        className="flex items-center gap-3 bg-white/40 px-6 py-3 rounded-full"
+                    >
+                        <Volume2 className="w-6 h-6 text-white" />
+                        <span className="text-white font-bold">Listen: &quot;{exampleWord.word}&quot;</span>
+                    </button>
+                </div>
             )}
 
             <BigButton onClick={minimalPairData ? () => setShowQuiz(true) : onNext}>
@@ -747,8 +798,9 @@ function DecodeWordsStep({ words, onNext, addScore }: { words: WordData[]; onNex
             <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
                 <p className="text-slate-400 font-bold text-sm mb-2">What does this word mean?</p>
 
-                {/* Big word display */}
-                <button onClick={() => playTTS(word.word)} className="flex items-center gap-2 mb-6">
+                {/* Big word display with image (V2-9) */}
+                <WordImage wordId={word.id} alt={word.word} size="sm" animate={false} />
+                <button onClick={() => playTTS(word.word)} className="flex items-center gap-2 mb-4 mt-2">
                     <span className="text-4xl font-black text-slate-800">{word.word}</span>
                     <Volume2 className="w-6 h-6 text-sky-400" />
                 </button>
@@ -836,9 +888,12 @@ function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
             <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
-                <p className="text-slate-400 font-bold text-sm mb-4">Listen, then say it! 🎤</p>
+                <p className="text-slate-400 font-bold text-sm mb-3">Listen, then say it! 🎤</p>
 
-                <span className="text-5xl font-black text-slate-800 dark:text-slate-100 mb-2">{word.word}</span>
+                {/* Word image (V2-9) */}
+                <WordImage wordId={word.id} alt={word.word} size="md" />
+
+                <span className="text-5xl font-black text-slate-800 dark:text-slate-100 mt-2 mb-1">{word.word}</span>
                 <p className="text-slate-500 font-medium mb-4">{word.meaning}</p>
 
                 <div className="flex gap-4 mb-4">

@@ -4,6 +4,61 @@ All notable changes to the phonics-app project are documented here, organized by
 
 ---
 
+## [2026-03-09] - V2-9: Visual Word Learning — 300단어 이미지 통합 (Track A Step 3)
+
+### Added
+
+**WordImage Component** (`src/app/lesson/[unitId]/LessonClient.tsx:21-65`):
+- Reusable component with size variants (sm/md/lg) and spring animation
+- Graceful error fallback: missing images return null without breaking UX
+- Framer Motion scale-in popup (stiffness:300, damping:22) for kid-friendly presentation
+- Image path convention: `/assets/images/${wordId}.png` (curriculum-driven)
+
+**Image Batch Generation Scripts** (4 scripts):
+- `scripts/generate-images-gemini.ts` (120+ lines): Gemini 3 Pro Image Preview for 3D Pixar-style illustrations
+  - Concurrency control (MAX_CONCURRENT=5), exponential backoff retry
+  - Skip-existing optimization for incremental generation
+  - Processes all ~336 words from curriculum.ts
+- `scripts/verify-images.ts`: Gemini 1.5 Pro vision-based QA validation
+- `scripts/generate-images.ts`: SVG emoji fallback generator for all 300 words
+- `scripts/test-imagen.ts`: Imagen 4.0 API test harness for A/B testing
+
+**Asset Integration** (5 lesson steps):
+- SoundFocusStep main word display (md size, animated)
+- SoundFocusStep quiz minimal pair buttons (sm size, animated)
+- BlendTapStep post-merge congratulation popup (lg size, spring animation)
+- DecodeWordsStep word display (sm size, non-animated)
+- SayCheckStep speaking practice (md size, animated)
+
+**Image Assets** (`public/assets/images/*.png`):
+- ~200+ PNG files generated and verified
+- Coverage: ~70% of 300 words (graceful fallback handles gaps)
+- Re-runnable script can fill remaining gaps incrementally
+
+### Changed
+- None (feature addition only)
+
+### Quality Metrics
+- **Design Match Rate**: 97% (all 3 checklist items implemented, 5 steps vs 2 required)
+- **Architecture Compliance**: 100% (Starter-level co-location, no file sprawl)
+- **Convention Compliance**: 95% (pre-existing import order issue from Round 7)
+- **Build Status**: PASS (0 errors, 0 warnings)
+- **Total New Code**: 445+ lines (WordImage component + script files + 200+ PNG assets)
+- **TypeScript Coverage**: 100%
+
+### Architecture Notes
+- **Reusability**: Single `WordImage` component used in 5 locations (DRY pattern)
+- **Graceful Degradation**: Missing images handled via onError → null, no UX impact
+- **Asset-First Design**: Image naming driven by curriculum word IDs
+- **Script Robustness**: Exponential backoff retry + skip-existing optimization + vision QA
+- **Bundle Impact**: Zero (images in public/, lazy-loaded)
+
+### Completion Report
+- Full report: [v2-9.report.md](./v2-9.report.md)
+- Gap analysis: [../03-analysis/v2-9.analysis.md](../03-analysis/v2-9.analysis.md)
+
+---
+
 ## [2026-03-09] - V2-6 & V2-7: 리포트 고도화 + L3/L4 커리큘럼 확장 (Track C Step 2)
 
 ### Added

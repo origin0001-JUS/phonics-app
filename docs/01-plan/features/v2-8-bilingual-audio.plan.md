@@ -1,0 +1,192 @@
+# V2-8: 홈 화면 고도화 & 이중 언어 오디오 시퀀서
+
+> Plan Document | Feature: v2-8 | Created: 2026-03-09
+
+---
+
+## 1. 개요 (Overview)
+
+### 1.1 목표
+홈 화면(`src/app/page.tsx`)의 마스코트 Foxy 마이크 버튼을 탭하면, **영어 인사말 직후 한국어 인사말이 지연 없이 자연스럽게 이어지는** 오디오 시퀀서를 구축한다. 음성 재생 상태에 따라 Foxy 캐릭터의 애니메이션(Idle/Talking)이 동기화된다.
+
+### 1.2 범위 (Scope)
+- **수정 대상 파일**: `src/app/page.tsx` (오디오 시퀀서 + 애니메이션 상태)
+- **수정 금지 파일**: lesson, units, db, srs, store, audio, lessonService, onboarding 등 모든 핵심 컴포넌트
+
+### 1.3 참조
+- `v2_execution_plan.md` > V2-8 섹션
+- Track A > Step 3 > 터미널 A 전담
+
+---
+
+## 2. 현황 분석 (As-Is)
+
+### 2.1 현재 홈 화면 오디오 동작
+```tsx
+// src/app/page.tsx:106-112 (현재)
+<button onClick={() => {
+  const audio = new Audio('/assets/audio/hi_im_foxy.mp3');
+  audio.play().catch(() => {});
+}}>
+```
+
+- **영어 mp3 1개만 재생** (`hi_im_foxy.mp3`)
+- 한국어 후속 음성 없음
+- Foxy 캐릭터 애니메이션 동기화 없음 (정적 이미지)
+- 오디오 프리로드 없음 (첫 탭 시 지연 가능)
+
+### 2.2 기존 오디오 에셋
+| 파일 | 용도 | 상태 |
+|------|------|------|
+| `hi_im_foxy.mp3` | 영어 인사 "Hi! I'm Foxy!" | 존재 |
+| `foxy_level_select.mp3` | 온보딩 한국어 안내 | 존재 |
+| 한국어 인사 mp3 | "안녕! 나는 폭시야! 같이 파닉스를 배워보자!" | **미존재** |
+
+### 2.3 audio.ts 유틸리티
+- `preloadAudioFiles(urls)`: 프리로드 캐시 지원
+- `playWordAudio(word)`: 단어 TTS (onEnded Promise 지원)
+- 시퀀서/체이닝 기능 없음
+
+---
+
+## 3. 구현 계획 (To-Be)
+
+### 3.1 오디오 시퀀서 (Audio Sequencer)
+
+`page.tsx` 내부에 **`useAudioSequencer` 커스텀 훅**을 co-locate하여 구현:
+
+```
+[사용자 탭]
+  → 영어 mp3 재생 ("Hi! I'm Foxy!")
+  → onEnded 이벤트
+  → 300ms gap (자연스러운 전환)
+  → 한국어 mp3 재생 ("안녕! 나는 폭시야! 같이 파닉스를 배워보자!")
+  → onEnded 이벤트
+  → 시퀀스 완료
+```
+
+**핵심 설계:**
+- `onEnded` 이벤트 체이닝 방식 (Web Audio API 버퍼 병합보다 단순하고 안정적)
+- 재생 중 재탭 시: 현재 시퀀스 중단 후 처음부터 재시작
+- `useEffect`에서 컴포넌트 마운트 시 두 mp3 파일 프리로드
+
+### 3.2 Foxy 애니메이션 상태 연동
+
+**상태 머신:**
+```
+idle (기본) → talking_en (영어 재생 중) → talking_ko (한국어 재생 중) → idle
+```
+
+**시각적 피드백:**
+- `idle`: 정적 마스코트 이미지 (현재와 동일)
+- `talking_en` / `talking_ko`:
+  - 마스코트 주변 펄스 애니메이션 (Tailwind `animate-pulse` 또는 커스텀)
+  - 말풍선 UI 표시 (현재 재생 중인 텍스트)
+  - 마이크 버튼 색상 변화 (sky → green 활성 표시)
+
+> **참고**: Foxy Idle/Talking SVG 에셋은 Antigravity가 별도 준비 예정. 현 단계에서는 CSS 애니메이션으로 Talking 상태를 표현하고, 에셋 교체 시 이미지 src만 변경하면 되도록 설계.
+
+### 3.3 한국어 인사 음성 파일
+
+**옵션 A (권장)**: `SpeechSynthesis` 한국어 fallback
+- 별도 mp3 불필요, `lang: 'ko-KR'` 설정으로 브라우저 TTS 활용
+- 단점: 기기별 음질 차이
+
+**옵션 B**: ElevenLabs 생성 mp3
+- `public/assets/audio/foxy_hello_ko.mp3` 파일로 사전 생성
+- 가장 자연스러운 품질
+
+**결정**: 옵션 B를 1순위로 시도. 파일이 없을 경우 옵션 A로 자동 fallback하는 이중 안전장치 구현.
+
+### 3.4 말풍선 UI
+
+마스코트 위에 떠오르는 말풍선으로 현재 재생 중인 텍스트 표시:
+- 영어 재생 시: `"Hi! I'm Foxy!"` (영어 텍스트)
+- 한국어 재생 시: `"안녕! 같이 파닉스를 배워보자!"` (한국어 텍스트)
+- 재생 종료 시: 말풍선 fade-out
+
+---
+
+## 4. 기술 상세 (Technical Details)
+
+### 4.1 useAudioSequencer 훅 인터페이스
+
+```typescript
+type FoxyState = 'idle' | 'talking_en' | 'talking_ko';
+
+interface AudioSequencerReturn {
+  play: () => void;         // 시퀀스 시작 (재탭 시 리셋)
+  stop: () => void;         // 시퀀스 중단
+  foxyState: FoxyState;     // 현재 애니메이션 상태
+  isPlaying: boolean;       // 재생 중 여부
+}
+```
+
+### 4.2 오디오 파일 경로
+```
+/assets/audio/hi_im_foxy.mp3          (영어, 기존)
+/assets/audio/foxy_hello_ko.mp3       (한국어, 신규 생성 필요)
+```
+
+### 4.3 프리로드 전략
+- 컴포넌트 마운트 시 `new Audio(path); audio.preload = 'auto'; audio.load()`
+- `useRef`로 Audio 인스턴스 캐시 (리렌더링 방지)
+
+### 4.4 모바일 고려사항
+- iOS Safari: 첫 사용자 인터랙션(탭) 후에만 오디오 재생 가능 → 마이크 버튼 탭이 이를 충족
+- autoplay 금지 → 자동 재생 없이 반드시 사용자 탭 후 시작
+
+---
+
+## 5. 수정 파일 목록
+
+| 파일 | 변경 유형 | 설명 |
+|------|-----------|------|
+| `src/app/page.tsx` | **수정** | useAudioSequencer 훅 + 말풍선 UI + 애니메이션 상태 |
+| `public/assets/audio/foxy_hello_ko.mp3` | **신규** | 한국어 인사 음성 (Antigravity 생성 또는 SpeechSynthesis fallback) |
+
+### 수정 금지 파일
+- `src/lib/audio.ts` — 변경하지 않음
+- `src/lib/store.ts` — Zustand 스토어 변경 없음 (page.tsx 내 로컬 state로 처리)
+- `src/lib/db.ts`, `src/lib/srs.ts`, `src/lib/lessonService.ts` — 변경 없음
+- `src/app/lesson/`, `src/app/units/`, `src/app/onboarding/` — 변경 없음
+
+---
+
+## 6. 구현 순서 (Implementation Order)
+
+1. **useAudioSequencer 훅 구현** — page.tsx 내 co-located 커스텀 훅
+2. **프리로드 로직** — useEffect에서 마운트 시 mp3 프리로드
+3. **마이크 버튼 연동** — 기존 onClick 핸들러를 시퀀서로 교체
+4. **Foxy 애니메이션 상태** — foxyState 기반 CSS 클래스 토글
+5. **말풍선 UI** — 현재 재생 텍스트 표시 + fade-in/out 애니메이션
+6. **한국어 fallback** — mp3 미존재 시 SpeechSynthesis 한국어 fallback
+
+---
+
+## 7. 검증 기준 (Acceptance Criteria)
+
+- [ ] 마이크 버튼 탭 시 영어 인사 → (300ms gap) → 한국어 인사 순서로 재생됨
+- [ ] 재생 중 재탭 시 현재 시퀀스가 중단되고 처음부터 다시 시작됨
+- [ ] 영어 재생 중 Foxy talking 애니메이션 활성화
+- [ ] 한국어 재생 중에도 Foxy talking 애니메이션 유지
+- [ ] 시퀀스 완료 후 idle 상태로 복귀
+- [ ] 말풍선에 현재 재생 중인 텍스트가 표시됨
+- [ ] 한국어 mp3 미존재 시 SpeechSynthesis fallback 정상 동작
+- [ ] 모바일(iOS Safari) 첫 탭 후 오디오 정상 재생
+- [ ] page.tsx 외 다른 파일 변경 없음
+
+---
+
+## 8. 리스크 & 완화
+
+| 리스크 | 영향도 | 완화 방안 |
+|--------|--------|-----------|
+| 한국어 mp3 파일 부재 | 중 | SpeechSynthesis ko-KR fallback 자동 전환 |
+| iOS autoplay 제한 | 낮 | 사용자 탭 이벤트 내에서만 재생 (이미 충족) |
+| Foxy SVG 에셋 미준비 | 낮 | CSS 펄스 애니메이션으로 대체, 추후 이미지 교체만 필요 |
+| onEnded 이벤트 미발생 | 낮 | timeout fallback (5초 후 자동 진행) |
+
+---
+
+*Generated by PDCA Plan Phase | Feature: v2-8 | 2026-03-09*
