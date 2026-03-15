@@ -4,6 +4,58 @@ All notable changes to the phonics-app project are documented here, organized by
 
 ---
 
+## [2026-03-15] - qa-round4: QA Round 4 버그 수정 (Critical Audio & Interaction Fixes)
+
+### Added
+
+**Bug Fixes** (5/5 fixes completed):
+- **Part O**: WordFamily range error fixed. Family progress text clamped to valid range (e.g., "Family 4 / 4" never exceeds count). Tapping guard prevents double-tap race conditions during state transitions. Uses `safeFamilyIdx = Math.min(familyIdx, Math.max(0, families.length - 1))`.
+- **Part P**: WordFamily audio timing resolved. Wrong SFX wrapped in try/catch for robustness. Audio delay increased from 600ms to 1400ms to allow full word audio playback (200ms pre-delay + 1400ms total) before correct SFX fires.
+- **Part Q**: SayCheckStep autoplay implemented. useEffect on idx change triggers TTS after 300ms (browser autoplay policy). Mic button unlocks automatically after 1500ms (hasListened=true).
+- **Part S**: Pronunciation assessment UI added. Accuracy percentage + progress bar displayed below STT feedback. Uses `result.confidence * 100` with green (matched) or orange (unmatched) color coding.
+- **Part T**: Review queue visibility fixed. Wrong answers now appear in queue due today instead of tomorrow. Override `nextReviewDate = today` for incorrect answers in addScore callback, synced to Dexie immediately.
+
+### Changed
+- **src/app/lesson/[unitId]/WordFamilyBuilder.tsx**: Index clamping (L44), tapping guard state (L41), handler guard (L103), SFX try/catch (L113), audio timing (L122-141)
+- **src/app/lesson/[unitId]/LessonClient.tsx**: SayCheck autoplay (L937-950), pronunciation UI (L1043, L1055-1067), SRS date override (L267-282)
+
+### Fixed
+- WordFamily progress display: No longer shows out-of-bounds indices
+- WordFamily interaction: Tapping guard prevents UI freeze after last family
+- WordFamily audio: Wrong SFX plays reliably, word audio completes before state change
+- SayCheck autoplay: Word audio plays on mount and word change, mic unlocks automatically
+- Pronunciation feedback: Accuracy % + progress bar now visible after STT recording
+- Review queue: Wrong answers appear immediately in queue (due today, not tomorrow)
+
+### Quality Metrics
+- **Design Match Rate**: 100% (26/26 items PASS)
+- **Build Status**: PASS (0 errors, 0 warnings)
+- **Convention Compliance**: 97% (pre-existing import order issue)
+- **Total Lines Modified**: ~60 (surgical fixes, minimal sprawl)
+- **Files Modified**: 2 (WordFamilyBuilder.tsx, LessonClient.tsx)
+- **Iterations**: 0 (first-pass success)
+
+### Regression Check
+- Lesson flow: Intact (audio and state timing fixes are additive)
+- WordFamily behavior: Range guard + tapping guard both non-breaking
+- SayCheck behavior: Autoplay is feature enhancement, mic button more responsive
+- SRS algorithm: SM-2 unchanged (only nextReviewDate override for wrong answers)
+- Build verification: All 37 lesson paths + other routes compile successfully
+
+### Architecture Notes
+- **safeFamilyIdx pattern**: Extra defensive `Math.max(0, ...)` handles zero-length families edge case
+- **Try/catch on audio**: Prevents audio errors from breaking interaction (robustness)
+- **Fire-and-forget SRS write**: IIFE `(async () => { ... })()` handles DB persistence without blocking lesson
+- **Audio timing strategy**: 200ms pre-delay + 1400ms total prevents word audio cutoff
+- **Autoplay with browser policy**: 300ms delay respects Autoplay-Policy and gives audio context time
+
+### Completion Report
+- Full report: [qa-round4.report.md](./qa-round4.report.md)
+- Gap analysis: [../03-analysis/qa-round4.analysis.md](../03-analysis/qa-round4.analysis.md)
+- Plan document: [../01-plan/features/qa-round4.plan.md](../01-plan/features/qa-round4.plan.md)
+
+---
+
 ## [2026-03-15] - qa-round2: QA Round 2 버그 수정 (Critical Session & SRS Fixes)
 
 ### Added

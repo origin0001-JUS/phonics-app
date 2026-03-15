@@ -96,7 +96,7 @@ async function main() {
         const batch = words.slice(i, i + MAX_CONCURRENT);
         const promises = batch.map(w => {
             const subject = `${w.word} (${w.meaning})`;
-            const prompt = `A cute and high-quality 3D render of ${subject}. Soft studio lighting, Pixar or Disney style, vibrant colors. Extremely friendly and appealing to young children. Clean pastel background.`;
+            const prompt = `A cute and high-quality 3D render of ${subject}. Soft studio lighting, Pixar or Disney style, vibrant colors. Extremely friendly and appealing to young children. Clean pastel background. IMPORTANT: No text, no letters, no words, no speech bubbles.`;
             return generateImageForWord(w.id, prompt);
         });
 

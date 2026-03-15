@@ -77,7 +77,7 @@ function WordImage({
 
 // ─── Minimal Pairs Data (for Sound Focus quiz) ───
 const MINIMAL_PAIRS: { units: string[]; label: string; items: [string, string][] }[] = [
-    { units: ["unit_01", "unit_02"], label: "a vs e", items: [["bat", "bet"], ["hat", "het"], ["pan", "pen"], ["man", "men"], ["bad", "bed"]] },
+    { units: ["unit_01", "unit_02"], label: "a vs e", items: [["bat", "bet"], ["hat", "hit"], ["pan", "pen"], ["man", "men"], ["bad", "bed"]] },
     { units: ["unit_02", "unit_03"], label: "e vs i", items: [["bed", "bid"], ["pet", "pit"], ["net", "nit"], ["pen", "pin"], ["set", "sit"]] },
     { units: ["unit_03", "unit_04"], label: "i vs o", items: [["dig", "dog"], ["hip", "hop"], ["hit", "hot"], ["big", "bog"]] },
     { units: ["unit_04", "unit_05"], label: "o vs u", items: [["hot", "hut"], ["cop", "cup"], ["pot", "put"], ["dog", "dug"]] },
@@ -265,14 +265,17 @@ export default function LessonPage() {
         recordWordAttempt(wordId, correct);
 
         if (!correct) {
-            // Push wrong answer to SRS review queue immediately
+            // Push wrong answer to SRS review queue immediately — due TODAY so review badge updates
             (async () => {
                 try {
+                    const today = new Date().toISOString().split('T')[0];
                     const existing = await db.cards.get(wordId);
                     const srsCard = existing
                         ? vocabCardToSRSCard(existing)
                         : createNewCard(wordId, unitId);
                     const updated = calculateNextReview(srsCard, 0); // Rating 0 = Again
+                    // Override nextReviewDate to today so the card appears in review queue immediately
+                    updated.nextReviewDate = today;
                     await db.cards.put(srsCardToVocabCard(updated));
                 } catch (err) {
                     console.warn('SRS immediate update failed:', err);
@@ -930,11 +933,21 @@ function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { 
     const word = words[idx];
     const currentPhoneme = usePhonemeSequence(word.phonemes, isSpeaking);
 
-    // Reset when word changes
+    // Reset when word changes + auto-play word audio (Part Q fix)
     useEffect(() => {
         setHasListened(false);
         setResult(null);
-    }, [idx]);
+        // Auto-play word audio with small delay for browser autoplay policy
+        const timer = setTimeout(() => {
+            setIsSpeaking(true);
+            playTTS(words[idx]?.word ?? '');
+            setTimeout(() => {
+                setIsSpeaking(false);
+                setHasListened(true);
+            }, 1500);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [idx, words]);
 
     // Report sub-step changes to parent for persistence
     useEffect(() => { onSubStepChange?.(idx); }, [idx, onSubStepChange]);
@@ -1028,15 +1041,30 @@ function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { 
                 )}
 
                 {result && !listening && (
-                    <div className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm ${result.matched
+                    <div className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm ${result.matched
                         ? "bg-green-50 text-green-700 border-2 border-green-200"
                         : "bg-orange-50 text-orange-700 border-2 border-orange-200"
                         }`}>
-                        {result.matched ? (
-                            <><CheckCircle className="w-5 h-5" /> Great pronunciation! 🎉</>
-                        ) : (
-                            <><XCircle className="w-5 h-5" /> Try again! Tap 🔊 to listen first</>
-                        )}
+                        <div className="flex items-center gap-2">
+                            {result.matched ? (
+                                <><CheckCircle className="w-5 h-5" /> Great pronunciation!</>
+                            ) : (
+                                <><XCircle className="w-5 h-5" /> Try again! Tap the speaker first</>
+                            )}
+                        </div>
+                        {/* Similarity score display (Part S fix) */}
+                        <div className="w-full mt-1">
+                            <div className="flex items-center justify-between text-xs mb-1">
+                                <span>Accuracy</span>
+                                <span>{Math.round((result.confidence || 0) * 100)}%</span>
+                            </div>
+                            <div className="w-full h-2 bg-white/60 rounded-full overflow-hidden">
+                                <div
+                                    className={`h-full rounded-full transition-all duration-500 ${result.matched ? "bg-green-500" : "bg-orange-400"}`}
+                                    style={{ width: `${Math.round((result.confidence || 0) * 100)}%` }}
+                                />
+                            </div>
+                        </div>
                     </div>
                 )}
 

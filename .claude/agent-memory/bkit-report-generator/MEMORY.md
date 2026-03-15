@@ -120,7 +120,30 @@
 - **Convention Compliance**: 95% (naming perfect, import order pre-existing)
 - **File Modification**: 1 file only (page.tsx: 171 → 274 lines)
 
-## Next Report Trigger
+## QA Round 4 (Critical Bug Fix) — COMPLETE
+
+### Pattern: 100% Match Rate, 0 Iterations
+Five beta-reported bugs fixed with surgical precision:
+
+1. **Part O** (WordFamily range error): `safeFamilyIdx = Math.min(familyIdx, Math.max(0, families.length - 1))` + tapping guard prevents double-tap race condition
+2. **Part P** (WordFamily audio timing): try/catch on `playSFX('wrong')` + 1400ms delay (200ms pre-buffer) allows full word audio
+3. **Part Q** (SayCheck autoplay): useEffect on idx change triggers TTS at 300ms, mic unlocks at 1500ms (hasListened=true)
+4. **Part S** (Pronunciation UI): Accuracy % + progress bar using `result.confidence * 100`, green/orange color coding
+5. **Part T** (Review queue): `nextReviewDate = today` override for wrong answers in addScore, fire-and-forget Dexie write
+
+### Key Success Factors
+- **Clear problem specs**: Each bug had explicit root cause in plan (no ambiguity)
+- **Localized fixes**: 2 files only, ~60 lines total (surgical precision)
+- **Audio timing mastery**: Separated word audio (200ms), correct SFX (1400ms), state transitions (1400ms+) to prevent cutoffs
+- **SRS callback pattern**: Fire-and-forget async write using IIFE avoids blocking lesson flow
+
+### Report Quality
+- **Design Match**: 100% (26/26 items PASS)
+- **Build**: PASS (0 errors, 0 warnings)
+- **Files Modified**: 2 (WordFamilyBuilder.tsx, LessonClient.tsx)
+- **Changelog Entry**: Updated `docs/04-report/changelog.md` with full breakdown
+
+### Next Report Trigger
 
 **Round 16 (v2-polish)** will likely cover:
 1. Wiring word images into MagicEStep + Blend & Tap (300+ PNG assets exist but not rendered)
@@ -137,4 +160,4 @@
 
 ---
 
-**Status**: V2-8 complete (99% match rate, 0 iterations). v2-6-v2-7 + v2-9 + v2-11 + v2-4-v2-5 complete. Ready for v2-polish (Round 16) or V2-12 TTS upgrade (est. 2026-03-15).
+**Status**: QA Round 4 complete (100% match rate, 0 iterations). V2-8, qa-round2, v2-6-v2-7, v2-9, v2-11, v2-4-v2-5 all complete. Ready for v2-polish (Round 16) or V2-12 TTS upgrade (est. 2026-03-15).

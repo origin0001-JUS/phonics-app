@@ -38,8 +38,11 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
     const [builtWords, setBuiltWords] = useState<BuiltWord[]>([]);
     const [lastTapped, setLastTapped] = useState<string | null>(null);
     const [showCelebration, setShowCelebration] = useState(false);
+    const [tapping, setTapping] = useState(false);
 
-    const currentFamily = families[familyIdx];
+    // Clamp familyIdx to valid range to prevent "Family 4/3" display bug
+    const safeFamilyIdx = Math.min(familyIdx, Math.max(0, families.length - 1));
+    const currentFamily = families[safeFamilyIdx];
     const rime = currentFamily?.[0] || '';
     const familyWords = currentFamily?.[1] || [];
 
@@ -87,7 +90,7 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
         
         const shuffledOptions = [...corrects, ...pickedDistractors].sort(() => Math.random() - 0.5);
         setOptions(shuffledOptions);
-    }, [familyIdx, rime, correctOnsets, allPossibleOnsets]);
+    }, [safeFamilyIdx, rime, correctOnsets, allPossibleOnsets]);
 
     // Check if an onset has already been built
     const isBuilt = useCallback((onset: string) => {
@@ -97,33 +100,35 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
     const [wrongTapped, setWrongTapped] = useState<string | null>(null);
 
     const handleOnsetTap = (onset: string) => {
-        if (isBuilt(onset)) return;
+        if (isBuilt(onset) || tapping) return;
 
         setLastTapped(onset);
-        
+
         // Check if it's a correct onset
         const correctTarget = correctOnsets.find(c => c.onset === onset);
 
         if (!correctTarget) {
-            // Wrong tap
+            // Wrong tap — play SFX reliably with try/catch
             setWrongTapped(onset);
-            playSFX('wrong');
+            try { playSFX('wrong'); } catch { /* ignore audio errors */ }
             setTimeout(() => setWrongTapped(null), 600);
             return;
         }
 
         const word = correctTarget.word;
+        setTapping(true);
 
-        // Play the full word
+        // Play the full word audio first, then add to built words after audio finishes
         setTimeout(() => {
             playWordAudio(word);
         }, 200);
 
-        // Add to built words with animation delay
+        // Wait enough time for word audio to play fully (~1.2s) before state transition
         setTimeout(() => {
             const newBuilt = [...builtWords, { word, onset, rime }];
             setBuiltWords(newBuilt);
             playSFX('correct');
+            setTapping(false);
 
             // Check if all onsets for this family are now built
             const builtCount = newBuilt.filter(bw => bw.rime === rime).length;
@@ -131,16 +136,16 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
                 setTimeout(() => {
                     setShowCelebration(true);
                     playSFX('complete');
-                }, 400);
+                }, 500);
             }
-        }, 600);
+        }, 1400);
     };
 
     const allBuilt = builtWords.filter(bw => bw.rime === rime).length === correctOnsets.length;
 
     const handleNext = () => {
         setShowCelebration(false);
-        if (familyIdx < families.length - 1) {
+        if (safeFamilyIdx < families.length - 1) {
             setFamilyIdx(i => i + 1);
             setLastTapped(null);
         } else {
@@ -254,7 +259,7 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
 
             {/* Family progress */}
             <p className="text-white/70 font-bold text-sm">
-                Family {familyIdx + 1} / {families.length}
+                Family {safeFamilyIdx + 1} / {families.length}
             </p>
 
             {/* Celebration modal */}
@@ -288,7 +293,7 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
                                 onClick={handleNext}
                                 className="w-full bg-[#fcd34d] text-amber-900 font-black text-lg py-4 rounded-2xl shadow-[0_6px_0_#d97706] active:shadow-none active:translate-y-[6px] transition-all flex items-center justify-center gap-2 mt-2"
                             >
-                                {familyIdx < families.length - 1 ? "Next Family" : "Continue"} <ArrowRight className="w-5 h-5" />
+                                {safeFamilyIdx < families.length - 1 ? "Next Family" : "Continue"} <ArrowRight className="w-5 h-5" />
                             </button>
                         </motion.div>
                     </motion.div>
@@ -306,7 +311,7 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
                         onClick={handleNext}
                         className="w-full bg-[#fcd34d] text-amber-900 font-black text-lg py-4 rounded-2xl shadow-[0_6px_0_#d97706] active:shadow-none active:translate-y-[6px] transition-all flex items-center justify-center gap-2"
                     >
-                        {familyIdx < families.length - 1 ? "Next Family" : "Continue"} <ArrowRight className="w-5 h-5" />
+                        {safeFamilyIdx < families.length - 1 ? "Next Family" : "Continue"} <ArrowRight className="w-5 h-5" />
                     </button>
                 </motion.div>
             )}

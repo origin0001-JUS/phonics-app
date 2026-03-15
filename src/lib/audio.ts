@@ -58,19 +58,16 @@ function getSafeFilename(text: string): string {
         .substring(0, 50) + '.mp3';
 }
 
-/**
- * Play sentence TTS using pre-generated mp3 file.
- * File naming: sentence text converted to safe filename (e.g., "A fat cat." -> "a_fat_cat.mp3").
- * Falls back to browser SpeechSynthesis.
- */
-export function playSentenceAudio(unitId: string, sentenceIndex: number, sentenceText: string): Promise<void> {
-    return new Promise((resolve) => {
+export function playSentenceAudio(unitId: string, sentenceIndex: number, sentenceText: string): { promise: Promise<void>, audio: HTMLAudioElement | null } {
+    let audioRef: HTMLAudioElement | null = null;
+    const promise = new Promise<void>((resolve) => {
         if (typeof window === 'undefined') { resolve(); return; }
 
         const filename = getSafeFilename(sentenceText);
         const path = `/assets/audio/${filename}`;
 
         const audio = new Audio(path);
+        audioRef = audio;
         audio.play()
             .then(() => {
                 audio.onended = () => resolve();
@@ -81,6 +78,7 @@ export function playSentenceAudio(unitId: string, sentenceIndex: number, sentenc
                 resolve();
             });
     });
+    return { promise, audio: audioRef };
 }
 
 /**

@@ -91,19 +91,43 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
         stopRef.current = false;
 
         // Play the full sentence audio
-        const audioPromise = playSentenceAudio(unitId, currentPanel, text);
+        const { promise: audioPromise, audio } = playSentenceAudio(unitId, currentPanel, text);
 
+        let duration = 0;
+        
+        // Wait for audio metadata to load to get accurate duration
+        if (audio) {
+            await new Promise<void>((resolve) => {
+                if (audio.readyState >= 1) { // HAVE_METADATA
+                    duration = audio.duration;
+                    resolve();
+                } else {
+                    audio.addEventListener('loadedmetadata', () => {
+                        duration = audio.duration;
+                        resolve();
+                    });
+                    // Fallback resolve in case of error
+                    audio.addEventListener('error', () => resolve());
+                    setTimeout(resolve, 500); // 500ms timeout
+                }
+            });
+        }
+
+        // Calculate delay per word based on total duration (if available)
+        // Give 250ms initial buffer, and assume last word finishes slightly before the very end.
+        const totalMs = duration > 0 ? duration * 1000 : words.length * 300;
+        
         // Initial delay to let the audio buffer and start playing
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 250));
+        
+        const effectiveMs = Math.max(0, totalMs - 250);
+        const perWordDelay = Math.max(150, effectiveMs / Math.max(1, words.length));
 
-        // TTS is relatively fast. Calculate delay based on word length.
         for (let i = 0; i < words.length; i++) {
             if (stopRef.current) break;
             setHighlightedWord(i);
             
-            // Shorter delay to match fast TTS speed (approx 200~300ms per word)
-            const wordDelay = Math.max(150, words[i].length * 30 + 100);
-            await new Promise(resolve => setTimeout(resolve, wordDelay));
+            await new Promise(resolve => setTimeout(resolve, perWordDelay));
         }
 
         setHighlightedWord(-1);
@@ -232,12 +256,21 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
                     onClick={handlePanelTap}
                     className={`bg-gradient-to-b ${getPanelStyle(currentPanel)} rounded-[2rem] p-8 w-full shadow-[0_8px_0_#e2e8f0] border-4 flex flex-col items-center cursor-pointer min-h-[200px] justify-center`}
                 >
-                    {/* Placeholder illustration area */}
-                    <div className="w-full h-24 bg-white/50 rounded-xl mb-6 flex items-center justify-center border-2 border-dashed border-slate-200">
-                        <span className="text-4xl">
+                    {/* Panel illustration area */}
+                    <div className="w-full aspect-video max-w-[280px] mx-auto bg-white/50 rounded-2xl mb-6 flex items-center justify-center border-4 border-white/60 overflow-hidden shadow-sm relative">
+                        <span className="text-4xl absolute z-0 text-slate-300 opacity-50">
                             {currentPanel < Math.ceil(sentences.length * 0.3) ? "🌅" :
                              currentPanel < Math.ceil(sentences.length * 0.7) ? "⚡" : "🌟"}
                         </span>
+                        <img 
+                            key={`/assets/stories/${unitId}/panel_${currentPanel + 1}.png`}
+                            src={`/assets/stories/${unitId}/panel_${currentPanel + 1}.png`} 
+                            alt={`Story panel ${currentPanel + 1}`}
+                            className="w-full h-full object-cover absolute inset-0 z-10 transition-opacity duration-300"
+                            onError={(e) => {
+                                (e.target as HTMLImageElement).style.opacity = '0';
+                            }}
+                        />
                     </div>
 
                     {/* Sentence with karaoke highlighting */}

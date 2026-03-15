@@ -175,8 +175,8 @@ function buildOnsetPrompt(onset: string): string {
 
 function buildRimePrompt(rime: string): string {
     const PHONETIC_MAP: Record<string, string> = {
-        'at': 'aaat.', 'an': 'aaan.', 'ag': 'aaag.', 'ap': 'aaap.', 'am': 'aaam.', 'ad': 'aaad.', 'ab': 'aaab.', 'ack': 'aack.', 'ash': 'aash.', 'ass': 'aass.', 'atch': 'aatch.',
-        'ig': 'ihg.', 'in': 'ihn.', 'it': 'iht.', 'ip': 'ihp.', 'im': 'ihm.', 'id': 'ihd.', 'ib': 'ihb.', 'ick': 'ihck.', 'ish': 'ihsh.', 'is': 'ihss.', 'ix': 'ihks.',
+        'at': 'at.', 'an': 'aaan.', 'ag': 'aaag.', 'ap': 'aaap.', 'am': 'aaam.', 'ad': 'aaad.', 'ab': 'aaab.', 'ack': 'aack.', 'ash': 'aash.', 'ass': 'aass.', 'atch': 'aatch.',
+        'ig': 'igg.', 'in': 'ihn.', 'it': 'iht.', 'ip': 'ihp.', 'im': 'ihm.', 'id': 'ihd.', 'ib': 'ihb.', 'ick': 'ihck.', 'ish': 'ihsh.', 'is': 'ihss.', 'ix': 'ihks.',
         'og': 'ahg.', 'op': 'ahp.', 'ot': 'aht.', 'ob': 'ahb.', 'od': 'ahd.', 'om': 'ahm.', 'ong': 'ahng.', 'ox': 'ahks.',
         'ug': 'uhg.', 'un': 'uhn.', 'up': 'uhp.', 'ub': 'uhb.', 'ud': 'uhd.', 'um': 'uhm.', 'us': 'uhss.', 'ut': 'uht.', 'uck': 'uhck.', 'unch': 'uhnch.', 'unk': 'uhnk.',
         'en': 'ehn.', 'et': 'eht.', 'eg': 'ehg.', 'ed': 'ehd.', 'ep': 'ehp.', 'em': 'ehm.', 'ell': 'ehl.', 'ess': 'ehss.', 'est': 'ehst.', 'eck': 'ehck.', 'ench': 'ehnch.',

@@ -83,7 +83,14 @@ async function extractJobsFromCurriculum(): Promise<TtsJob[]> {
                 processedWords.add(word.word);
                 // 단어를 읽을 때는 너무 빠르지 않도록 속도 제한을 위해 약간의 쉼표나 마침표를 추가할 수 있지만,
                 // 기본적으로 텍스트 그대로 보냄. 발음 안정을 위해 첫 글자 대문자, 끝에 마침표.
-                const safeText = word.word.charAt(0).toUpperCase() + word.word.slice(1) + '.';
+                let safeText = word.word.charAt(0).toUpperCase() + word.word.slice(1) + '.';
+
+                // Fix weird pronunciations
+                if (word.word.toLowerCase() === 'big') {
+                    safeText = 'Big'; // Removing period to avoid weird '비그' trailing sound
+                } else if (word.word.toLowerCase() === 'ig') {
+                    safeText = 'igg';
+                }
 
                 jobs.push({
                     text: safeText,
