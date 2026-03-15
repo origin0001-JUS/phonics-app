@@ -11,6 +11,17 @@ body {
   overscroll-behavior-y: none;
 }
 
+/* Prevent 300ms tap delay on all interactive elements */
+button, a, [role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Tailwind utility for touch-action */
+.touch-action-manipulation {
+  touch-action: manipulation;
+}
+
 /* Dark mode color-scheme */
 html.dark {
   color-scheme: dark;

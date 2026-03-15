@@ -8,6 +8,7 @@ import MouthCrossSection from "./MouthCrossSection";
 interface MouthVisualizerProps {
     currentPhoneme?: string;
     currentWord?: string;
+    wordPhonemes?: string[];
     isSpeaking?: boolean;
     compact?: boolean;
 }
@@ -118,13 +119,14 @@ function FrontViewPlaceholder({ viseme, isSpeaking }: { viseme: VisemeId; isSpea
 }
 
 export default function MouthVisualizer({
-    currentPhoneme, currentWord, isSpeaking, compact
+    currentPhoneme, currentWord, wordPhonemes, isSpeaking, compact
 }: MouthVisualizerProps) {
+    const [showHelp, setShowHelp] = useState(false);
+
     const viseme: VisemeId = currentPhoneme
         ? (phonemeToViseme[currentPhoneme] || 'rest')
         : 'rest';
 
-    const guide = visemeGuide[viseme];
     const size = compact ? 'w-20 h-20' : 'w-28 h-28';
 
     return (
@@ -165,20 +167,45 @@ export default function MouthVisualizer({
                 </div>
             )}
 
-            {/* Korean pronunciation tip */}
-            {viseme !== 'rest' && (
-                <AnimatePresence mode="wait">
-                    <motion.p
-                        key={viseme}
-                        className="text-sm font-bold text-slate-600 text-center bg-amber-50 px-4 py-2 rounded-xl border-2 border-amber-200 max-w-[280px]"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                    >
-                        {guide.tipKo}
-                    </motion.p>
-                </AnimatePresence>
+            {/* Toggle Help Button */}
+            {wordPhonemes && wordPhonemes.length > 0 && (
+                <button 
+                    onClick={() => setShowHelp(!showHelp)}
+                    className="mt-2 text-sm font-bold text-amber-600 bg-amber-50 px-4 py-2 rounded-full border-2 border-amber-200 active:scale-95 transition-transform flex items-center gap-2 shadow-sm"
+                >
+                    💡 {showHelp ? "발음 팁 숨기기" : "발음 팁 보기"}
+                </button>
             )}
+
+            {/* Collapsible Sequential Help */}
+            <AnimatePresence>
+                {showHelp && wordPhonemes && wordPhonemes.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden w-full max-w-[320px]"
+                    >
+                        <div className="bg-amber-50/80 border-2 border-amber-200 rounded-2xl p-4 flex flex-col gap-3 mt-2 shadow-inner">
+                            {wordPhonemes.map((p, idx) => {
+                                const v = phonemeToViseme[p] || 'rest';
+                                const g = visemeGuide[v] || visemeGuide.rest;
+                                return (
+                                    <div key={`${p}-${idx}`} className="flex items-start gap-3">
+                                        <div className="w-6 h-6 shrink-0 bg-amber-200 text-amber-800 rounded-full flex items-center justify-center font-black text-sm mt-0.5">
+                                            {idx + 1}
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="font-black text-indigo-600 mb-0.5">/{p}/</p>
+                                            <p className="text-sm font-bold text-slate-600 leading-snug break-keep">{g.tipKo}</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Label */}
             <span className={`text-xs font-bold transition-colors px-3 py-1 rounded-full ${

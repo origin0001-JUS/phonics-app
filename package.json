@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "generate-tts": "tsx scripts/generate-tts.ts",
-    "generate-images": "tsx scripts/generate-images.ts"
+    "generate-images": "tsx scripts/generate-images.ts",
+    "generate-lipsync-videos": "tsx scripts/generate-lipsync-videos.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.1.0",

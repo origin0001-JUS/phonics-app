@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ArrowLeft, Lock } from "lucide-react";
 import { db, type UnlockedReward } from "@/lib/db";
 import { REWARDS, type RewardDefinition } from "@/data/rewards";
@@ -28,12 +29,12 @@ export default function RewardsPage() {
         <div className="flex min-h-[100dvh] flex-col px-4 py-6 overflow-y-auto">
             {/* Header */}
             <div className="mb-6 flex items-center gap-3 shrink-0">
-                <button
-                    onClick={() => router.back()}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border-4 border-white/60 bg-white/80 shadow-[0_4px_0_#c8c8c8] active:translate-y-[4px] active:shadow-none"
+                <Link
+                    href="/"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border-4 border-white/60 dark:border-slate-600 bg-white/80 dark:bg-slate-700 shadow-[0_4px_0_#c8c8c8] dark:shadow-[0_4px_0_#1e293b] active:translate-y-[4px] active:shadow-none transition-all touch-manipulation cursor-pointer"
                 >
-                    <ArrowLeft className="h-5 w-5 text-gray-700" />
-                </button>
+                    <ArrowLeft className="h-5 w-5 text-gray-700 dark:text-gray-200" />
+                </Link>
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                         나의 트로피

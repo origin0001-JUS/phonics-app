@@ -53,8 +53,9 @@ export default function SettingsPage() {
         // Keep completedUnits — only update grade/level/unlockedUnits
         const completedUnits = progress?.completedUnits ?? [];
 
-        // Merge: keep already-unlocked units + new grade units
-        const newUnlocked = [...new Set([...mapping.units, ...completedUnits])];
+        // Merge: keep already-unlocked units, fallback to unit_01
+        const existingUnlocked = progress?.unlockedUnits?.length ? progress.unlockedUnits : ["unit_01"];
+        const newUnlocked = [...new Set([...existingUnlocked, ...completedUnits])];
 
         await db.progress.put({
             id: "user_progress",
@@ -105,12 +106,12 @@ export default function SettingsPage() {
         <div className="flex min-h-[100dvh] flex-col px-4 py-6">
             {/* Header */}
             <div className="mb-6 flex items-center gap-3">
-                <button
-                    onClick={() => router.back()}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border-4 border-white/60 dark:border-slate-600 bg-white/80 dark:bg-slate-700 shadow-[0_4px_0_#c8c8c8] dark:shadow-[0_4px_0_#1e293b] active:translate-y-[4px] active:shadow-none"
+                <Link
+                    href="/"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border-4 border-white/60 dark:border-slate-600 bg-white/80 dark:bg-slate-700 shadow-[0_4px_0_#c8c8c8] dark:shadow-[0_4px_0_#1e293b] active:translate-y-[4px] active:shadow-none transition-all touch-manipulation cursor-pointer"
                 >
-                    <ArrowLeft className="h-5 w-5 text-gray-700" />
-                </button>
+                    <ArrowLeft className="h-5 w-5 text-gray-700 dark:text-gray-200" />
+                </Link>
                 <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">설정</h1>
             </div>
 

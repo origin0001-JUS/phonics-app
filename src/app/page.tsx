@@ -7,84 +7,47 @@ import { db } from "@/lib/db";
 import { Mic, Settings, Star, BookOpen, Loader2, Trophy } from "lucide-react";
 import Link from "next/link";
 
-// ─── V2-8: Bilingual Audio Sequencer Types ───
+// ─── V2-8: Bilingual Video Sequencer Types ───
 
 type FoxyState = "idle" | "talking_en" | "talking_ko";
 
-interface AudioStep {
+interface VideoStep {
   src: string;
-  fallbackText: string;
-  fallbackLang: string;
   foxyState: FoxyState;
   bubbleText: string;
 }
 
-const GREETING_SEQUENCE: AudioStep[] = [
+const VIDEO_SEQUENCE: VideoStep[] = [
   {
-    src: "/assets/audio/hi_im_foxy.mp3",
-    fallbackText: "Hi! I'm Foxy!",
-    fallbackLang: "en-US",
+    src: "/assets/video/Foxy_english.mp4",
     foxyState: "talking_en",
-    bubbleText: "Hi! I'm Foxy! \uD83E\uDD8A",
-  },
-  {
-    src: "/assets/audio/foxy_hello_ko.mp3",
-    fallbackText: "안녕! 나는 폭시야! 같이 파닉스를 배워보자!",
-    fallbackLang: "ko-KR",
-    foxyState: "talking_ko",
-    bubbleText: "안녕! 같이 파닉스를 배워보자!",
+    bubbleText: "Hi! I'm Foxy! 🦊",
   },
 ];
 
-// ─── useAudioSequencer Hook (co-located) ───
+// ─── useVideoSequencer Hook (co-located) ───
 
-function useAudioSequencer(steps: AudioStep[]) {
+function useVideoSequencer(steps: VideoStep[]) {
   const [foxyState, setFoxyState] = useState<FoxyState>("idle");
   const [currentBubbleText, setCurrentBubbleText] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentVideoSrc, setCurrentVideoSrc] = useState("");
 
-  const audioRefs = useRef<HTMLAudioElement[]>([]);
   const currentIndexRef = useRef(-1);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Preload audio files on mount
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    audioRefs.current = steps.map((step) => {
-      const audio = new Audio(step.src);
-      audio.preload = "auto";
-      audio.load();
-      return audio;
-    });
-    return () => {
-      // Cleanup on unmount
-      audioRefs.current.forEach((a) => {
-        a.pause();
-        a.removeAttribute("src");
-      });
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const finish = useCallback(() => {
     currentIndexRef.current = -1;
     setFoxyState("idle");
     setCurrentBubbleText("");
     setIsPlaying(false);
+    setCurrentVideoSrc("");
   }, []);
 
   const stop = useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
-    }
-    audioRefs.current.forEach((a) => {
-      a.pause();
-      a.currentTime = 0;
-      a.onended = null;
-    });
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
     }
     finish();
   }, [finish]);
@@ -100,57 +63,27 @@ function useAudioSequencer(steps: AudioStep[]) {
       currentIndexRef.current = index;
       setFoxyState(step.foxyState);
       setCurrentBubbleText(step.bubbleText);
-
-      const audio = audioRefs.current[index];
-      if (!audio) {
-        finish();
-        return;
-      }
-
-      audio.currentTime = 0;
-      audio.onended = () => {
-        if (index + 1 < steps.length) {
-          timeoutRef.current = setTimeout(() => playStep(index + 1), 300);
-        } else {
-          finish();
-        }
-      };
-
-      audio.play().catch(() => {
-        // mp3 load failed → SpeechSynthesis fallback
-        if (
-          typeof window !== "undefined" &&
-          "speechSynthesis" in window
-        ) {
-          window.speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(step.fallbackText);
-          utterance.lang = step.fallbackLang;
-          utterance.rate = 0.85;
-          utterance.onend = () => {
-            if (index + 1 < steps.length) {
-              timeoutRef.current = setTimeout(() => playStep(index + 1), 300);
-            } else {
-              finish();
-            }
-          };
-          window.speechSynthesis.speak(utterance);
-        } else {
-          // No fallback available → skip to next or finish
-          if (index + 1 < steps.length) {
-            timeoutRef.current = setTimeout(() => playStep(index + 1), 300);
-          } else {
-            finish();
-          }
-        }
-      });
+      setCurrentVideoSrc(step.src);
     },
     [steps, finish]
   );
 
+  const handleVideoEnd = useCallback(() => {
+    if (timeoutRef.current) return; // Prevent double firing
+    const nextIndex = currentIndexRef.current + 1;
+    if (nextIndex < steps.length) {
+      timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = null;
+        playStep(nextIndex);
+      }, 300);
+    } else {
+      finish();
+    }
+  }, [steps.length, playStep, finish]);
+
   const play = useCallback(() => {
     stop();
     setIsPlaying(true);
-    // Small delay after stop to ensure clean state
     requestAnimationFrame(() => playStep(0));
   }, [stop, playStep]);
 
@@ -160,8 +93,9 @@ function useAudioSequencer(steps: AudioStep[]) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { play, stop, foxyState, currentBubbleText, isPlaying };
+  return { play, stop, foxyState, currentBubbleText, isPlaying, currentVideoSrc, handleVideoEnd };
 }
+
 
 // ─── Home Page ───
 
@@ -171,8 +105,8 @@ export default function Home() {
   const [dueCount, setDueCount] = useState(0);
   const [checkingOnboarding, setCheckingOnboarding] = useState(true);
 
-  const { play, foxyState, currentBubbleText } =
-    useAudioSequencer(GREETING_SEQUENCE);
+  const { play, foxyState, currentBubbleText, currentVideoSrc, handleVideoEnd } =
+    useVideoSequencer(VIDEO_SEQUENCE);
 
   useEffect(() => {
     db.progress.get("user_progress").then((p) => {
@@ -269,11 +203,10 @@ export default function Home() {
 
         {/* Speech Bubble */}
         <div
-          className={`transition-all duration-300 ${
-            currentBubbleText
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-2 pointer-events-none"
-          }`}
+          className={`transition-all duration-300 ${currentBubbleText
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 -translate-y-2 pointer-events-none"
+            }`}
         >
           {currentBubbleText && (
             <div className="bg-white border-4 border-[#fcd34d] rounded-2xl px-5 py-3 mb-2 relative shadow-lg max-w-[260px]">
@@ -288,52 +221,64 @@ export default function Home() {
 
         {/* Mascot Face */}
         <div
-          className={`w-36 h-36 bg-white/40 rounded-full flex items-center justify-center relative mb-2 transition-all duration-300 ${
-            foxyState !== "idle"
-              ? `animate-pulse ${
-                  foxyState === "talking_en"
-                    ? "ring-4 ring-sky-300"
-                    : "ring-4 ring-amber-300"
-                }`
-              : ""
-          }`}
+          className={`w-36 h-36 bg-white/40 rounded-full flex items-center justify-center relative mb-2 transition-all duration-300 ${foxyState !== "idle"
+            ? `animate-pulse ${foxyState === "talking_en"
+              ? "ring-4 ring-sky-300"
+              : "ring-4 ring-amber-300"
+            }`
+            : ""
+            }`}
         >
           <div className="w-30 h-30 rounded-full flex items-center justify-center border-4 border-white shadow-[0_10px_20px_rgba(0,0,0,0.1)] relative overflow-hidden bg-white">
-            <img
-              src="/assets/images/cute_foxy_mascot.png"
-              alt="Cute Foxy Mascot"
-              className="w-full h-full object-cover scale-110"
-            />
+            {currentVideoSrc ? (
+              <video
+                src={currentVideoSrc}
+                autoPlay
+                playsInline
+                onTimeUpdate={(e) => {
+                  const video = e.currentTarget;
+                  // Trim the last 1.0 second to avoid the audio pop
+                  if (video.duration && video.currentTime >= video.duration - 1.0) {
+                    handleVideoEnd();
+                  }
+                }}
+                onEnded={handleVideoEnd}
+                className="w-full h-full object-cover scale-110"
+              />
+            ) : (
+              <img
+                src="/assets/images/foxy_mascot_3d.jpg"
+                alt="Cute Foxy Mascot"
+                className="w-full h-full object-cover scale-110"
+              />
+            )}
           </div>
 
           <button
             onClick={play}
-            className={`absolute -bottom-2 right-4 w-14 h-14 rounded-full flex items-center justify-center shadow-[0_6px_0_#d1d5db] active:shadow-[0_0px_0_#d1d5db] active:translate-y-[6px] transition-all border-4 z-20 ${
-              foxyState === "talking_en"
-                ? "bg-[#a3da61] border-[#8bc34a]"
-                : foxyState === "talking_ko"
-                  ? "bg-[#fcd34d] border-[#d97706]"
-                  : "bg-white border-[#d8f4ff]"
-            }`}
+            className={`absolute -bottom-2 right-4 w-14 h-14 rounded-full flex items-center justify-center shadow-[0_6px_0_#d1d5db] active:shadow-[0_0px_0_#d1d5db] active:translate-y-[6px] transition-all border-4 z-20 ${foxyState === "talking_en"
+              ? "bg-[#a3da61] border-[#8bc34a]"
+              : foxyState === "talking_ko"
+                ? "bg-[#fcd34d] border-[#d97706]"
+                : "bg-white border-[#d8f4ff]"
+              }`}
           >
             <Mic
-              className={`w-7 h-7 ${
-                foxyState !== "idle"
-                  ? "text-white animate-bounce"
-                  : "text-sky-500"
-              }`}
+              className={`w-7 h-7 ${foxyState !== "idle"
+                ? "text-white animate-bounce"
+                : "text-sky-500"
+                }`}
             />
           </button>
         </div>
 
         <p
-          className={`font-bold mb-4 text-sm ${
-            foxyState === "idle"
-              ? "text-slate-600 dark:text-slate-400 opacity-80"
-              : foxyState === "talking_en"
-                ? "text-sky-500 animate-pulse"
-                : "text-amber-500 animate-pulse"
-          }`}
+          className={`font-bold mb-4 text-sm ${foxyState === "idle"
+            ? "text-slate-600 dark:text-slate-400 opacity-80"
+            : foxyState === "talking_en"
+              ? "text-sky-500 animate-pulse"
+              : "text-amber-500 animate-pulse"
+            }`}
         >
           {foxyState === "idle"
             ? "Tap to hear me!"

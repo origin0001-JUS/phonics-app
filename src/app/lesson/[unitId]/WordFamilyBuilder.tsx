@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Volume2, ArrowRight, Layers, Star } from "lucide-react";
 import { playWordAudio, playSFX } from "@/lib/audio";
@@ -43,8 +43,17 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
     const rime = currentFamily?.[0] || '';
     const familyWords = currentFamily?.[1] || [];
 
+    // All possible onsets from the entire words list to use as distractors
+    const allPossibleOnsets = useMemo(() => {
+        const set = new Set<string>();
+        for (const w of words) {
+            if (w.onset) set.add(w.onset);
+        }
+        return Array.from(set);
+    }, [words]);
+
     // Available onsets for this family
-    const onsets = useMemo(() => {
+    const correctOnsets = useMemo(() => {
         return familyWords.map(w => ({
             onset: w.onset!,
             word: w.word,
@@ -52,15 +61,58 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
         }));
     }, [familyWords]);
 
+    // Options to display (correct + distractors)
+    const [options, setOptions] = useState<string[]>([]);
+    
+    // Generate mixed options when family changes
+    useEffect(() => {
+        if (!rime || correctOnsets.length === 0) return;
+        
+        const corrects = correctOnsets.map(o => o.onset);
+        const distractors = allPossibleOnsets.filter(o => !corrects.includes(o));
+        
+        // Shuffle distractors and pick enough to make total options around 6-8
+        // Or at least double the correct onsets if there are many
+        const numDistractorsToPick = Math.max(3, 8 - corrects.length);
+        const pickedDistractors = [...distractors].sort(() => Math.random() - 0.5).slice(0, numDistractorsToPick);
+        
+        // Ensure fallback if not enough distractors from current unit words
+        const fallbackDistractors = ['b', 'c', 'h', 'm', 'p', 's', 't', 'n', 'r', 'l'].filter(o => !corrects.includes(o));
+        while (pickedDistractors.length < numDistractorsToPick && fallbackDistractors.length > 0) {
+            const fallback = fallbackDistractors.pop();
+            if (fallback && !pickedDistractors.includes(fallback)) {
+                pickedDistractors.push(fallback);
+            }
+        }
+        
+        const shuffledOptions = [...corrects, ...pickedDistractors].sort(() => Math.random() - 0.5);
+        setOptions(shuffledOptions);
+    }, [familyIdx, rime, correctOnsets, allPossibleOnsets]);
+
     // Check if an onset has already been built
     const isBuilt = useCallback((onset: string) => {
         return builtWords.some(bw => bw.onset === onset && bw.rime === rime);
     }, [builtWords, rime]);
 
-    const handleOnsetTap = (onset: string, word: string) => {
+    const [wrongTapped, setWrongTapped] = useState<string | null>(null);
+
+    const handleOnsetTap = (onset: string) => {
         if (isBuilt(onset)) return;
 
         setLastTapped(onset);
+        
+        // Check if it's a correct onset
+        const correctTarget = correctOnsets.find(c => c.onset === onset);
+
+        if (!correctTarget) {
+            // Wrong tap
+            setWrongTapped(onset);
+            playSFX('wrong');
+            setTimeout(() => setWrongTapped(null), 600);
+            return;
+        }
+
+        const word = correctTarget.word;
 
         // Play the full word
         setTimeout(() => {
@@ -75,7 +127,7 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
 
             // Check if all onsets for this family are now built
             const builtCount = newBuilt.filter(bw => bw.rime === rime).length;
-            if (builtCount === onsets.length) {
+            if (builtCount === correctOnsets.length) {
                 setTimeout(() => {
                     setShowCelebration(true);
                     playSFX('complete');
@@ -84,7 +136,7 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
         }, 600);
     };
 
-    const allBuilt = builtWords.filter(bw => bw.rime === rime).length === onsets.length;
+    const allBuilt = builtWords.filter(bw => bw.rime === rime).length === correctOnsets.length;
 
     const handleNext = () => {
         setShowCelebration(false);
@@ -138,22 +190,36 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
 
                 {/* Onset buttons grid */}
                 <div className="flex flex-wrap gap-3 justify-center mb-4">
-                    {onsets.map(({ onset, word }) => {
+                    {options.map((onset) => {
                         const built = isBuilt(onset);
-                        const justTapped = lastTapped === onset && !built;
+                        const isWrong = wrongTapped === onset;
+                        // Just a subtle tap animation if correct and tapped
+                        const justTapped = lastTapped === onset && !built && !isWrong;
+                        
                         return (
                             <motion.button
                                 key={onset}
-                                onClick={() => handleOnsetTap(onset, word)}
-                                disabled={built}
-                                animate={justTapped ? { scale: [1, 1.2, 1] } : {}}
-                                className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-black transition-all border-4 ${
+                                onClick={() => handleOnsetTap(onset)}
+                                disabled={built || isWrong}
+                                animate={
+                                    isWrong ? { x: [-5, 5, -5, 5, 0], scale: 0.95 }
+                                    : justTapped ? { scale: [1, 1.2, 1] } : {}
+                                }
+                                transition={{ duration: isWrong ? 0.3 : 0.2 }}
+                                className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-black transition-all border-4 relative overflow-hidden ${
                                     built
                                         ? "bg-green-100 border-green-300 text-green-500 opacity-60"
-                                        : "bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-300 shadow-[0_4px_0_#93c5fd] active:shadow-none active:translate-y-[4px] active:scale-95"
+                                        : isWrong
+                                        ? "bg-red-50 border-red-300 text-red-500"
+                                        : "bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-300 shadow-[0_4px_0_#93c5fd] active:shadow-none active:translate-y-[4px] active:scale-95 cursor-pointer"
                                 }`}
                             >
                                 {onset}
+                                {isWrong && (
+                                    <div className="absolute inset-0 bg-red-500/10 flex items-center justify-center">
+                                        <div className="w-10 h-10 text-red-400 opacity-50 text-4xl leading-none rotate-45 flex items-center justify-center font-normal pb-1">+</div>
+                                    </div>
+                                )}
                             </motion.button>
                         );
                     })}
@@ -162,7 +228,7 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
                 {/* Built words card stack */}
                 <div className="w-full mt-2">
                     <p className="text-xs font-bold text-slate-400 mb-2 text-center">
-                        Built: {builtWords.filter(bw => bw.rime === rime).length} / {onsets.length}
+                        Built: {builtWords.filter(bw => bw.rime === rime).length} / {correctOnsets.length}
                     </p>
                     <div className="flex flex-wrap gap-2 justify-center">
                         <AnimatePresence>

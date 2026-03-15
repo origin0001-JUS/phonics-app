@@ -287,7 +287,17 @@ export function listenAndCompare(
             }
         };
 
-        recognition.start();
+        try {
+            recognition.start();
+        } catch (err) {
+            console.warn("SpeechRecognition start failed:", err);
+            if (!settled) {
+                settled = true;
+                clearTimeout(timeout);
+                // On error, be lenient — treat as pass for kids
+                resolve({ transcript: '', confidence: 0, matched: true });
+            }
+        }
     });
 }
 

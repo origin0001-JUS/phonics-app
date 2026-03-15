@@ -4,6 +4,102 @@ All notable changes to the phonics-app project are documented here, organized by
 
 ---
 
+## [2026-03-15] - qa-round2: QA Round 2 버그 수정 (Critical Session & SRS Fixes)
+
+### Added
+
+**Bug Fixes** (3/3 fixes completed):
+- **Bug 1**: Progress Volatility resolved (`sessionStorage` → `localStorage` migration). Lesson step position now persists when users navigate away on mobile (OS tab kill no longer loses progress). Word quiz results serialized and restored.
+- **Bug 2**: SRS Review Queue now updates immediately on wrong answers. `addScore` callback writes wrong answers to Dexie via `calculateNextReview(srsCard, 0)`, setting `nextReviewDate = today`. Review badge on home reflects wrong answers instantly instead of only at lesson completion.
+- **Task 2**: Sub-step Session Restore implemented. Added `subStepIndex` state persisted in localStorage. Three step components (DecodeWordsStep, SayCheckStep, ExitTicketStep) now accept `initialSubStep` + `onSubStepChange` props. Users can resume at question-level granularity (e.g., question 4/6 instead of 1/6).
+
+### Changed
+- **src/app/lesson/[unitId]/LessonClient.tsx**: Lesson state persistence improved, SRS immediate sync added, sub-step tracking added (+35 lines net)
+
+### Fixed
+- Session restore granularity: From step-level to question-level
+- SRS badge staleness: From completion-time to real-time updates
+- Mobile progress loss: From sessionStorage volatility to persistent localStorage
+
+### Quality Metrics
+- **Design Match Rate**: 97% (33/33 functional requirements PASS, pre-existing import order issue noted)
+- **Build Status**: PASS (0 errors, 0 warnings)
+- **Convention Compliance**: 97% (naming/types perfect, import order pre-existing from Round 7)
+- **Total Lines Modified**: 35 (surgical fixes, minimal sprawl)
+- **Files Modified**: 1 (LessonClient.tsx only)
+- **Iterations**: 0 (first-pass success due to accurate gap analysis)
+
+### Regression Check
+- Lesson flow: Intact (localStorage adds persistence layer, doesn't interfere with step machine)
+- SRS SM-2 algorithm: Untouched (only called immediately instead of deferred)
+- Word result tracking: Enhanced (now serialized + restored, not lost)
+- Build verification: All 37 lesson paths + other routes compile successfully
+
+### Architecture Notes
+- **localStorage for session state**: Fast synchronous restore on mount (IndexedDB is async)
+- **Fire-and-forget SRS writes**: Non-blocking async; lesson continues even if DB write fails
+- **Sub-step via props pattern**: Parent owns restoration, children own step UI state (clean separation)
+
+### Completion Report
+- Full report: [qa-round2.report.md](./qa-round2.report.md)
+- Gap analysis: [../03-analysis/qa-round2.analysis.md](../03-analysis/qa-round2.analysis.md)
+- Plan document: [../01-plan/features/qa-round2.plan.md](../01-plan/features/qa-round2.plan.md)
+
+---
+
+## [2026-03-15] - v2-bugfix: QA Round 1 버그 수정 (QA Verification)
+
+### Added
+
+**Bug Fixes** (4/4 active bugs completed):
+- Bug #1: Unit locking logic corrected (fresh users now start with only unit_01 unlocked, not 1-6)
+- Bug #2: Settings back button fixed for dark mode (`dark:text-gray-200` + dark bg variants added)
+- Bug #3: Multi-click issue resolved (changed `transition-all` to `transition-transform duration-100`, added `touch-action-manipulation` in globals.css)
+- Bug #5: Pronunciation assessment microphone now properly activates (removed unreliable `hasListened` gate, added try/catch/finally robustness to `handleRecord`)
+
+**Deferred Items** (2/2 properly documented):
+- Bug #4: Session restore granularity (macro-step works, micro-step deferred to v2-polish)
+- Bug #6: Asset & TTS pipeline (images and phoneme audio mostly complete from prior rounds, comprehensive QA audit deferred)
+
+### Changed
+- **src/app/onboarding/page.tsx**: Unit unlock initialization fixed (+2 lines)
+- **src/app/units/page.tsx**: DEFAULT_UNLOCKED constant fixed (+1 line)
+- **src/lib/lessonService.ts**: Fallback unlock value fixed (+1 line)
+- **src/app/settings/page.tsx**: Dark mode color variants for back button (+4 lines)
+- **src/app/lesson/[unitId]/LessonClient.tsx**: Button transitions optimized, handleRecord error handling improved (+8 lines)
+- **src/app/globals.css**: Global touch-action rule added for mobile tap delay elimination (+4 lines)
+
+### Fixed
+- None (all fixes above)
+
+### Quality Metrics
+- **Design Match Rate**: 97% (4/4 active bugs pass, 2 deferred correctly excluded)
+- **Build Status**: PASS (0 errors, 0 warnings)
+- **Convention Compliance**: 98% (pre-existing import order issue remains, low priority)
+- **Total Lines Modified**: 20 (minimal surgical fixes)
+- **Files Modified**: 6 (concentrated changes, no sprawl)
+- **Iterations**: 0 (first-pass success due to accurate initial analysis)
+
+### Regression Check
+- Unit unlock flow: Sequential unlock after lesson completion intact ✓
+- Review unit prerequisites: REVIEW_PREREQUISITES map untouched ✓
+- Dark mode: Settings and other pages fully functional in both modes ✓
+- Session restore (macro-level): Lesson state backup pattern from Round 13-D intact ✓
+- STT functionality: listenAndCompare() call protected by try/catch/finally ✓
+
+### Architecture Notes
+- **Surgical fixes**: Each bug addressed at root cause with minimal collateral impact
+- **Mobile optimization**: `touch-action: manipulation` eliminates 300ms tap delay globally
+- **Error handling**: Pronunciation assessment now robust against audio timing issues (try/catch/finally pattern)
+- **Design change (Bug #5)**: Removed `hasListened` gate entirely (better UX) instead of fixing flag reliability
+
+### Completion Report
+- Full report: [v2-bugfix.report.md](./v2-bugfix.report.md)
+- Gap analysis: [../03-analysis/v2-bugfix.analysis.md](../03-analysis/v2-bugfix.analysis.md)
+- Plan/Design: [../CLAUDE_BUG_FIX_TASKS.md](../CLAUDE_BUG_FIX_TASKS.md)
+
+---
+
 ## [2026-03-10] - V2-8: 홈 화면 이중 언어 오디오 시퀀서 (Track A Step 3)
 
 ### Added

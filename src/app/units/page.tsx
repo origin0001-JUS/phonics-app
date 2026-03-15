@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { ChevronLeft, Lock, Star, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-const DEFAULT_UNLOCKED = ["unit_01", "unit_02", "unit_03"];
+const DEFAULT_UNLOCKED = ["unit_01"];
 
 export default function UnitsPage() {
     const [unlockedUnits, setUnlockedUnits] = useState<string[]>([]);

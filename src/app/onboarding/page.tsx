@@ -93,7 +93,7 @@ function BigButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`w-full py-4 rounded-2xl font-black text-xl tracking-wide transition-all active:translate-y-[6px] border-4 border-white ${styles[color]} ${disabled ? "opacity-40 pointer-events-none" : ""}`}
+      className={`w-full py-4 rounded-2xl font-black text-xl tracking-wide transition-transform duration-100 active:translate-y-[6px] border-4 border-white ${styles[color]} ${disabled ? "opacity-40 pointer-events-none" : ""}`}
     >
       {children}
     </button>
@@ -328,7 +328,7 @@ export default function OnboardingPage() {
     await db.progress.put({
       id: "user_progress",
       currentLevel: mapping.level,
-      unlockedUnits: mapping.units,
+      unlockedUnits: ["unit_01"],
       completedUnits: [],
       lastPlayedDate: new Date().toISOString(),
       onboardingCompleted: true,

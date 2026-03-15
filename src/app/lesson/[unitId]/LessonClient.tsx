@@ -2,15 +2,19 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import { getUnitById, curriculum, microReadingKoMap, type WordData } from "@/data/curriculum";
-import { saveLessonResults, type WordResult } from "@/lib/lessonService";
-import { REWARDS } from "@/data/rewards";
-import { playWordAudio, playSentenceAudio, playSFX, fallbackTTS, listenAndCompare, isSTTSupported, preloadAudioFiles, type STTResult } from "@/lib/audio";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     ChevronLeft, Volume2, ArrowRight, Check,
     Mic, BookOpen, Star, Trophy, CheckCircle, XCircle
 } from "lucide-react";
+
+import { getUnitById, curriculum, microReadingKoMap, type WordData } from "@/data/curriculum";
+import { saveLessonResults, vocabCardToSRSCard, srsCardToVocabCard, type WordResult } from "@/lib/lessonService";
+import { db } from "@/lib/db";
+import { createNewCard, calculateNextReview } from "@/lib/srs";
+import { REWARDS } from "@/data/rewards";
+import { playWordAudio, playSentenceAudio, playSFX, fallbackTTS, listenAndCompare, isSTTSupported, preloadAudioFiles, type STTResult } from "@/lib/audio";
+
 import MouthVisualizer, { usePhonemeSequence } from "./MouthVisualizer";
 import MagicEStep from "./MagicEStep";
 import StoryReaderStep from "./StoryReaderStep";
@@ -32,12 +36,19 @@ function WordImage({
     const [error, setError] = useState(false);
 
     const sizeClasses = {
-        sm: "w-20 h-20",
-        md: "w-28 h-28",
-        lg: "w-32 h-32",
+        sm: "w-28 h-28 min-w-[7rem]", // originally w-20 h-20 (80px -> 112px, +40%)
+        md: "w-40 h-40 min-w-[10rem]", // originally w-28 h-28 (112px -> 160px, +42%)
+        lg: "w-48 h-48 min-w-[12rem]", // originally w-32 h-32 (128px -> 192px, +50%)
     };
 
-    if (error) return null;
+    if (error) {
+        return (
+            <div className={`${sizeClasses[size]} bg-slate-100 rounded-3xl border-4 border-slate-200 border-dashed shadow-inner flex flex-col items-center justify-center p-2`}>
+                <span className="text-slate-400 font-bold text-lg md:text-2xl text-center pb-1">{wordId}</span>
+                <span className="text-slate-300 text-xs">No Image</span>
+            </div>
+        );
+    }
 
     const img = (
         <div className={`${sizeClasses[size]} bg-sky-50 rounded-3xl border-4 border-sky-100 shadow-[0_6px_16px_rgba(0,0,0,0.08)] overflow-hidden flex items-center justify-center p-2 relative`}>
@@ -175,6 +186,7 @@ export default function LessonPage() {
     const stepOrder = useMemo(() => buildStepOrder(unitId, hasWordFamilies), [unitId, hasWordFamilies]);
 
     const [stepIndex, setStepIndex] = useState(0);
+    const [subStepIndex, setSubStepIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [totalQuestions, setTotalQuestions] = useState(0);
     const [newRewards, setNewRewards] = useState<string[]>([]);
@@ -185,29 +197,44 @@ export default function LessonPage() {
         lessonStartRef.current = Date.now();
     }, []);
 
-    // ─── Task 13-D: Restore lesson state from sessionStorage ───
-    const sessionKey = `lesson_state_${unitId}`;
+    // ─── QA-R2: Restore lesson state from localStorage (was sessionStorage) ───
+    const storageKey = `lesson_state_${unitId}`;
     const [sessionRestored, setSessionRestored] = useState(false);
     useEffect(() => {
         try {
-            const saved = sessionStorage.getItem(sessionKey);
+            const saved = localStorage.getItem(storageKey);
             if (saved) {
                 const state = JSON.parse(saved);
                 if (typeof state.stepIndex === 'number') setStepIndex(state.stepIndex);
+                if (typeof state.subStepIndex === 'number') setSubStepIndex(state.subStepIndex);
                 if (typeof state.score === 'number') setScore(state.score);
                 if (typeof state.totalQuestions === 'number') setTotalQuestions(state.totalQuestions);
+                // Restore word results
+                if (state.wordResults && typeof state.wordResults === 'object') {
+                    const map = new Map<string, WordResult>();
+                    for (const [k, v] of Object.entries(state.wordResults)) {
+                        map.set(k, v as WordResult);
+                    }
+                    wordResultsRef.current = map;
+                }
             }
         } catch { /* ignore */ }
         setSessionRestored(true);
-    }, [sessionKey]);
+    }, [storageKey]);
 
-    // ─── Task 13-D: Save lesson state to sessionStorage on change ───
+    // ─── QA-R2: Save lesson state to localStorage on change ───
     useEffect(() => {
         if (!sessionRestored) return;
         try {
-            sessionStorage.setItem(sessionKey, JSON.stringify({ stepIndex, score, totalQuestions }));
+            const wordResultsObj: Record<string, WordResult> = {};
+            for (const [k, v] of wordResultsRef.current) {
+                wordResultsObj[k] = v;
+            }
+            localStorage.setItem(storageKey, JSON.stringify({
+                stepIndex, subStepIndex, score, totalQuestions, wordResults: wordResultsObj,
+            }));
         } catch { /* ignore */ }
-    }, [stepIndex, score, totalQuestions, sessionKey, sessionRestored]);
+    }, [stepIndex, subStepIndex, score, totalQuestions, storageKey, sessionRestored]);
 
     const currentStep = stepOrder[stepIndex];
     const progress = ((stepIndex) / (stepOrder.length - 1)) * 100;
@@ -223,17 +250,36 @@ export default function LessonPage() {
         }
     }, [unitId]);
 
+    // Reset subStepIndex when moving to the next step
     const goNext = useCallback(() => {
         if (stepIndex < stepOrder.length - 1) {
             setStepIndex((i) => i + 1);
+            setSubStepIndex(0);
         }
     }, [stepIndex]);
 
+    // QA-R2 Bug 2: Immediately update SRS card on wrong answer so review queue reflects it
     const addScore = useCallback((wordId: string, correct: boolean) => {
         setTotalQuestions((t) => t + 1);
         if (correct) setScore((s) => s + 1);
         recordWordAttempt(wordId, correct);
-    }, [recordWordAttempt]);
+
+        if (!correct) {
+            // Push wrong answer to SRS review queue immediately
+            (async () => {
+                try {
+                    const existing = await db.cards.get(wordId);
+                    const srsCard = existing
+                        ? vocabCardToSRSCard(existing)
+                        : createNewCard(wordId, unitId);
+                    const updated = calculateNextReview(srsCard, 0); // Rating 0 = Again
+                    await db.cards.put(srsCardToVocabCard(updated));
+                } catch (err) {
+                    console.warn('SRS immediate update failed:', err);
+                }
+            })();
+        }
+    }, [recordWordAttempt, unitId]);
 
     // Pick 6 words for lesson activities (safe even if unit is undefined)
     const lessonWords = useMemo(() => {
@@ -278,8 +324,8 @@ export default function LessonPage() {
 
     // Save lesson results when entering Results step
     const handleLessonComplete = useCallback(() => {
-        // Task 13-D: Clear session storage on lesson completion
-        try { sessionStorage.removeItem(sessionKey); } catch { /* ignore */ }
+        // QA-R2: Clear localStorage on lesson completion
+        try { localStorage.removeItem(storageKey); } catch { /* ignore */ }
 
         // Ensure all lesson words have at least an entry (even without quiz)
         for (const word of lessonWords) {
@@ -300,7 +346,7 @@ export default function LessonPage() {
         }, isPerfect).then((unlocked) => {
             if (unlocked.length > 0) setNewRewards(unlocked);
         }).catch(console.error);
-    }, [unitId, lessonWords, score, totalQuestions, sessionKey]);
+    }, [unitId, lessonWords, score, totalQuestions, storageKey]);
 
     if (!unit) {
         return (
@@ -357,13 +403,13 @@ export default function LessonPage() {
                     <MagicEStep words={lessonWords} onNext={goNext} />
                 )}
                 {currentStep === "decode_words" && (
-                    <DecodeWordsStep words={lessonWords} onNext={goNext} addScore={addScore} />
+                    <DecodeWordsStep words={lessonWords} onNext={goNext} addScore={addScore} initialSubStep={subStepIndex} onSubStepChange={setSubStepIndex} />
                 )}
                 {currentStep === "word_family" && (
                     <WordFamilyBuilder words={unit.words} onNext={goNext} />
                 )}
                 {currentStep === "say_check" && (
-                    <SayCheckStep words={lessonWords} onNext={goNext} />
+                    <SayCheckStep words={lessonWords} onNext={goNext} initialSubStep={subStepIndex} onSubStepChange={setSubStepIndex} />
                 )}
                 {currentStep === "micro_reader" && (
                     <MicroReaderStep sentences={unit.microReading} sentencesKo={microReadingKoMap[unit.id]} onNext={goNext} />
@@ -372,7 +418,7 @@ export default function LessonPage() {
                     <StoryReaderStep unitId={unitId} onNext={goNext} />
                 )}
                 {currentStep === "exit_ticket" && (
-                    <ExitTicketStep words={lessonWords} onNext={goNext} addScore={addScore} />
+                    <ExitTicketStep words={lessonWords} onNext={goNext} addScore={addScore} initialSubStep={subStepIndex} onSubStepChange={setSubStepIndex} />
                 )}
                 {currentStep === "results" && (
                     <ResultsStep score={score} total={totalQuestions} unitTitle={unit.title} onFinish={() => router.push("/units")} onMount={handleLessonComplete} newRewards={newRewards} />
@@ -402,7 +448,8 @@ function BigButton({ children, onClick, color = "bg-[#fcd34d]", shadow = "shadow
     return (
         <button
             onClick={onClick}
-            className={`w-full ${color} text-amber-900 font-black text-lg py-4 rounded-2xl ${shadow} active:shadow-none active:translate-y-[6px] transition-all flex items-center justify-center gap-2`}
+            // 터치 시작 시 바로 반응하도록 개선, `touch-manipulation` 속성으로 모바일 브라우저의 더블탭 줌 딜레이 300ms 방지
+            className={`w-full ${color} text-amber-900 font-black text-lg py-4 rounded-2xl ${shadow} active:shadow-none active:translate-y-[6px] transition-all duration-75 touch-manipulation cursor-pointer flex items-center justify-center gap-2`}
         >
             {children}
         </button>
@@ -422,6 +469,33 @@ const PHONEME_SPEAK_MAP: Record<string, string> = {
     'ʃ': 'sh', 'tʃ': 'ch', 'θ': 'th', 'ð': 'th',
     'dʒ': 'j', 'ŋ': 'ng',
 };
+
+/** Convert onset/rime text into phonics-friendly TTS spellings */
+function getPhonicsTTS(text: string): string {
+    const t = text.toLowerCase();
+    const map: Record<string, string> = {
+        'a': 'ah', 'e': 'eh', 'i': 'ih', 'o': 'aw', 'u': 'uh',
+        'b': 'buh', 'c': 'kuh', 'd': 'duh', 'f': 'fuh', 'g': 'guh',
+        'h': 'huh', 'j': 'juh', 'k': 'kuh', 'l': 'lll', 'm': 'mmm',
+        'n': 'nnn', 'p': 'puh', 'q': 'kwuh', 'r': 'rrr', 's': 'sss',
+        't': 'tuh', 'v': 'vuh', 'w': 'wuh', 'x': 'ks', 'y': 'yuh', 'z': 'zzz',
+        'sh': 'shh', 'ch': 'ch', 'th': 'th', 'wh': 'wuh', 'ph': 'fff',
+        'bl': 'bll', 'cl': 'kll', 'fl': 'fll', 'gl': 'gll', 'pl': 'pll', 'sl': 'sll',
+        'br': 'brr', 'cr': 'krr', 'dr': 'drr', 'fr': 'frr', 'gr': 'grr', 'pr': 'prr', 'tr': 'trr',
+        'sk': 'skk', 'sm': 'smm', 'sn': 'snn', 'sp': 'spp', 'st': 'stt', 'sw': 'sww',
+        // Rimes
+        'ag': 'ag', 'ig': 'igg', 'og': 'og', 'ug': 'ug', 'eg': 'eg',
+        'ad': 'ad', 'id': 'idd', 'od': 'od', 'ud': 'ud', 'ed': 'ed',
+        'at': 'at', 'it': 'it', 'ot': 'ot', 'ut': 'ut', 'et': 'et',
+        'ap': 'ap', 'ip': 'ip', 'op': 'op', 'up': 'up', 'ep': 'ep',
+        'am': 'am', 'im': 'imm', 'om': 'om', 'um': 'um', 'em': 'em',
+        'an': 'an', 'in': 'in', 'on': 'on', 'un': 'un', 'en': 'en',
+        'ab': 'ab', 'ib': 'ibb', 'ob': 'ob', 'ub': 'ub', 'eb': 'eb',
+        'ack': 'ack', 'ick': 'ick', 'ock': 'ock', 'uck': 'uck', 'eck': 'eck',
+        'ash': 'ash', 'ish': 'ish', 'osh': 'osh', 'ush': 'ush', 'esh': 'esh',
+    };
+    return map[t] || t;
+}
 
 function playPhonemeSound(phoneme: string) {
     const text = PHONEME_SPEAK_MAP[phoneme] || phoneme;
@@ -618,22 +692,24 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
     const tapOnset = () => {
         if (onsetTapped) return;
         setOnsetTapped(true);
-        fallbackTTS(word.onset!);
+        const audio = new Audio(`/assets/audio/phonemes/onset_${word.onset?.toLowerCase()}.mp3`);
+        audio.play().catch(() => fallbackTTS(getPhonicsTTS(word.onset!)));
     };
 
     // Task 13-C: Independent rime tap — plays rime sound only
     const tapRime = () => {
         if (rimeTapped) return;
         setRimeTapped(true);
-        fallbackTTS(word.rime!);
+        const audio = new Audio(`/assets/audio/phonemes/rime_${word.rime?.toLowerCase()}.mp3`);
+        audio.play().catch(() => fallbackTTS(getPhonicsTTS(word.rime!)));
     };
 
     // Task 13-C: When both onset and rime are tapped, merge and play full word
     useEffect(() => {
         if (onsetTapped && rimeTapped && !merging) {
             setMerging(true);
-            setTimeout(() => playSFX('correct'), 400);
-            setTimeout(() => playTTS(word.word), 800);
+            setTimeout(() => playSFX('correct'), 800);
+            setTimeout(() => playTTS(word.word), 1800);
         }
     }, [onsetTapped, rimeTapped, merging, word.word]);
 
@@ -760,11 +836,14 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
 // ═══════════════════════════════════════
 // STEP 3: Decode Words — Match word to meaning (3 min)
 // ═══════════════════════════════════════
-function DecodeWordsStep({ words, onNext, addScore }: { words: WordData[]; onNext: () => void; addScore: (wordId: string, c: boolean) => void }) {
-    const [idx, setIdx] = useState(0);
+function DecodeWordsStep({ words, onNext, addScore, initialSubStep = 0, onSubStepChange }: { words: WordData[]; onNext: () => void; addScore: (wordId: string, c: boolean) => void; initialSubStep?: number; onSubStepChange?: (idx: number) => void }) {
+    const [idx, setIdx] = useState(initialSubStep);
     const [selected, setSelected] = useState<string | null>(null);
     const [showResult, setShowResult] = useState(false);
     const word = words[idx];
+
+    // Report sub-step changes to parent for persistence
+    useEffect(() => { onSubStepChange?.(idx); }, [idx, onSubStepChange]);
 
     // Shuffle 3 wrong + 1 correct
     const options = useMemo(() => {
@@ -841,20 +920,33 @@ function DecodeWordsStep({ words, onNext, addScore }: { words: WordData[]; onNex
 // ═══════════════════════════════════════
 // STEP 4: Say & Check (2 min) — Real STT
 // ═══════════════════════════════════════
-function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void }) {
-    const [idx, setIdx] = useState(0);
+function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { words: WordData[]; onNext: () => void; initialSubStep?: number; onSubStepChange?: (idx: number) => void }) {
+    const [idx, setIdx] = useState(initialSubStep);
     const [listening, setListening] = useState(false);
     const [result, setResult] = useState<STTResult | null>(null);
     const [sttAvailable] = useState(() => isSTTSupported());
     const [isSpeaking, setIsSpeaking] = useState(false);
+    const [hasListened, setHasListened] = useState(false);
     const word = words[idx];
     const currentPhoneme = usePhonemeSequence(word.phonemes, isSpeaking);
+
+    // Reset when word changes
+    useEffect(() => {
+        setHasListened(false);
+        setResult(null);
+    }, [idx]);
+
+    // Report sub-step changes to parent for persistence
+    useEffect(() => { onSubStepChange?.(idx); }, [idx, onSubStepChange]);
 
     const handleListen = () => {
         setIsSpeaking(true);
         playTTS(word.word);
-        // Approximate TTS duration, then stop speaking animation
-        setTimeout(() => setIsSpeaking(false), 1500);
+        // Approximate TTS duration, then stop speaking animation and enable mic
+        setTimeout(() => {
+            setIsSpeaking(false);
+            setHasListened(true);
+        }, 1500);
     };
 
     const handleRecord = async () => {
@@ -863,15 +955,21 @@ function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void
         setIsSpeaking(true);
         setResult(null);
 
-        const sttResult = await listenAndCompare(word.word, 4000);
-        setListening(false);
-        setIsSpeaking(false);
-        setResult(sttResult);
+        try {
+            const sttResult = await listenAndCompare(word.word, 4000);
+            setResult(sttResult);
 
-        if (sttResult.matched) {
-            playSFX('correct');
-        } else {
-            playSFX('wrong');
+            if (sttResult.matched) {
+                playSFX('correct');
+            } else {
+                playSFX('wrong');
+            }
+        } catch (err) {
+            console.warn('STT failed:', err);
+            setResult({ matched: false, transcript: '', confidence: 0 });
+        } finally {
+            setListening(false);
+            setIsSpeaking(false);
         }
     };
 
@@ -908,13 +1006,16 @@ function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void
                     {/* Record */}
                     <button
                         onClick={handleRecord}
-                        disabled={listening}
-                        className={`w-16 h-16 rounded-full flex items-center justify-center border-4 transition-all ${listening
-                            ? "bg-red-400 border-red-500 shadow-[0_4px_0_#dc2626] animate-pulse"
-                            : "bg-orange-100 border-orange-200 shadow-[0_4px_0_#fb923c] active:shadow-none active:translate-y-[4px]"
-                            }`}
+                        disabled={listening || !hasListened}
+                        className={`w-16 h-16 rounded-full flex items-center justify-center border-4 transition-all ${
+                            !hasListened
+                                ? "bg-slate-100 border-slate-200 shadow-none cursor-not-allowed opacity-50"
+                                : listening
+                                    ? "bg-red-400 border-red-500 shadow-[0_4px_0_#dc2626] animate-pulse"
+                                    : "bg-orange-100 border-orange-200 shadow-[0_4px_0_#fb923c] active:shadow-none active:translate-y-[4px]"
+                        }`}
                     >
-                        <Mic className={`w-7 h-7 ${listening ? "text-white" : "text-orange-600"}`} />
+                        <Mic className={`w-7 h-7 ${!hasListened ? "text-slate-400" : listening ? "text-white" : "text-orange-600"}`} />
                     </button>
                 </div>
 
@@ -948,6 +1049,7 @@ function SayCheckStep({ words, onNext }: { words: WordData[]; onNext: () => void
             <MouthVisualizer
                 currentPhoneme={currentPhoneme}
                 currentWord={word.word}
+                wordPhonemes={word.phonemes}
                 isSpeaking={isSpeaking}
             />
 
@@ -1020,12 +1122,15 @@ function MicroReaderStep({ sentences, sentencesKo, onNext }: { sentences: string
 // ═══════════════════════════════════════
 // STEP 6: Exit Ticket (1 min) — Quick 3-question quiz
 // ═══════════════════════════════════════
-function ExitTicketStep({ words, onNext, addScore }: { words: WordData[]; onNext: () => void; addScore: (wordId: string, c: boolean) => void }) {
+function ExitTicketStep({ words, onNext, addScore, initialSubStep = 0, onSubStepChange }: { words: WordData[]; onNext: () => void; addScore: (wordId: string, c: boolean) => void; initialSubStep?: number; onSubStepChange?: (idx: number) => void }) {
     const quizWords = words.slice(0, 3);
-    const [qIdx, setQIdx] = useState(0);
+    const [qIdx, setQIdx] = useState(initialSubStep);
     const [answered, setAnswered] = useState(false);
     const [wasCorrect, setWasCorrect] = useState(false);
     const word = quizWords[qIdx];
+
+    // Report sub-step changes to parent for persistence
+    useEffect(() => { onSubStepChange?.(qIdx); }, [qIdx, onSubStepChange]);
 
     const options = useMemo(() => {
         const others = words.filter((w) => w.id !== word.id).slice(0, 2);

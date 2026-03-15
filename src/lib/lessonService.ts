@@ -154,7 +154,7 @@ export async function saveLessonResults(outcome: LessonOutcome, isPerfectLesson 
 
     // 3. Update progress — mark complete + unlock next unit
     const progress = await db.progress.get('user_progress');
-    const unlockedUnits = progress?.unlockedUnits ?? ['unit_01', 'unit_02', 'unit_03'];
+    const unlockedUnits = progress?.unlockedUnits ?? ['unit_01'];
     const completedUnits = progress?.completedUnits ?? [];
 
     // Mark this unit as completed
