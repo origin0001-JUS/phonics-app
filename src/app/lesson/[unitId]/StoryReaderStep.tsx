@@ -93,16 +93,16 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
         // Play the full sentence audio
         const audioPromise = playSentenceAudio(unitId, currentPanel, text);
 
-        // Initial delay to let the audio buffer and start playing (fixes text being ahead)
-        await new Promise(resolve => setTimeout(resolve, 300));
+        // Initial delay to let the audio buffer and start playing
+        await new Promise(resolve => setTimeout(resolve, 200));
 
-        // Calculate a slightly more dynamic timing or use a larger base (450ms seems more natural for slowly spoken stories)
+        // TTS is relatively fast. Calculate delay based on word length.
         for (let i = 0; i < words.length; i++) {
             if (stopRef.current) break;
             setHighlightedWord(i);
             
-            // Adjust delay slightly based on word length for a natural feel, base 350ms + 30ms per char
-            const wordDelay = Math.max(300, words[i].length * 30 + 350);
+            // Shorter delay to match fast TTS speed (approx 200~300ms per word)
+            const wordDelay = Math.max(150, words[i].length * 30 + 100);
             await new Promise(resolve => setTimeout(resolve, wordDelay));
         }
 
