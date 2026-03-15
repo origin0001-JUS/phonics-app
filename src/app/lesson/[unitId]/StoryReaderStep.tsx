@@ -91,18 +91,30 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
         stopRef.current = false;
 
         // Play the full sentence audio
-        playSentenceAudio(unitId, currentPanel, text);
+        const audioPromise = playSentenceAudio(unitId, currentPanel, text);
 
-        // Approximate timing: ~400ms per word for karaoke highlighting
+        // Initial delay to let the audio buffer and start playing (fixes text being ahead)
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        // Calculate a slightly more dynamic timing or use a larger base (450ms seems more natural for slowly spoken stories)
         for (let i = 0; i < words.length; i++) {
             if (stopRef.current) break;
             setHighlightedWord(i);
-            await new Promise(resolve => setTimeout(resolve, 400));
+            
+            // Adjust delay slightly based on word length for a natural feel, base 350ms + 30ms per char
+            const wordDelay = Math.max(300, words[i].length * 30 + 350);
+            await new Promise(resolve => setTimeout(resolve, wordDelay));
         }
 
         setHighlightedWord(-1);
-        setIsPlaying(false);
-        setPanelsRead(prev => new Set(prev).add(currentPanel));
+        
+        // Wait for the actual audio to finish before re-enabling controls or auto-playing next
+        await audioPromise;
+
+        if (!stopRef.current) {
+            setIsPlaying(false);
+            setPanelsRead(prev => new Set(prev).add(currentPanel));
+        }
     }, [currentPanel, unitId]);
 
     // Auto-play mode: advance through panels automatically
