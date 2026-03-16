@@ -18,55 +18,56 @@
 ## 스타일 가이드
 
 ```
-- 아이 입/얼굴 클로즈업 일러스트 (실사 X, 만화풍 O)
-- 밝고 깨끗한 파스텔 색상
-- 화살표/하이라이트로 핵심 포인트 강조
-- 텍스트 레이블은 영문 + 간단 기호
-- 비교 이미지: 좌우 분할 (LEFT | RIGHT)
-- 연속 프레임: 2~3컷 가로 배치 (Frame 1 → Frame 2)
-- 512×512px, 투명 또는 흰 배경
+- 일관된 아트 스타일: 귀엽고 둥근 "어린이 캐릭터" 입/얼굴 일러스트 (실사 X, 깔끔한 플랫 디자인 벡터 아트 O)
+- 밝고 깨끗한 톤: 솔리드 파스텔 컬러 배경(예: 파스텔 블루, 핑크, 옐로우)
+- 직관적인 시각적 기호: 텍스트는 절대 포함하지 않음(Absolutely NO text, NO letters, NO words).
+- 보이스/무성음 구분: 성대 진동은 목에 '지그재그 진동선(〰️)', 무성음은 '바람 부는 기호(💨)' 등으로 시각화
+- 비교 이미지: 좌우 대칭 분할 레이아웃으로 차이를 극명하게 보여줌
+- 512×512px 웹용 스퀘어
 ```
 
 ---
 
 ## 이미지 목록 (17장)
 
+모든 프롬프트에 공통 필수 접두어: **"Vector illustration of a cute child's mouth, clean flat design, pastel background. Absolutely NO TEXT, NO LETTERS, NO WORDS anywhere in the image. Pure visual symbols only."**
+
 ### 🔴 Very Hard (7장)
 
 | # | 파일명 | 설명 | 프롬프트 |
 |---|--------|------|---------|
-| 1 | `th_voiceless.webp` | /θ/ (thin) 정면 | Close-up of a child's mouth (front view) showing the TH sound /θ/. The tongue tip is clearly visible between the upper and lower front teeth. Bright, clean, educational illustration style. Soft pastel colors. Arrow or highlight pointing to the tongue tip between teeth. Text label: "th" — 512x512px, white background. |
-| 2 | `th_voiced.webp` | /ð/ (this) 정면 + 성대 진동 | Same as th_voiceless but with a small vibration icon near the throat to indicate voicing. Label: "th (voiced)" |
-| 3 | `r_sound.webp` | /r/ vs /l/ 비교 | Split comparison illustration showing two mouth positions side by side: LEFT: "R" sound — lips slightly rounded, tongue curled back not touching anything. RIGHT: "L" sound — lips flat, tongue tip clearly touching the ridge behind upper teeth. Labels: "R" and "L" with arrows. Educational kids style, 512x512px. |
-| 4 | `l_sound.webp` | /l/ 정면 (혀끝 잇몸) | Child's mouth front view for /l/. Tongue tip clearly touching the alveolar ridge (just behind upper teeth). Mouth slightly open so the tongue position is visible. Arrow pointing to tongue tip touching the ridge. Label: "L". Kids educational style, 512x512px, white background. |
-| 5 | `f_sound.webp` | /f/ vs /p/ 비교 | Split comparison illustration: LEFT: "F" sound — upper teeth resting on lower lip, air flowing out. RIGHT: "P" sound — both lips pressed together. Labels and arrows. Kids educational style, 512x512px. |
-| 6 | `v_sound.webp` | /v/ vs /b/ 비교 | Split comparison illustration: LEFT: "V" sound — upper teeth on lower lip + vibration icon at throat. RIGHT: "B" sound — both lips pressed together + vibration icon at throat. Labels and arrows. Kids educational style, 512x512px. |
-| 7 | `z_sound.webp` | /z/ vs /s/ 비교 | Child's mouth front view for /z/: Teeth almost closed (same as "s"), with vibration icon at throat. Split with "s" for comparison: same mouth, different throat. Labels: "z (zoo) [voice]" and "s (sun) [air]". Kids educational style, 512x512px. |
+| 1 | `th_voiceless.webp` | /θ/ (thin) 정면 | Vector illustration of a child's mouth (front view). Tongue tip clearly visible between upper and lower teeth. A small visual gust of wind symbol (💨) near the mouth. Clean flat design, pastel background, NO TEXT. |
+| 2 | `th_voiced.webp` | /ð/ (this) 정면 + 성대 진동 | Vector illustration of a child's mouth (front view). Tongue tip clearly visible between upper and lower teeth. A vibration wave symbol (〰️) near the throat. Clean flat design, pastel background, NO TEXT. |
+| 3 | `r_sound.webp` | /r/ vs /l/ 비교 | Split comparison illustration of a child's mouth side by side. LEFT side: Lips rounded, tongue curled back pointing inward. RIGHT side: Lips flat, tongue tip pushing up against the roof of the mouth. Visual contrast, clean flat design, pastel background, NO TEXT. |
+| 4 | `l_sound.webp` | /l/ 정면 (혀끝 잇몸) | Vector illustration of a child's mouth (front view). Tongue tip raised and pushing against the upper gum ridge. Clean flat design, pastel background, NO TEXT. |
+| 5 | `f_sound.webp` | /f/ vs /p/ 비교 | Split comparison illustration. LEFT: Upper teeth resting lightly on lower lip with a gentle wind symbol. RIGHT: Both lips pressed tightly together then popping open. Clean flat design, pastel background, NO TEXT. |
+| 6 | `v_sound.webp` | /v/ vs /b/ 비교 | Split comparison illustration. LEFT: Upper teeth on lower lip, plus a glowing vibration (〰️) wave at the throat. RIGHT: Both lips pressed tightly together, plus a glowing vibration wave at the throat. Clean flat design, pastel background, NO TEXT. |
+| 7 | `z_sound.webp` | /z/ vs /s/ 비교 | Split comparison illustration (front view). LEFT: Teeth almost closed, glowing vibration wave at throat (z). RIGHT: Teeth almost closed, slight wind symbol at the mouth, NO throat vibration (s). Clean flat design, pastel background, NO TEXT. |
 
 ### 🟠 Hard (5장)
 
 | # | 파일명 | 설명 | 프롬프트 |
 |---|--------|------|---------|
-| 8 | `vowel_ae.webp` | /æ/ vs /ɛ/ 턱 높이 비교 | Split comparison illustration of jaw opening: LEFT: /æ/ (cat) — jaw dropped wide, "2 fingers" space, corners slightly pulled back. RIGHT: /ɛ/ (bed) — jaw dropped medium, "1 finger" space. Side profile view showing different jaw heights. Labels: "a (cat)" and "e (bed)". Kids educational style, 512x512px. |
-| 9 | `vowel_e.webp` | /ɛ/ vs /ɪ/ 비교 | Split comparison illustration: LEFT: /ɪ/ (sit) — slight smile shape, jaw barely open (grin!). RIGHT: /ɛ/ (bed) — jaw drops down (chin moves!). Front view. Labels: "i (sit)" and "e (bed)". Mnemonic text: "I = grin, E = chin". Kids educational style, 512x512px. |
-| 10 | `vowel_i.webp` | /ɪ/ 정면 (살짝 웃는 모양) | Child's mouth front view for /ɪ/ (sit). Slight smile shape with corners of lips slightly pulled back. Jaw barely open. Relaxed, not tense. Label: "i (sit)". Kids educational style, 512x512px, white background. |
-| 11 | `vowel_o.webp` | /ɒ/ 정면 (둥근 O) | Child's mouth front view for /ɒ/ (hot): Mouth open in a round O shape, wider than Korean "오". Label: "o (hot)" — like a surprised "오!" but bigger. Kids educational style, 512x512px. |
-| 12 | `vowel_u.webp` | /ʌ/ 정면 (편안하게) | Child's mouth front view for /ʌ/ (cup): Mouth barely open, very relaxed, like a lazy "어". Label: "u (cup)" — the most relaxed sound! Kids educational style, 512x512px. |
+| 8 | `vowel_ae.webp` | /æ/ vs /ɛ/ 턱 높이 비교 | Split comparison (side profile of a child). LEFT: Jaw dropped wide open. RIGHT: Jaw dropped only moderately. A visual measuring arrow indicating the different jaw heights. Clean flat design, pastel background, NO TEXT. |
+| 9 | `vowel_e.webp` | /ɛ/ vs /ɪ/ 비교 | Split comparison (front view). LEFT: Slight smile shape, jaw barely open (like a grin). RIGHT: Jaw dropped down more openly. Clean flat design, pastel background, NO TEXT. |
+| 10 | `vowel_i.webp` | /ɪ/ 정면 (살짝 웃는 모양) | Vector illustration of a child's mouth (front view). Mouth forms a slight, relaxed smile shape, corners pulled slightly back, barely open. Clean flat design, pastel background, NO TEXT. |
+| 11 | `vowel_o.webp` | /ɒ/ 정면 (둥근 O) | Vector illustration of a child's mouth (front view). Mouth opened wide in a large, surprised circular 'O' shape. Clean flat design, pastel background, NO TEXT. |
+| 12 | `vowel_u.webp` | /ʌ/ 정면 (편안하게) | Vector illustration of a child's mouth (front view). Mouth totally relaxed, barely open, lazy position. Clean flat design, pastel background, NO TEXT. |
 
 ### 🟡 Moderate (3장)
 
 | # | 파일명 | 설명 | 프롬프트 |
 |---|--------|------|---------|
-| 13 | `sh_sound.webp` | /ʃ/ vs /s/ 비교 | Split comparison: LEFT: "sh" — lips rounded and pushed forward (like blowing a kiss). RIGHT: "s" — lips flat, teeth visible, like a hissing snake. Labels and arrows. Kids educational style, 512x512px. |
-| 14 | `ch_sound.webp` | /tʃ/ 정면 | Child's mouth front view for /tʃ/: Lips rounded like "sh" but with a burst of air. Small "explosion" graphic to show the initial stop. Label: "ch (chin)". Kids educational style, 512x512px. |
-| 15 | `vowel_ay.webp` | /eɪ/ 이중모음 연속 프레임 | Sequence showing mouth shape change for /eɪ/: Frame 1: medium open → Frame 2: smile shape. Arrow showing the glide movement. Label: "a_e (cake)" — your mouth moves! Kids educational style, 512x512px. |
+| 13 | `sh_sound.webp` | /ʃ/ vs /s/ 비교 | Split comparison (front view). LEFT: Lips pushed forward in a rounded 'shh' shape. RIGHT: Lips flat and tense like a smile, teeth visible. Clean flat design, pastel background, NO TEXT. |
+| 14 | `ch_sound.webp` | /tʃ/ 정면 | Vector illustration of a child's mouth (front view). Lips pushed forward in a rounded shape, accompanied by a small visual "burst" or static popping symbol. Clean flat design, pastel background, NO TEXT. |
+| 15 | `vowel_ay.webp` | /eɪ/ 이중모음 연속 프레임 | Sequential illustration with two mouths side-by-side. First mouth: Medium open shape. Second mouth: Transitioned into a wide smile shape. A visual arrow (→) linking them. Clean flat design, pastel background, NO TEXT. |
 
 ### 🟢 Easy (2장)
 
 | # | 파일명 | 설명 | 프롬프트 |
 |---|--------|------|---------|
-| 16 | `vowel_ee.webp` | /iː/ vs /ɪ/ 비교 | Split comparison: LEFT: /iː/ (bee) — wide smile, tense lips, "cheese!". RIGHT: /ɪ/ (bit) — relaxed, shorter, loose smile. Labels: "ee (bee) 길고 팽팽!" and "i (bit) 짧고 편안". Kids educational style, 512x512px. |
-| 17 | `b_p_compare.webp` | /b/ vs /p/ 성대 진동 차이 | Split comparison with throat highlight: LEFT: "b" — lips together, throat vibration icon ✓. RIGHT: "p" — lips together, throat vibration icon ✗. Same mouth shape! Different voice. Labels: "b (bug) [voice]" and "p (pig) [air]". Kids educational style, 512x512px. |
+| 16 | `vowel_ee.webp` | /iː/ vs /ɪ/ 비교 | Split comparison (front view). LEFT: Big, wide, tense smile stretching far outwards. RIGHT: Relaxed, loose, smaller smile. Clean flat design, pastel background, NO TEXT. |
+| 17 | `b_p_compare.webp` | /b/ vs /p/ 성대 진동 차이 | Split comparison (front view). LEFT: Both lips closed tight, vibrant glowing symbol at the throat (voiced). RIGHT: Both lips closed tight, NO throat glow, only a small wind symbol at the lips (air). Clean flat design, pastel background, NO TEXT.
 
 ---
 
