@@ -9,11 +9,13 @@
     "lint": "eslint",
     "generate-tts": "tsx scripts/generate-tts.ts",
     "generate-images": "tsx scripts/generate-images.ts",
-    "generate-lipsync-videos": "tsx scripts/generate-lipsync-videos.ts"
+    "generate-lipsync-videos": "tsx scripts/generate-lipsync-videos.ts",
+    "test-fabric-sample": "tsx scripts/test-veed-fabric-sample.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.1.0",
     "@capacitor/core": "^8.1.0",
+    "@fal-ai/client": "^1.9.4",
     "@supabase/supabase-js": "^2.98.0",
     "clsx": "^2.1.1",
     "dexie": "^4.3.0",
