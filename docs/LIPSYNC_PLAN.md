@@ -328,7 +328,7 @@ Antigravity/Gemini에 이 프롬프트를 넣어 일러스트 생성.
 랩탑 없이도 지금 할 수 있는 것:
 1. ✅ 이 계획서 작성 & 업데이트
 2. ✅ `src/data/pronunciationGuide.ts` 생성 (20개 음소, 이미지 프롬프트 포함)
-3. `src/data/representativeWords.ts` 파일 생성 (Round 14-A)
+3. ✅ `src/data/representativeWords.ts` 완성 (Round 14-A: 92단어 + Sound Focus 15개)
 4. `MouthVisualizer.tsx` 비디오 레이어 + 참조 사진 UI 추가 (Round 14-B 확장)
    → 영상/이미지 없어도 텍스트 폴백으로 정상 동작
 
