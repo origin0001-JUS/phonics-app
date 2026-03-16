@@ -28,70 +28,71 @@ const API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
 // Style anchor for consistency across all panels
 const STYLE = `Children's educational comic panel illustration.
-Style: Flat 2D cartoon, bold outlines, bright cheerful colors, Pixar-like character design.
-Characters have big round eyes, simple friendly expressions.
-Background is simple and uncluttered. No text or labels.
+Style: Flat 2D cartoon, bold outlines, bright cheerful colors, completely textless.
+CRITICAL RULE: ABSOLUTELY NO TEXT, NO LETTERS, NO WORDS, NO ALPHABETS, NO SPEECH BUBBLES ANYWHERE IN THE IMAGE.
+Background is simple and uncluttered.
 Square format (400x400). White border around the panel.`;
 
+// Cohesive stories with consistent subjects per unit
 const STORIES: Record<string, { panels: string[] }> = {
     unit_01: {
         panels: [
-            `${STYLE} Scene: A cute cartoon orange cat sitting happily on a colorful mat. Short-a phonics theme.`,
-            `${STYLE} Scene: A cute cartoon bat flying above a fancy hat. Short-a phonics theme.`,
-            `${STYLE} Scene: A cartoon man wearing a red cap looking at a treasure map. Short-a phonics theme.`,
-            `${STYLE} Scene: A cartoon rat sitting sadly on a mat next to a tin can. Short-a phonics theme.`,
-            `${STYLE} Scene: A cartoon cat tapping a bag with its paw playfully. Short-a phonics theme.`,
-            `${STYLE} Scene: A cartoon cat and rat taking a nap together on a mat, both sleeping with ZZZs. Short-a phonics theme.`,
+            `${STYLE} Scene: A single cute, fat orange cartoon cat sitting happily on a colorful mat. No text.`,
+            `${STYLE} Scene: The EXACT SAME fat orange cat sleeping peacefully (taking a nap) on the mat. No text.`,
+            `${STYLE} Scene: A small brown cartoon rat running toward the mat where the orange cat is. No text.`,
+            `${STYLE} Scene: The EXACT SAME fat orange cat and the brown rat sitting together as friends on the mat. No text.`,
+            `${STYLE} Scene: The EXACT SAME fat orange cat wearing a blue cap and holding a small bag. No text.`,
+            `${STYLE} Scene: The fat orange cat and the brown rat running happily toward a human dad figure. No text.`,
         ]
     },
     unit_02: {
         panels: [
-            `${STYLE} Scene: A cute cartoon hen sitting cozy on a soft bed with pillows. Short-e phonics theme.`,
-            `${STYLE} Scene: A cartoon dog wearing a red collar writing with a pen. Short-e phonics theme.`,
-            `${STYLE} Scene: Ten cartoon men pulling a fishing net from the sea. Short-e phonics theme.`,
-            `${STYLE} Scene: A cute cartoon jet plane flying through light rain, getting wet. Short-e phonics theme.`,
-            `${STYLE} Scene: A cartoon kitten begging with big eyes at a food bowl, being fed. Short-e phonics theme.`,
-            `${STYLE} Scene: A cartoon hen and dog sleeping together happily in a cozy den cave. Short-e phonics theme.`,
+            `${STYLE} Scene: A single cute cartoon red hen sitting inside a small pen enclosure. No text.`,
+            `${STYLE} Scene: The EXACT SAME red hen looking at a large comfortable bed. No text.`,
+            `${STYLE} Scene: A fishing net resting on top of the bed. The red hen looks at it. No text.`,
+            `${STYLE} Scene: The EXACT SAME red hen standing outside in the rain, getting completely wet. No text.`,
+            `${STYLE} Scene: Ten cartoon men gathering around the wet red hen to help her. No text.`,
+            `${STYLE} Scene: The EXACT SAME red hen resting comfortably in the bed with blankets. No text.`,
         ]
     },
     unit_03: {
         panels: [
-            `${STYLE} Scene: A cute cartoon pink pig sitting down happily on a cushion. Short-i phonics theme.`,
-            `${STYLE} Scene: A cartoon pig wearing a curly golden wig, looking silly and happy. Short-i phonics theme.`,
-            `${STYLE} Scene: A cartoon pig digging in the dirt with a small shovel. Short-i phonics theme.`,
-            `${STYLE} Scene: A cartoon child with wide eyes spotting the funny pig. Short-i phonics theme.`,
-            `${STYLE} Scene: A cartoon child doing a Six backflip gymnastics move outdoors. Short-i phonics theme.`,
-            `${STYLE} Scene: A cartoon pig and child sitting together side by side, smiling. Short-i phonics theme.`,
+            `${STYLE} Scene: A single huge, cute pink cartoon pig sitting down happily. No text.`,
+            `${STYLE} Scene: The EXACT SAME pink pig doing a funny jig dance. No text.`,
+            `${STYLE} Scene: The pink pig hiding inside a large dirt pit. No text.`,
+            `${STYLE} Scene: A cartoon kid suddenly biting into a sweet fig fruit. No text.`,
+            `${STYLE} Scene: The EXACT SAME pink pig and the kid sitting together side-by-side. No text.`,
+            `${STYLE} Scene: A close-up of The EXACT SAME pink pig smiling broadly. No text.`,
         ]
     },
     unit_04: {
         panels: [
-            `${STYLE} Scene: A cartoon dog sitting on a log in a sunny park. Short-o phonics theme.`,
-            `${STYLE} Scene: A cartoon dog looking hot and sweaty under a bright sun. Short-o phonics theme.`,
-            `${STYLE} Scene: A cartoon dog carrying a mop to clean up. Short-o phonics theme.`,
-            `${STYLE} Scene: A cartoon orange fox watching the dog with curiosity. Short-o phonics theme.`,
-            `${STYLE} Scene: A cartoon fox jumping on top of a big box happily. Short-o phonics theme.`,
-            `${STYLE} Scene: A cartoon dog and fox sharing food from a pot together. Short-o phonics theme.`,
+            `${STYLE} Scene: A single cartoon dog looking at a hot dog on a plate. No text.`,
+            `${STYLE} Scene: A cartoon orange fox hiding inside a cardboard box. No text.`,
+            `${STYLE} Scene: The EXACT SAME cartoon dog running to the top of a small hill. No text.`,
+            `${STYLE} Scene: A cartoon mom holding a hot cooking pot with steam rising. No text.`,
+            `${STYLE} Scene: The EXACT SAME cartoon dog and the orange fox hopping joyfully together. No text.`,
+            `${STYLE} Scene: The dog and fox resting comfortably after hopping. No text.`,
         ]
     },
     unit_05: {
         panels: [
-            `${STYLE} Scene: A cute cartoon bug sitting in warm sunlight looking happy. Short-u phonics theme.`,
-            `${STYLE} Scene: A cartoon bug having fun inside a giant teacup. Short-u phonics theme.`,
-            `${STYLE} Scene: A cartoon bug running very fast with motion lines. Short-u phonics theme.`,
-            `${STYLE} Scene: A cartoon puppy dog chasing after the bug. Short-u phonics theme.`,
-            `${STYLE} Scene: A cartoon bug hiding safely inside a yellow rubber bathtub. Short-u phonics theme.`,
-            `${STYLE} Scene: A cartoon bug and puppy giving each other a big happy hug. Short-u phonics theme.`,
+            `${STYLE} Scene: A cartoon hen sitting inside a small wooden pen. No text.`,
+            `${STYLE} Scene: The EXACT SAME hen is bright red acting silly. No text.`,
+            `${STYLE} Scene: A fishing net resting on a bed. No text.`,
+            `${STYLE} Scene: The EXACT SAME hen standing outside in the rain, getting wet. No text.`,
+            `${STYLE} Scene: Ten happy cartoon men greeting the hen. No text.`,
+            `${STYLE} Scene: The red hen sleeping peacefully in the bed. No text.`,
         ]
     },
     unit_07: {
         panels: [
-            `${STYLE} Scene: A cartoon baker happily baking a big layered birthday cake. Long-a Magic-e phonics theme.`,
-            `${STYLE} Scene: A cartoon child placing the cake carefully beside a sparkling lake. Long-a phonics theme.`,
-            `${STYLE} Scene: A cartoon wave of water splashing toward the cake with a surprised expression. Long-a phonics theme.`,
-            `${STYLE} Scene: A cartoon clock showing the cake arrived late, dripping with frosting. Long-a phonics theme.`,
-            `${STYLE} Scene: A cartoon child and baker writing a creative new name for their cake. Long-a phonics theme.`,
-            `${STYLE} Scene: A cartoon child and baker at a gate eating pieces of cake, celebrating. Long-a phonics theme.`,
+            `${STYLE} Scene: A cartoon girl named Kate cheerfully baking a large cake in a kitchen. No text.`,
+            `${STYLE} Scene: The EXACT SAME girl, Kate, carrying the cake toward a beautiful blue lake. No text.`,
+            `${STYLE} Scene: The sun setting (late) as Kate arrives at a wooden gate near the lake. No text.`,
+            `${STYLE} Scene: A cartoon boy named Dave giving a superhero cape to Kate. No text.`,
+            `${STYLE} Scene: Kate wearing the cape and Dave having a fun running race together. No text.`,
+            `${STYLE} Scene: Kate and Dave celebrating their great game by the lake. No text.`,
         ]
     },
 };
