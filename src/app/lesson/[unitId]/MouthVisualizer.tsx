@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { phonemeToViseme, visemeGuide, type VisemeId } from "@/data/visemeMap";
+import { getGuideForPhoneme, getConfusionPair, type PronunciationRef } from "@/data/pronunciationGuide";
 import MouthCrossSection from "./MouthCrossSection";
+import Image from "next/image";
 
 interface MouthVisualizerProps {
     currentPhoneme?: string;
@@ -118,14 +120,104 @@ function FrontViewPlaceholder({ viseme, isSpeaking }: { viseme: VisemeId; isSpea
     );
 }
 
+// Difficulty badge colors
+const difficultyConfig = {
+    very_hard: { bg: 'bg-red-100', text: 'text-red-700', border: 'border-red-200', label: '어려워요!' },
+    hard: { bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-200', label: '주의!' },
+    moderate: { bg: 'bg-yellow-100', text: 'text-yellow-700', border: 'border-yellow-200', label: '연습!' },
+    easy: { bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-200', label: '쉬워요' },
+} as const;
+
+// Pronunciation reference photo panel
+function PronunciationRefPanel({ guide, confusionGuide }: { guide: PronunciationRef; confusionGuide?: PronunciationRef }) {
+    const [imgError, setImgError] = useState(false);
+    const diff = difficultyConfig[guide.difficulty];
+
+    // Reset image error when guide changes
+    useEffect(() => { setImgError(false); }, [guide.phoneme]);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            className="w-full max-w-[320px]"
+        >
+            <div className={`${diff.bg} ${diff.border} border-2 rounded-2xl p-4 shadow-inner`}>
+                {/* Header: phoneme + difficulty badge */}
+                <div className="flex items-center justify-between mb-2">
+                    <span className="font-black text-indigo-700 text-base">/{guide.phoneme}/ 발음 가이드</span>
+                    <span className={`${diff.bg} ${diff.text} ${diff.border} border text-xs font-bold px-2 py-0.5 rounded-full`}>
+                        {diff.label}
+                    </span>
+                </div>
+
+                {/* Reference image (if available) */}
+                {!imgError && (
+                    <div className="relative w-full aspect-square max-w-[200px] mx-auto mb-3 rounded-xl overflow-hidden bg-white border border-slate-200">
+                        <Image
+                            src={guide.imagePath}
+                            alt={`${guide.phoneme} 발음 참조`}
+                            fill
+                            className="object-contain"
+                            onError={() => setImgError(true)}
+                            sizes="200px"
+                        />
+                    </div>
+                )}
+
+                {/* Visual key point */}
+                <div className="bg-white/70 rounded-xl p-3 mb-2">
+                    <p className="text-sm font-black text-slate-700 break-keep leading-relaxed">
+                        👀 {guide.visualKey}
+                    </p>
+                </div>
+
+                {/* Visual tip */}
+                <div className="bg-white/70 rounded-xl p-3 mb-2">
+                    <p className="text-sm font-bold text-slate-600 break-keep leading-relaxed whitespace-pre-line">
+                        🪞 {guide.visualTip}
+                    </p>
+                </div>
+
+                {/* Common mistake */}
+                {guide.commonMistake && (
+                    <div className="bg-red-50/70 rounded-xl p-3 mb-2 border border-red-100">
+                        <p className="text-sm font-bold text-red-600 break-keep leading-relaxed">
+                            ⚠️ {guide.commonMistake}
+                        </p>
+                    </div>
+                )}
+
+                {/* Confusion pair comparison */}
+                {confusionGuide && (
+                    <div className="bg-purple-50/70 rounded-xl p-3 border border-purple-100">
+                        <p className="text-xs font-black text-purple-700 mb-1">
+                            🔄 비교: /{guide.phoneme}/ vs /{confusionGuide.phoneme}/
+                        </p>
+                        <p className="text-sm font-bold text-purple-600 break-keep leading-relaxed">
+                            {confusionGuide.visualKey}
+                        </p>
+                    </div>
+                )}
+            </div>
+        </motion.div>
+    );
+}
+
 export default function MouthVisualizer({
     currentPhoneme, currentWord, wordPhonemes, isSpeaking, compact
 }: MouthVisualizerProps) {
     const [showHelp, setShowHelp] = useState(false);
+    const [showGuide, setShowGuide] = useState(false);
 
     const viseme: VisemeId = currentPhoneme
         ? (phonemeToViseme[currentPhoneme] || 'rest')
         : 'rest';
+
+    // Look up pronunciation guide for current phoneme
+    const pronGuide = currentPhoneme ? getGuideForPhoneme(currentPhoneme) : undefined;
+    const confusionGuide = currentPhoneme ? getConfusionPair(currentPhoneme) : undefined;
 
     const size = compact ? 'w-20 h-20' : 'w-28 h-28';
 
@@ -167,17 +259,44 @@ export default function MouthVisualizer({
                 </div>
             )}
 
-            {/* Toggle Help Button */}
-            {wordPhonemes && wordPhonemes.length > 0 && (
-                <button 
-                    onClick={() => setShowHelp(!showHelp)}
-                    className="mt-2 text-sm font-bold text-amber-600 bg-amber-50 px-4 py-2 rounded-full border-2 border-amber-200 active:scale-95 transition-transform flex items-center gap-2 shadow-sm"
-                >
-                    💡 {showHelp ? "발음 팁 숨기기" : "발음 팁 보기"}
-                </button>
-            )}
+            {/* Action buttons row */}
+            <div className="flex gap-2 flex-wrap justify-center">
+                {/* Pronunciation guide toggle (only when guide data exists) */}
+                {pronGuide && (
+                    <button
+                        onClick={() => setShowGuide(!showGuide)}
+                        className={`text-sm font-bold px-4 py-2 rounded-full border-2 active:scale-95 transition-transform flex items-center gap-1.5 shadow-sm ${
+                            showGuide
+                                ? 'text-purple-700 bg-purple-100 border-purple-300'
+                                : 'text-purple-600 bg-purple-50 border-purple-200'
+                        }`}
+                    >
+                        📸 {showGuide ? '가이드 숨기기' : '발음 가이드'}
+                        {pronGuide.difficulty === 'very_hard' && (
+                            <span className="bg-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full leading-none">!</span>
+                        )}
+                    </button>
+                )}
 
-            {/* Collapsible Sequential Help */}
+                {/* Existing help toggle */}
+                {wordPhonemes && wordPhonemes.length > 0 && (
+                    <button
+                        onClick={() => setShowHelp(!showHelp)}
+                        className="text-sm font-bold text-amber-600 bg-amber-50 px-4 py-2 rounded-full border-2 border-amber-200 active:scale-95 transition-transform flex items-center gap-1.5 shadow-sm"
+                    >
+                        💡 {showHelp ? '팁 숨기기' : '발음 팁'}
+                    </button>
+                )}
+            </div>
+
+            {/* Pronunciation Guide Panel (new) */}
+            <AnimatePresence>
+                {showGuide && pronGuide && (
+                    <PronunciationRefPanel guide={pronGuide} confusionGuide={confusionGuide} />
+                )}
+            </AnimatePresence>
+
+            {/* Collapsible Sequential Help (existing) */}
             <AnimatePresence>
                 {showHelp && wordPhonemes && wordPhonemes.length > 0 && (
                     <motion.div
