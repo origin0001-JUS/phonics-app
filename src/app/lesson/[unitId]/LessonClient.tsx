@@ -14,6 +14,7 @@ import { db } from "@/lib/db";
 import { createNewCard, calculateNextReview } from "@/lib/srs";
 import { REWARDS } from "@/data/rewards";
 import { playWordAudio, playSentenceAudio, playSFX, fallbackTTS, listenAndCompare, isSTTSupported, preloadAudioFiles, type STTResult } from "@/lib/audio";
+import { getSoundFocusVideoPath } from "@/data/representativeWords";
 
 import MouthVisualizer, { usePhonemeSequence } from "./MouthVisualizer";
 import MagicEStep from "./MagicEStep";
@@ -515,6 +516,10 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
     const [quizIdx, setQuizIdx] = useState(0);
     const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
     const [showQuizResult, setShowQuizResult] = useState(false);
+    
+    // For AI Lipsync video
+    const videoPath = useMemo(() => unit.id ? getSoundFocusVideoPath(unit.id) : null, [unit.id]);
+    const [isSpeakingVideo, setIsSpeakingVideo] = useState(false);
 
     const quizItems = useMemo(() => {
         if (!minimalPairData) return [];
@@ -622,16 +627,40 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
-            {/* Giant Sound Display */}
+            {/* Giant Sound Display with Video option */}
             <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-8 w-full max-w-xs shadow-[0_10px_0_#e2e8f0] dark:shadow-[0_10px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
-                <p className="text-slate-400 dark:text-slate-500 font-bold mb-2">Today&apos;s Sound</p>
-                <div className="w-32 h-32 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
-                    <span className="text-6xl font-black text-white drop-shadow-md">
-                        {unit.title.split(" ").pop()}
-                    </span>
-                </div>
-                <p className="text-2xl font-black text-slate-800 dark:text-slate-100 mb-1">{unit.title}</p>
-                <p className="text-slate-500 font-medium text-sm">/{unit.targetSound}/</p>
+                <p className="text-slate-400 dark:text-slate-500 font-bold mb-4">Today&apos;s Sound</p>
+                
+                {videoPath ? (
+                    <div className="mb-4 flex flex-col items-center w-full">
+                        <MouthVisualizer 
+                            currentPhoneme={unit.targetSound}
+                            videoPath={videoPath}
+                            isSpeaking={isSpeakingVideo}
+                            compact={false}
+                        />
+                        <button 
+                            onClick={() => {
+                                setIsSpeakingVideo(true);
+                                playPhonemeSound(unit.targetSound);
+                                setTimeout(() => setIsSpeakingVideo(false), 2000);
+                            }}
+                            className="mt-6 flex items-center justify-center gap-2 bg-indigo-100 text-indigo-700 px-6 py-3 rounded-full font-bold w-full active:scale-95 transition-transform"
+                        >
+                            <Volume2 className="w-5 h-5" /> Listen to /{unit.targetSound}/
+                        </button>
+                    </div>
+                ) : (
+                    <>
+                        <div className="w-32 h-32 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                            <span className="text-6xl font-black text-white drop-shadow-md">
+                                {unit.title.split(" ").pop()}
+                            </span>
+                        </div>
+                        <p className="text-2xl font-black text-slate-800 dark:text-slate-100 mb-1">{unit.title}</p>
+                        <p className="text-slate-500 font-medium text-sm">/{unit.targetSound}/</p>
+                    </>
+                )}
             </div>
 
             {/* Example word with image (V2-9) */}
@@ -664,6 +693,7 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
     const [onsetTapped, setOnsetTapped] = useState(false);
     const [rimeTapped, setRimeTapped] = useState(false);
     const [merging, setMerging] = useState(false);
+    const [isSpeakingWord, setIsSpeakingWord] = useState(false); // For MouthVisualizer
     const word = words[currentIdx];
 
     const useOnsetRime = !!(word.onset && word.rime);
@@ -687,7 +717,11 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
 
         if (tappedPhonemes.length + 1 === word.phonemes.length) {
             setTimeout(() => playSFX('correct'), 600);
-            setTimeout(() => playTTS(word.word), 1200);
+            setTimeout(() => {
+                setIsSpeakingWord(true);
+                playTTS(word.word);
+                setTimeout(() => setIsSpeakingWord(false), 2000);
+            }, 1200);
         }
     };
 
@@ -712,7 +746,11 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
         if (onsetTapped && rimeTapped && !merging) {
             setMerging(true);
             setTimeout(() => playSFX('correct'), 800);
-            setTimeout(() => playTTS(word.word), 1800);
+            setTimeout(() => {
+                setIsSpeakingWord(true);
+                playTTS(word.word);
+                setTimeout(() => setIsSpeakingWord(false), 2000);
+            }, 1800);
         }
     }, [onsetTapped, rimeTapped, merging, word.word]);
 
@@ -789,7 +827,7 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
                     </div>
                 )}
 
-                {/* Blended result with 3D Image Popup */}
+                {/* Blended result with 3D Image Popup and MouthVisualizer */}
                 {allTapped && (
                     <motion.div
                         initial={{ opacity: 0, scale: 0.5, y: 20 }}
@@ -797,18 +835,25 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
                         className="flex flex-col items-center mt-2 w-full"
                     >
-                        {!imageError && (
-                            <div className="w-32 h-32 mb-4 bg-sky-50 rounded-3xl border-4 border-sky-100 shadow-[0_8px_20px_rgba(0,0,0,0.1)] overflow-hidden flex items-center justify-center p-2 relative">
-                                <img
-                                    src={`/assets/images/${word.id}.png`}
-                                    alt={word.word}
-                                    className="w-full h-full object-contain drop-shadow-md"
-                                    onError={() => setImageError(true)}
-                                />
-                                {/* Optional: Subtle shine effect overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-0 animate-[shine_2s_ease-in-out_infinite]" />
-                            </div>
-                        )}
+                        <div className="flex gap-4 items-center mb-4">
+                            {!imageError && (
+                                <div className="w-32 h-32 bg-sky-50 rounded-3xl border-4 border-sky-100 shadow-[0_8px_20px_rgba(0,0,0,0.1)] overflow-hidden flex items-center justify-center p-2 relative">
+                                    <img
+                                        src={`/assets/images/${word.id}.png`}
+                                        alt={word.word}
+                                        className="w-full h-full object-contain drop-shadow-md"
+                                        onError={() => setImageError(true)}
+                                    />
+                                    {/* Optional: Subtle shine effect overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-0 animate-[shine_2s_ease-in-out_infinite]" />
+                                </div>
+                            )}
+                            <MouthVisualizer 
+                                currentWord={word.word} 
+                                isSpeaking={isSpeakingWord} 
+                                compact={true}
+                            />
+                        </div>
                         <div className="bg-green-50 border-4 border-green-200 shadow-[0_4px_0_#bbf7d0] rounded-2xl px-8 py-3 flex items-center gap-3">
                             <Check className="w-6 h-6 text-green-500" strokeWidth={4} />
                             <span className="font-black text-green-700 text-2xl tracking-wide">{word.word}</span>

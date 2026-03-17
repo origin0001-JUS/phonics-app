@@ -55,18 +55,18 @@ const ASSET_DIR = path.join(process.cwd(), 'flow_asset', 'phonics_split');
 const WORK_DIR = path.join(ASSET_DIR, '_batch_work');
 const SEED_IMAGE = path.join(ASSET_DIR, 'seed_final.jpeg');
 
-// ─── 누락 단어 (기존 MP4 제외) ───
+// ─── 누락 단어 24개 (기존 MP4 제외, bee/boat/bowl 이미 존재, bed 추가) ───
 const ALL_MISSING = [
-    'bed', 'bee', 'boat', 'bowl', 'cake', 'cat', 'chip', 'chop', 'clap',
-    'crab', 'food', 'hat', 'hen', 'man', 'map', 'meat', 'net', 'red',
-    'sea', 'seed', 'sing', 'sled', 'thin', 'this', 'whale', 'when', 'whip',
+    'bed', 'cake', 'cat', 'chip', 'chop', 'clap', 'crab', 'food',
+    'hat', 'hen', 'man', 'map', 'meat', 'net', 'red', 'sea',
+    'seed', 'sing', 'sled', 'thin', 'this', 'whale', 'when', 'whip',
 ];
 
-// 3배치로 분할
+// 3배치 (8개씩)
 const BATCHES = [
-    ALL_MISSING.slice(0, 9),
-    ALL_MISSING.slice(9, 18),
-    ALL_MISSING.slice(18, 27),
+    ALL_MISSING.slice(0, 8),
+    ALL_MISSING.slice(8, 16),
+    ALL_MISSING.slice(16, 24),
 ];
 
 // ─── 타임스탬프 기록 ───
@@ -342,7 +342,7 @@ async function main() {
     }
 
     // 배치 재구성 (실제 누락만)
-    const batchSize = 9;
+    const batchSize = 8;
     const batches: string[][] = [];
     for (let i = 0; i < realMissing.length; i += batchSize) {
         batches.push(realMissing.slice(i, i + batchSize));
@@ -354,6 +354,19 @@ async function main() {
     if (dryRun) { console.log('\n(--dry-run 종료)'); return; }
 
     fs.mkdirSync(WORK_DIR, { recursive: true });
+
+    // 이전 배치 캐시 삭제 (단어 구성 변경됨)
+    for (let i = 1; i <= 5; i++) {
+        const batchMp3 = path.join(WORK_DIR, `batch_${i}.mp3`);
+        const batchTs = path.join(WORK_DIR, `batch_${i}_timestamps.json`);
+        const batchVid = path.join(WORK_DIR, `batch_${i}_video.mp4`);
+        for (const f of [batchMp3, batchTs, batchVid]) {
+            if (fs.existsSync(f)) {
+                fs.unlinkSync(f);
+                console.log(`  🗑️  삭제: ${path.basename(f)}`);
+            }
+        }
+    }
 
     // ━━━ Phase 1: 모든 TTS 생성 ━━━
     console.log('\n━━━ Phase 1: TTS 생성 ━━━\n');

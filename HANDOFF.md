@@ -5,22 +5,32 @@
 ---
 
 ## 마지막 작업 환경
-- **환경**: 웹 Claude Code / Antigravity
-- **시간**: 2026-03-17
-- **브랜치**: `claude/multi-environment-setup-Nlrfn`
+- **환경**: 랩탑 Antigravity (GUI)
+- **시간**: 2026-03-18
+- **브랜치**: `claude/multi-environment-setup-Nlrfn` (또는 현재 브랜치)
 
 ---
 
-## 현재 진행 상태 (Round 14 진행 중 + Round 5 QA 병합)
+## 현재 진행 상태 (하이브리드 병렬 개발 오케스트레이션 구축 완료)
 
-### 최근 반영된 작업 (Round 5 QA 병합 내용)
-- **Round 5 QA (데코더블 스토리 개편)**: 하이브리드 작업 완료
-  - `src/data/decodableStories.ts` 생성 및 스토리 데이터 단일화 (하나로 이어지는 서사, 번역 텍스트 추가).
-  - `StoryReaderStep.tsx`에 해석 도우미(Translation Tooltip) UI 구현 완료.
-  - AI 이미지 생성 프롬프트(`scripts/generate-story-images.ts`) 강화 완료.
-  - *참고: Gemini API 제한(fetch failed) 이슈로 인한 스토리 이미지 누락분이 있을 수 있으므로 재확인 필요.*
+### 이번 세션 완료한 작업 (워크플로우 세팅)
+- [x] **하이브리드 병렬 개발 가이드 문서 작성**: `docs/HYBRID_DEV_GUIDE.md`
+- [x] **전역 슬래시 명령어(단축어) 구현**: `~/.agents/workflows/`
+  - `/save`: 컨텍스트 저장 및 `git push` 자동화
+  - `/load`: `git pull` 및 컨텍스트 브리핑 자동화
+  - `/claude`: 클로드용 프롬프트 생성 (비서 역할)
+  - `/plan`: 기획 분석, UI/CLI 업무 배분, `CLAUDE_TASKS.md` 갱신 및 터미널 명령어 자동 생성 (PM 역할)
+- [x] **클로드 코드 시스템 프롬프트(`CLAUDE.md`) 업데이트**: 작업 완료 시 `git push` 및 `HANDOFF.md` 작성 강제화
 
-### 이번 세션 완료한 작업 (Round 14 준비)
+- [x] 누락 24개 단어 립싱크 영상 일괄 생성 완료
+  - ElevenLabs TTS (Sparkles for Kids, speed 0.6, 앞 0.5초 + 뒤 0.3초)
+  - VEED Fabric 1.0 배치 방식 (더미 워밍업 + 3배치 × 8단어)
+  - Seed_final.jpeg 시드 이미지 사용
+  - `flow_asset/phonics_split/` 내 **총 92개 mp4** 완성
+- [x] `scripts/generate-lipsync-batch.ts` 업데이트 (24개 단어 3배치 구성)
+- [x] `docs/01-plan/features/lipsync-batch-warmup.plan.md` v2 업데이트
+
+### 이전 세션 완료 작업 (Round 14 준비)
 - [x] `src/data/pronunciationGuide.ts` 생성 — 20개 음소별 발음 참조 데이터
 - [x] `src/data/representativeWords.ts` 보완 — Round 14-A 스펙 완성
 - [x] `docs/LIPSYNC_PLAN.md` 업데이트 (VEED Fabric 1.0 도입)
@@ -28,35 +38,21 @@
 
 ---
 
-## 🔥 랩탑에서 해야 할 일 (즉시)
+## 🔥 다음 할 일
 
-### 1. 스토리 이미지 누락 여부 확인 (Round 5 잔여 작업)
-- `npx tsx scripts/generate-story-images.ts`를 실행하여 429 에러로 누락되었던 스토리가 모두 생성되었는지 확인.
+### 1. 생성된 립싱크 영상 품질 확인
+- `flow_asset/phonics_split/` 내 새로 생성된 24개 mp4 품질 확인
+- 특히 확인: bed, cat, hat, man, thin, whale, sea 등
+- 워밍업 배치 방식으로 초반 품질 저하 문제 해결되었는지 확인
 
-### 2. VEED Fabric 1.0 샘플 테스트 실행
-웹 환경에서 외부 API 호출 차단으로 실행 불가하므로 **랩탑에서 실행 필수.**
+### 2. Round 14 앱 통합 (Task 14-C, 14-D)
+- `MouthVisualizer.tsx`에 비디오 레이어 통합 (이미 완료됨)
+- `LessonClient.tsx`에서 MouthVisualizer 연동 확인
+- 전체 빌드 및 브라우저 테스트
 
-```bash
-# 1. 의존성 설치
-npm install
-
-# 2. .env.local 생성 (키는 아래 참조)
-# (FAL_KEY, ELEVENLABS_API_KEY 입력)
-
-# 3. 실행
-npm run test-fabric-sample
-```
-
-### 3. 품질 평가 체크리스트
-| 단어 | 확인할 것 |
-|------|----------|
-| **thin** | th 소리 시 혀끝이 치아 사이로 보이는가? s/t와 구별되는가? |
-| **fish** | f 소리 시 윗니가 아랫입술에 닿는가? sh때 입술 둥글어지는가? |
-| **cat** | /æ/ 모음 시 입이 크게 벌어지는가? "bet"보다 확실히 큰가? |
-
-### 4. 품질 판단 후 분기
-- **OK** → 전체 109개 영상 생성 스크립트 작성 (~$17)
-- **아쉬움** → 720p로 재테스트 (추가 ~$0.42) 또는 다른 모델 검토
+### 3. Sound Focus 영상 15개 (선택사항)
+- `representativeWords.ts`의 `soundFocusEntries` 15개에 대한 영상은 아직 미생성
+- 필요 시 별도 스크립트로 생성 가능
 
 ---
 
@@ -66,8 +62,9 @@ npm run test-fabric-sample
 - Round 13: ⏳ 태스크 정의됨, 진행 대기
 - **Round 14**: AI 립싱크 영상 통합
   - **Task 14-A**: ✅ `representativeWords.ts` 완성 (92단어 + Sound Focus 15개)
-  - **Task 14-B**: ⏳ 대기 (MouthVisualizer.tsx 비디오 레이어 추가)
-  - **Task 14-C**: ⏳ 대기 (LessonClient.tsx에 MouthVisualizer 삽입)
+  - **Task 14-B**: ✅ 완료 (MouthVisualizer.tsx 비디오 레이어 추가)
+  - **Task 14-C**: ✅ 완료 (LessonClient.tsx에 MouthVisualizer 삽입)
+  - **Task 14-E**: ✅ 완료 (누락 24개 립싱크 영상 배치 생성, 총 92개 mp4)
 - Round 15: V2 코어 로직, 진행 대기
 
 ---

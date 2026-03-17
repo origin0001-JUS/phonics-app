@@ -125,10 +125,10 @@ const imagesToGenerate: ImageDef[] = [
 ];
 
 async function generateImage(imageDef: ImageDef) {
-  const outputPath = path.join(OUTPUT_DIR, `${imageDef.filename}.webp`);
+  const outputPath = path.join(OUTPUT_DIR, `${imageDef.filename}.svg`);
 
   if (fs.existsSync(outputPath)) {
-    console.log(`Skipping ${imageDef.filename}.webp, already exists.`);
+    console.log(`Skipping ${imageDef.filename}.svg, already exists.`);
     return;
   }
 
@@ -136,27 +136,24 @@ async function generateImage(imageDef: ImageDef) {
   
   const fullPrompt = `${STYLE_PREFIX} ${imageDef.prompt}`;
 
+  const promptWithSvg = `${fullPrompt}\n\nCRITICAL INSTRUCTION: You are an expert vector artist. DO NOT output any markdown, markdown code blocks, or text. ONLY output the raw, minified SVG XML code for the image. The SVG must be 512x512. Use clean path vectors, vibrant colors, and precise shapes.`;
+
   try {
-    // Note: Imagen 3 generation is typically accessed via Vertex AI. 
-    // If using Google AI Studio (generativelanguage), the endpoint is different or unavailable without whitelist.
-    // Let's try the v1beta endpoint for imagen.
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        instances: [
+        contents: [
           {
-            prompt: fullPrompt
+            parts: [{ text: promptWithSvg }]
           }
         ],
-        parameters: {
-          sampleCount: 1,
-          aspectRatio: "1:1",
-          outputOptions: {
-            mimeType: "image/jpeg"
-          }
+        generationConfig: {
+            temperature: 0.1,
+            topK: 1,
+            topP: 1
         }
       })
     });
@@ -168,17 +165,23 @@ async function generateImage(imageDef: ImageDef) {
 
     const data = await response.json();
     
-    if (!data.predictions || data.predictions.length === 0) {
+    if (!data.candidates || data.candidates.length === 0 || !data.candidates[0].content) {
         throw new Error(`No image data returned from API for ${imageDef.filename}`);
     }
 
-    const base64Image = data.predictions[0].bytesBase64Encoded;
+    let svgContent = data.candidates[0].content.parts[0].text;
+    
+    // Cleanup markdown if it accidentally added it
+    if (svgContent.includes('```svg')) {
+      svgContent = svgContent.replace(/```svg/g, '').replace(/```/g, '').trim();
+    } else if (svgContent.includes('```')) {
+      svgContent = svgContent.replace(/```/g, '').trim();
+    }
 
-    // Since imagen API returns base64 string, we write it as a buffer. 
-    // We will save as jpeg first, then user can convert to webp if needed later
-    const tempJpgPath = path.join(OUTPUT_DIR, `${imageDef.filename}.jpeg`);
-    fs.writeFileSync(tempJpgPath, Buffer.from(base64Image, 'base64'));
-    console.log(`Saved ${imageDef.filename}.jpeg`);
+    // Save as SVG
+    const svgPath = path.join(OUTPUT_DIR, `${imageDef.filename}.svg`);
+    fs.writeFileSync(svgPath, svgContent);
+    console.log(`Saved ${imageDef.filename}.svg`);
   } catch (error) {
     console.error(`Error generating ${imageDef.filename}:`, error);
   }

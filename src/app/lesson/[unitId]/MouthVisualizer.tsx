@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { phonemeToViseme, visemeGuide, type VisemeId } from "@/data/visemeMap";
 import { getGuideForPhoneme, getConfusionPair, type PronunciationRef } from "@/data/pronunciationGuide";
+import { getLipSyncVideoPath } from "@/data/representativeWords";
 import MouthCrossSection from "./MouthCrossSection";
 import Image from "next/image";
 
@@ -13,6 +14,7 @@ interface MouthVisualizerProps {
     wordPhonemes?: string[];
     isSpeaking?: boolean;
     compact?: boolean;
+    videoPath?: string | null;
 }
 
 // Phoneme sequence hook — cycles through phonemes while speaking
@@ -206,10 +208,11 @@ function PronunciationRefPanel({ guide, confusionGuide }: { guide: Pronunciation
 }
 
 export default function MouthVisualizer({
-    currentPhoneme, currentWord, wordPhonemes, isSpeaking, compact
+    currentPhoneme, currentWord, wordPhonemes, isSpeaking, compact, videoPath
 }: MouthVisualizerProps) {
     const [showHelp, setShowHelp] = useState(false);
     const [showGuide, setShowGuide] = useState(false);
+    const [videoError, setVideoError] = useState(false);
 
     const viseme: VisemeId = currentPhoneme
         ? (phonemeToViseme[currentPhoneme] || 'rest')
@@ -221,17 +224,47 @@ export default function MouthVisualizer({
 
     const size = compact ? 'w-20 h-20' : 'w-28 h-28';
 
+    // Auto-resolve video path
+    const resolvedVideoPath = videoPath || (currentWord ? getLipSyncVideoPath(currentWord) : null);
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    // Reset video error when path changes
+    useEffect(() => { setVideoError(false); }, [resolvedVideoPath]);
+
+    // Handle video playback
+    useEffect(() => {
+        if (!videoRef.current) return;
+        if (isSpeaking) {
+            videoRef.current.currentTime = 0;
+            videoRef.current.play().catch(() => {});
+        } else {
+            videoRef.current.pause();
+            videoRef.current.currentTime = 0;
+        }
+    }, [isSpeaking, resolvedVideoPath]);
+
     return (
         <div className="flex flex-col items-center gap-3">
             {/* Dual view */}
             <div className="flex gap-3 items-center">
                 {/* Front view: lip shape */}
                 <motion.div
-                    className={`${size} rounded-2xl overflow-hidden border-4 border-white shadow-lg bg-white`}
-                    animate={{ scale: isSpeaking ? [1, 1.03, 1] : 1 }}
-                    transition={{ repeat: isSpeaking ? Infinity : 0, duration: 0.5 }}
+                    className={`${size} rounded-2xl overflow-hidden border-4 border-white shadow-lg bg-white relative`}
+                    animate={{ scale: isSpeaking && (!resolvedVideoPath || videoError) ? [1, 1.03, 1] : 1 }}
+                    transition={{ repeat: isSpeaking && (!resolvedVideoPath || videoError) ? Infinity : 0, duration: 0.5 }}
                 >
-                    <FrontViewPlaceholder viseme={viseme} isSpeaking={isSpeaking} />
+                    {resolvedVideoPath && !videoError ? (
+                        <video
+                            ref={videoRef}
+                            src={resolvedVideoPath}
+                            className="w-full h-full object-cover"
+                            playsInline
+                            muted
+                            onError={() => setVideoError(true)}
+                        />
+                    ) : (
+                        <FrontViewPlaceholder viseme={viseme} isSpeaking={isSpeaking} />
+                    )}
                 </motion.div>
 
                 {/* Cross-section view: tongue position */}

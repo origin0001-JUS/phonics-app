@@ -1,87 +1,100 @@
-# Plan: 립싱크 배치 워밍업 방식 (lipsync-batch-warmup)
+# Plan: 립싱크 배치 워밍업 방식 v2 (lipsync-batch-warmup)
+
+> 최종 업데이트: 2026-03-17
+> 이전 세션에서 TTS 오디오 + 배치 합성까지 완료, VEED Fabric 영상 생성 미완료 상태에서 재개
 
 ## 배경
 
-립싱크 AI(VEED Fabric 등)는 영상 초반 2~3초 동안 입모양 동기화가 부정확하다가, 이후 안정화되어 정밀도가 올라가는 특성이 있음. 단일 단어(1~2초)만으로 영상을 생성하면 항상 "초반 부정확 구간"에 걸려 품질이 낮음.
+립싱크 AI(VEED Fabric)는 영상 초반 2~3초 동안 입모양 동기화가 부정확하다가, 이후 안정화되어 정밀도가 올라가는 특성이 있음. 단일 단어(1~2초)만으로 영상을 생성하면 항상 "초반 부정확 구간"에 걸려 품질이 낮음.
 
-## 핵심 전략: 더미 워밍업 + 연속 배치
+## 현재 상태 (2026-03-17)
 
-하나의 긴 오디오 파일을 만들어 립싱크 AI에 넣고, 결과 영상을 단어별로 분할(split)한다.
+### 기존 완료
+- **phonics_split/** 내 mp4: **69개** (기존 Google Flow 분할 + 수작업)
+- `representativeWords.ts` 전체 고유 단어: **87개**
 
-```
-[더미 문장 ~5초] → [단어1] → [간격] → [단어2] → [간격] → ... → [단어N]
-```
+### 이전 세션 잔재 (_batch_work/)
+- warmup.mp3 (더미 문장)
+- word_*.mp3 (23개 개별 단어 TTS — bed 누락!)
+- batch_1/2/3.mp3 (배치 오디오 합성 완료)
+- batch_1/2/3_timestamps.json (타임스탬프 기록)
+- 배치 비디오: **미생성** (세션 끊김)
 
-- 더미 구간: AI가 입모양을 안정화하는 "워밍업" 역할
-- 실제 단어들은 워밍업 이후 구간에 위치 → 정밀 립싱크 확보
-- 최종 영상에서 단어별 타임스탬프로 개별 MP4를 ffmpeg split
+### 문제점
+1. 이전 배치에 `bowl` 포함 (이미 mp4 존재) → 제거 필요
+2. `bed` TTS가 `_batch_work/word_bed.mp3`에 없음 → 생성 필요
+3. `bee`, `boat`도 이미 mp4 존재 → 제거 필요
 
-## 오디오 구성
+## 최종 누락 단어: 24개
 
-### 더미 워밍업 (앞 ~5초)
-- ElevenLabs TTS로 자연스러운 문장 생성
-- 예: "Hello! Let's practice some words together. Ready?"
-- 같은 Voice (Sparkles for Kids), 같은 Speed (0.6)
+기존 phonics_split mp4와 대조하여 정확히 24개 누락:
 
-### 단어 구간
-- 각 단어 사이 **1.0초 무음 간격** (분할 기준점)
-- 각 단어 앞 **0.5초 무음**, 뒤 **0.3초 무음** (자연스러운 호흡감)
-- 단어 자체는 Speed 0.6으로 약 0.5~1.0초
+| # | 단어 | 유닛 |
+|---|------|------|
+| 1 | bed | unit_02 |
+| 2 | cake | unit_07 |
+| 3 | cat | unit_01 |
+| 4 | chip | unit_28 |
+| 5 | chop | unit_17, unit_28 |
+| 6 | clap | unit_13, unit_25 |
+| 7 | crab | unit_26 |
+| 8 | food | unit_37 |
+| 9 | hat | unit_01 |
+| 10 | hen | unit_02 |
+| 11 | man | unit_01 |
+| 12 | map | unit_01 |
+| 13 | meat | unit_31 |
+| 14 | net | unit_02 |
+| 15 | red | unit_02 |
+| 16 | sea | unit_11 |
+| 17 | seed | unit_31 |
+| 18 | sing | unit_30 |
+| 19 | sled | unit_25 |
+| 20 | thin | unit_19, unit_29 |
+| 21 | this | unit_19, unit_29 |
+| 22 | whale | unit_19, unit_29 |
+| 23 | when | unit_19, unit_29 |
+| 24 | whip | unit_29 |
 
-### 구조 예시 (27단어 기준)
-```
-[0.0s ~ 5.0s]  더미 워밍업 문장
-[5.0s ~ 5.5s]  무음 (전환)
-[5.5s ~ 6.0s]  0.5초 무음 (단어1 앞)
-[6.0s ~ 6.8s]  "bed" 발음
-[6.8s ~ 7.1s]  0.3초 무음 (단어1 뒤)
-[7.1s ~ 8.1s]  1.0초 무음 (간격)
-[8.1s ~ 8.6s]  0.5초 무음 (단어2 앞)
-[8.6s ~ 9.4s]  "bee" 발음
-[9.4s ~ 9.7s]  0.3초 무음 (단어2 뒤)
-...반복...
-```
-
-### 예상 총 길이
-- 더미: ~5초
-- 단어당: ~0.8초(발음) + 0.5초(앞) + 0.3초(뒤) + 1.0초(간격) = ~2.6초
-- 27단어 × 2.6초 = ~70초
-- **총: ~75초 (1분 15초)**
-
-## 배치 분할 전략
-
-27개를 한 번에 넣으면 영상이 너무 길어질 수 있으므로 **9개씩 3배치**로 분할:
+## 배치 분할 (8개 × 3배치)
 
 | 배치 | 단어 | 예상 길이 |
 |------|------|----------|
-| Batch 1 | bed, bee, boat, bowl, cake, cat, chip, chop, clap | ~28초 |
-| Batch 2 | crab, food, hat, hen, man, map, meat, net, red | ~28초 |
-| Batch 3 | sea, seed, sing, sled, thin, this, whale, when, whip | ~28초 |
+| Batch 1 | bed, cake, cat, chip, chop, clap, crab, food | ~26초 |
+| Batch 2 | hat, hen, man, map, meat, net, red, sea | ~26초 |
+| Batch 3 | seed, sing, sled, thin, this, whale, when, whip | ~26초 |
 
-각 배치: 더미 5초 + 단어 9개 × 2.6초 ≈ **28초**
+각 배치: 더미 5초 + 단어 8개 × 2.6초 ≈ **26초**
+
+## 핵심 전략: 더미 워밍업 + 연속 배치
+
+```
+[더미 문장 ~5초] → [전환 무음] → [앞0.5s + 단어1 + 뒤0.3s] → [간격1.0s] → [앞0.5s + 단어2 + 뒤0.3s] → ...
+```
 
 ## 파이프라인
 
 ```
 Step 1: ElevenLabs TTS
-  - 더미 문장 1개 생성
-  - 27개 단어 개별 TTS 생성 (Speed 0.6)
+  - 더미 문장 1개 (캐시 재사용)
+  - 24개 단어 개별 TTS (Speed 0.6, Sparkles for Kids)
+  - bed만 신규 생성, 나머지 23개는 캐시 재사용
 
 Step 2: ffmpeg 오디오 합성
-  - 배치별로 [더미 + 무음 + 단어1 + 무음 + 단어2 + ...] 연결
-  - 각 단어의 시작/끝 타임스탬프 기록 → timestamps.json
+  - 3배치 × [더미 + 전환무음 + (앞무음 + 단어 + 뒤무음 + 간격무음) × 8]
+  - 타임스탬프 JSON 저장
+  - ⚠️ 이전 배치 캐시 삭제 후 재생성 (단어 구성 변경됨)
 
 Step 3: fal.ai 업로드 + VEED Fabric 영상 생성
-  - 배치별 1개 긴 영상 생성 (3개 영상)
-  - seed_final.jpeg 사용
+  - seed_final.jpeg 시드 이미지
+  - 배치별 1개 긴 영상 생성 (3개)
 
 Step 4: ffmpeg 영상 분할
-  - timestamps.json 기반으로 각 단어 구간을 개별 MP4로 추출
-  - ffmpeg -ss {start} -t {duration} -i batch_N.mp4 -c copy {word}.mp4
-  - 더미 구간은 버림
+  - timestamps.json 기반 개별 MP4 추출
+  - 재인코딩 방식 (-c:v libx264) — keyframe 정확도 보장
 
 Step 5: 출력
-  - flow_asset/phonics_split/{word}.mp4 에 27개 저장
+  - flow_asset/phonics_split/{word}.mp4에 24개 저장
 ```
 
 ## 설정
@@ -90,25 +103,43 @@ Step 5: 출력
 |------|-----|
 | Voice | Sparkles for Kids (`tapn1QwocNXk3viVSowa`) |
 | Speed | 0.6 |
-| 더미 워밍업 | ~5초 자연스러운 문장 |
+| Model | eleven_turbo_v2_5 |
+| 더미 워밍업 | "Hello! Let's practice some words together. Are you ready? Here we go!" |
 | 단어 앞 무음 | 0.5초 |
 | 단어 뒤 무음 | 0.3초 |
 | 단어 간 무음 | 1.0초 |
-| 배치 크기 | 9단어/배치 (3배치) |
-| Seed image | flow_asset/phonics_split/seed_final.jpeg |
-| 해상도 | 480p |
+| 워밍업→단어 전환 | 0.5초 |
+| 배치 크기 | 8단어/배치 (3배치) |
+| Seed image | flow_asset/phonics_split/Seed_final.jpeg |
+| VEED Fabric 해상도 | 480p |
 | 출력 | flow_asset/phonics_split/{word}.mp4 |
 
+## 캐시 전략
+
+### 재사용 가능
+- warmup.mp3 (동일 텍스트/설정)
+- 무음 파일 (_sil_*.mp3)
+- word_cake/cat/chip/chop/clap/crab/food/hat/hen/man/map/meat/net/red/sea/seed/sing/sled/thin/this/whale/when/whip.mp3 (23개)
+
+### 신규 생성 필요
+- word_bed.mp3 (이전 세션에서 누락)
+
+### 삭제 후 재생성
+- batch_1/2/3.mp3 (단어 구성 변경)
+- batch_1/2/3_timestamps.json (단어 구성 변경)
+
 ## 예상 비용
-- ElevenLabs: 28개 TTS (더미1 + 단어27) ≈ $0.10
-- VEED Fabric: 3배치 × ~28초 × $0.08/초 ≈ **$6.72**
-- 총: ~$7 (약 9,000원)
+- ElevenLabs: 1개 TTS (bed만) ≈ $0.01
+- VEED Fabric: 3배치 × ~26초 × $0.08/초 ≈ **$6.24**
+- 총: ~$6.25
 
 ## 리스크
-- 배치 영상이 너무 길면 VEED Fabric 큐 대기 시간 증가
-- 분할 시 프레임 정확도 (ffmpeg keyframe 이슈) → `-c copy` 대신 재인코딩 필요할 수 있음
+- VEED Fabric 큐 대기 시간 (배치당 5~10분)
+- ffmpeg 분할 시 프레임 정확도 → 재인코딩 방식으로 해결
+- fal.ai 업로드 실패 → 3회 재시도 로직 내장
 
 ## 성공 기준
-- 워밍업 후 단어 구간에서 입모양이 발음과 정확히 동기화
-- 분할된 개별 MP4가 자연스럽게 시작/종료
-- 기존 65개 영상과 품질 일관성 유지
+- [ ] 24개 개별 MP4 모두 생성
+- [ ] 워밍업 후 구간에서 입모양-발음 동기화 양호
+- [ ] 기존 69개 영상과 품질 일관성 유지
+- [ ] phonics_split/ 내 총 mp4 = 93개 (69 + 24)

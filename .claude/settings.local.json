@@ -48,7 +48,8 @@
       "WebFetch(domain:www.playingspeech.com)",
       "WebFetch(domain:www.speechietrish.com)",
       "Bash(ls:*)",
-      "Bash(which ffmpeg:*)"
+      "Bash(which ffmpeg:*)",
+      "Bash(ffmpeg -y -ss 9.266 -t 1.589 -i \"_batch_work/batch_3_video.mp4\" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k \"sing.mp4\")"
     ]
   }
 }
