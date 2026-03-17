@@ -71,6 +71,13 @@ src/
 - Home screen with onboarding redirect + due count badge
 - Onboarding: 3-screen flow (Welcome → Grade Select → Level Recommendation)
 - Unit selection grid (24 units, lock/unlock based on DB progress)
+13. You are part of an AI agent team working in parallel (Claude Web, Antigravity, Claude Code). Project state is maintained in `HANDOFF.md`. You must consult `HANDOFF.md` and ALWAYS run `git pull` before starting new work.
+14. **Task Completion Protocol**: When you finish answering a prompt file (e.g., `CLAUDE_PROMPT_...`), you MUST:
+    - Run the required test or build commands to ensure your changes work.
+    - Open `HANDOFF.md` and update the "Latest Updates" section with what you accomplished.
+    - Modify the "Who is doing what" section to mark yourself as "[대기 상태] (Idle)".
+    - Run `git add .`, `git commit -m "chore: claude code updates"`, and `git push` to sync your work with GitHub.
+    - In your final console message to the user, strictly state: "✅ 작업이 완료 및 GitHub에 Push 되었습니다. HANDOFF.md를 업데이트했으니, 안티그래비티 대화창으로 돌아가서 로직 리뷰 및 QA를 요청하세요.")
 - Full lesson flow (6 steps + results screen)
 - SRS engine (SM-2) connected to Dexie.js via lessonService.ts
 - Unit unlock logic (sequential + review unit prerequisites)

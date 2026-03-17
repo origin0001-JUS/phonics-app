@@ -18,56 +18,63 @@
 ## 스타일 가이드
 
 ```
-- 일관된 아트 스타일: 귀엽고 둥근 "어린이 캐릭터" 입/얼굴 일러스트 (실사 X, 깔끔한 플랫 디자인 벡터 아트 O)
+- 일관된 아트 스타일: 귀엽고 둥근 "어린이 캐릭터" 벡터 기반 교육용 일러스트 (실사 X, 깔끔한 플랫 디자인)
 - 밝고 깨끗한 톤: 솔리드 파스텔 컬러 배경(예: 파스텔 블루, 핑크, 옐로우)
-- 직관적인 시각적 기호: 텍스트는 절대 포함하지 않음(Absolutely NO text, NO letters, NO words).
-- 보이스/무성음 구분: 성대 진동은 목에 '지그재그 진동선(〰️)', 무성음은 '바람 부는 기호(💨)' 등으로 시각화
-- 비교 이미지: 좌우 대칭 분할 레이아웃으로 차이를 극명하게 보여줌
+- 음성학(Speech Therapy) 기반 직관성: 
+  * 혀의 내부 위치가 중요한 발음(/r/, /l/, 모음 턱 높이)은 반드시 측면 단면도(Sagittal Cross-section view)로 혀의 모양을 시각화.
+  * 입술과 이빨이 외부에서 보이는 발음(/f/, /v/, /θ/)은 정면 뷰(Front view)로 시각화하되, 시각적 은유(토끼 이빨, 뱀 등)를 포함.
+- 보이스/무성음 구분: 성대 진동은 목 쪽에 '지그재그 진동선(〰️)', 무성음은 입술 앞에 '바람 부는 기호(💨)' 적용
+- 직관적인 텍스트 레이블: 비교되는 음소의 알파벳 라벨(예: 'f', 'v', 'r', 'l')을 눈에 띄게 큰 폰트로 반드시 포함.
 - 512×512px 웹용 스퀘어
+
+## 참조용 시드(기본) 이미지
+- **정면 뷰 시드 이미지:** `c:\Users\origi\.gemini\antigravity\brain\b09a9bf9-3f07-40a2-bac0-258f7e54e1c0\base_style_seed_front_v2_1773738734323.png`
+- **측면 단면도 시드 이미지:** `c:\Users\origi\.gemini\antigravity\brain\b09a9bf9-3f07-40a2-bac0-258f7e54e1c0\base_style_seed_sagittal_v2_1773751139509.png`
+> **Claude 봇 지시사항**: 이 이미지들을 Gemini/Vertex API의 참조 자료(base image / image-to-image base)로 주입하여, 생성되는 17장의 이미지들이 이 시드 이미지의 질감, 색감, 선 굵기 등과 완벽한 통일감을 이루는 "베리에이션"으로 나오도록 스크립트를 작성하세요.
 ```
 
 ---
 
 ## 이미지 목록 (17장)
 
-모든 프롬프트에 공통 필수 접두어: **"Vector illustration of a cute child's mouth, clean flat design, pastel background. Absolutely NO TEXT, NO LETTERS, NO WORDS anywhere in the image. Pure visual symbols only."**
+모든 프롬프트 공통 필수 접두어: **"Vector educational illustration for kids, clean flat design, pastel background. MUST INCLUDE clear, bold alphabet text labels (e.g., 'f', 'v', 'r') directly in the image."**
 
 ### 🔴 Very Hard (7장)
 
 | # | 파일명 | 설명 | 프롬프트 |
 |---|--------|------|---------|
-| 1 | `th_voiceless.webp` | /θ/ (thin) 정면 | Vector illustration of a child's mouth (front view). Tongue tip clearly visible between upper and lower teeth. A small visual gust of wind symbol (💨) near the mouth. Clean flat design, pastel background, NO TEXT. |
-| 2 | `th_voiced.webp` | /ð/ (this) 정면 + 성대 진동 | Vector illustration of a child's mouth (front view). Tongue tip clearly visible between upper and lower teeth. A vibration wave symbol (〰️) near the throat. Clean flat design, pastel background, NO TEXT. |
-| 3 | `r_sound.webp` | /r/ vs /l/ 비교 | Split comparison illustration of a child's mouth side by side. LEFT side: Lips rounded, tongue curled back pointing inward. RIGHT side: Lips flat, tongue tip pushing up against the roof of the mouth. Visual contrast, clean flat design, pastel background, NO TEXT. |
-| 4 | `l_sound.webp` | /l/ 정면 (혀끝 잇몸) | Vector illustration of a child's mouth (front view). Tongue tip raised and pushing against the upper gum ridge. Clean flat design, pastel background, NO TEXT. |
-| 5 | `f_sound.webp` | /f/ vs /p/ 비교 | Split comparison illustration. LEFT: Upper teeth resting lightly on lower lip with a gentle wind symbol. RIGHT: Both lips pressed tightly together then popping open. Clean flat design, pastel background, NO TEXT. |
-| 6 | `v_sound.webp` | /v/ vs /b/ 비교 | Split comparison illustration. LEFT: Upper teeth on lower lip, plus a glowing vibration (〰️) wave at the throat. RIGHT: Both lips pressed tightly together, plus a glowing vibration wave at the throat. Clean flat design, pastel background, NO TEXT. |
-| 7 | `z_sound.webp` | /z/ vs /s/ 비교 | Split comparison illustration (front view). LEFT: Teeth almost closed, glowing vibration wave at throat (z). RIGHT: Teeth almost closed, slight wind symbol at the mouth, NO throat vibration (s). Clean flat design, pastel background, NO TEXT. |
+| 1 | `th_voiceless.webp` | /θ/ (thin) 정면 | Front view of a child's mouth blowing a small bubble. Tongue tip is clearly sticking gently between the upper and lower teeth. A gust of wind symbol (💨) coming from the mouth. Text label: 'th' |
+| 2 | `th_voiced.webp` | /ð/ (this) 정면 + 성대 진동 | Front view of a child's mouth. Tongue tip sticking gently between the upper and lower teeth. A vibrating bee icon or vibration lines (〰️) explicitly glowing at the throat area. Text label: 'th' |
+| 3 | `r_sound.webp` | /r/ vs /l/ 측면 내부도 | Split comparison: Sagittal side-profile cross-sections of a human head. LEFT: Lips rounded, tongue bunched and curled back (not touching the roof). RIGHT: Tongue tip pressing sharply up against the bumpy alveolar ridge behind the top teeth. Text labels: LEFT 'r', RIGHT 'l' |
+| 4 | `l_sound.webp` | /l/ 측면 내부도 | Sagittal side-profile cross-section of a human head. Tongue tip pressing sharply up against the bumpy alveolar ridge (roof of the mouth just behind top teeth). Arrow highlighting the tongue-to-ridge contact. Text label: 'l' |
+| 5 | `f_sound.webp` | /f/ vs /p/ 비교 | Split comparison front view. LEFT: Child resting top teeth gently on bottom lip (like cute bunny teeth), with wind blowing out. RIGHT: Both lips pressed tightly together. Text labels: LEFT 'f', RIGHT 'p' |
+| 6 | `v_sound.webp` | /v/ vs /b/ 비교 | Split comparison front view. LEFT: Child resting top teeth on bottom lip (bunny teeth) + heavy vibration lines at throat. RIGHT: Both lips pressed tightly together + heavy vibration lines at throat. Text labels: LEFT 'v', RIGHT 'b' |
+| 7 | `z_sound.webp` | /z/ vs /s/ 뱀소리 비교 | Split comparison front view. LEFT: Teeth closed together, throat vibrating with zigzag lines. RIGHT: Teeth closed together, wind coming out, a small hissing snake icon, NO vibration. Text labels: LEFT 'z', RIGHT 's' |
 
 ### 🟠 Hard (5장)
 
 | # | 파일명 | 설명 | 프롬프트 |
 |---|--------|------|---------|
-| 8 | `vowel_ae.webp` | /æ/ vs /ɛ/ 턱 높이 비교 | Split comparison (side profile of a child). LEFT: Jaw dropped wide open. RIGHT: Jaw dropped only moderately. A visual measuring arrow indicating the different jaw heights. Clean flat design, pastel background, NO TEXT. |
-| 9 | `vowel_e.webp` | /ɛ/ vs /ɪ/ 비교 | Split comparison (front view). LEFT: Slight smile shape, jaw barely open (like a grin). RIGHT: Jaw dropped down more openly. Clean flat design, pastel background, NO TEXT. |
-| 10 | `vowel_i.webp` | /ɪ/ 정면 (살짝 웃는 모양) | Vector illustration of a child's mouth (front view). Mouth forms a slight, relaxed smile shape, corners pulled slightly back, barely open. Clean flat design, pastel background, NO TEXT. |
-| 11 | `vowel_o.webp` | /ɒ/ 정면 (둥근 O) | Vector illustration of a child's mouth (front view). Mouth opened wide in a large, surprised circular 'O' shape. Clean flat design, pastel background, NO TEXT. |
-| 12 | `vowel_u.webp` | /ʌ/ 정면 (편안하게) | Vector illustration of a child's mouth (front view). Mouth totally relaxed, barely open, lazy position. Clean flat design, pastel background, NO TEXT. |
+| 8 | `vowel_ae.webp` | /æ/ vs /ɛ/ 턱 높이 비교 | Split comparison: Sagittal side-profile cross-sections. LEFT: Jaw dropped wide open (2-finger height). RIGHT: Jaw dropped only moderately (1-finger height). Provide a visual measuring block holding the jaws open to contrast the height. Text labels: LEFT 'a', RIGHT 'e' |
+| 9 | `vowel_e.webp` | /ɛ/ vs /ɪ/ 정면 비교 | Split comparison front view. LEFT: A slight, relaxed, almost flat horizontal grin (jaw barely open). RIGHT: Jaw dropped open downwards (chin pointing lower). Text labels: LEFT 'i', RIGHT 'e' |
+| 10 | `vowel_i.webp` | /ɪ/ 정면 (살짝 웃는 모양) | Front view. Child's mouth forming a slight, relaxed, lazy horizontal grin. Lips barely parted. Text label: 'i' |
+| 11 | `vowel_o.webp` | /ɒ/ 정면 (둥근 O) | Front view. Child's mouth opened wide in a tall, surprised oval 'O' shape. Very exaggerated open mouth. Text label: 'o' |
+| 12 | `vowel_u.webp` | /ʌ/ 정면 (편안하게) | Front view. Completely relaxed, deadpan, neutral mouth shape barely open. Minimal effort. Text label: 'u' |
 
 ### 🟡 Moderate (3장)
 
 | # | 파일명 | 설명 | 프롬프트 |
 |---|--------|------|---------|
-| 13 | `sh_sound.webp` | /ʃ/ vs /s/ 비교 | Split comparison (front view). LEFT: Lips pushed forward in a rounded 'shh' shape. RIGHT: Lips flat and tense like a smile, teeth visible. Clean flat design, pastel background, NO TEXT. |
-| 14 | `ch_sound.webp` | /tʃ/ 정면 | Vector illustration of a child's mouth (front view). Lips pushed forward in a rounded shape, accompanied by a small visual "burst" or static popping symbol. Clean flat design, pastel background, NO TEXT. |
-| 15 | `vowel_ay.webp` | /eɪ/ 이중모음 연속 프레임 | Sequential illustration with two mouths side-by-side. First mouth: Medium open shape. Second mouth: Transitioned into a wide smile shape. A visual arrow (→) linking them. Clean flat design, pastel background, NO TEXT. |
+| 13 | `sh_sound.webp` | /ʃ/ vs /s/ 나팔모양 입술 | Split comparison front view. LEFT: Lips pushed far forward into a tight round trumpet/kiss shape ("shh"). RIGHT: Lips pulled flat back into a tense smile showing clenched teeth. Text labels: LEFT 'sh', RIGHT 's' |
+| 14 | `ch_sound.webp` | /tʃ/ 정면 + 터짐 | Front view. Lips pushed forward in a round trumpet shape, but with an explosive bursting star graphic (💥) indicating a sudden stop and release of air. Text label: 'ch' |
+| 15 | `vowel_ay.webp` | /eɪ/ 이중모음 이동 | Sequential wide image showing a mouth transitioning. First mouth: medium open drop. Arrow pointing to -> Second mouth: wide pulling horizontal smile. Indicates active jaw and lip movement. Text label: 'a_e' |
 
 ### 🟢 Easy (2장)
 
 | # | 파일명 | 설명 | 프롬프트 |
 |---|--------|------|---------|
-| 16 | `vowel_ee.webp` | /iː/ vs /ɪ/ 비교 | Split comparison (front view). LEFT: Big, wide, tense smile stretching far outwards. RIGHT: Relaxed, loose, smaller smile. Clean flat design, pastel background, NO TEXT. |
-| 17 | `b_p_compare.webp` | /b/ vs /p/ 성대 진동 차이 | Split comparison (front view). LEFT: Both lips closed tight, vibrant glowing symbol at the throat (voiced). RIGHT: Both lips closed tight, NO throat glow, only a small wind symbol at the lips (air). Clean flat design, pastel background, NO TEXT.
+| 16 | `vowel_ee.webp` | /iː/ vs /ɪ/ 팽팽한 미소 | Split comparison front view. LEFT: Exaggerated, tight, extremely wide stretched smile revealing teeth ("cheese!"). RIGHT: Soft, lazy, slightly open neutral grin. Text labels: LEFT 'ee', RIGHT 'i' |
+| 17 | `b_p_compare.webp` | /b/ vs /p/ 진동 차이 | Split comparison front view. Both sides having lips locked tightly together. LEFT: Glowing zig-zag vibration icon on the throat. RIGHT: No throat vibration, but a bursting puff of wind symbol on the lips. Text labels: LEFT 'b', RIGHT 'p' |
 
 ---
 

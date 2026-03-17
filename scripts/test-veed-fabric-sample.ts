@@ -17,7 +17,6 @@
  */
 
 import { fal } from '@fal-ai/client';
-import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -57,8 +56,6 @@ if (!ELEVENLABS_API_KEY) {
 }
 
 fal.config({ credentials: FAL_KEY });
-
-const elevenlabs = new ElevenLabsClient({ apiKey: ELEVENLABS_API_KEY });
 
 // ─── 테스트 단어 정의 ───
 interface TestWord {
@@ -103,7 +100,7 @@ const OUTPUT_DIR = path.join(process.cwd(), 'public', 'assets', 'video', 'sample
 const AUDIO_DIR = path.join(OUTPUT_DIR, 'audio');
 const BASE_IMAGE = path.join(process.cwd(), 'public', 'assets', 'images', 'base_image_girl.png');
 
-// ─── Step 1: ElevenLabs TTS로 음성 생성 ───
+// ─── Step 1: ElevenLabs TTS로 음성 생성 (REST API 직접 호출) ───
 async function generateAudio(word: string, text: string): Promise<string> {
     const outPath = path.join(AUDIO_DIR, `${word}.mp3`);
 
@@ -114,43 +111,91 @@ async function generateAudio(word: string, text: string): Promise<string> {
 
     console.log(`  🎙️  ElevenLabs TTS 생성 중: "${text}"`);
 
-    const audio = await elevenlabs.textToSpeech.convert(
-        'cgSgspJ2msm6clMCkdW9',  // "Jessica" voice — clear American English
+    const voiceId = 'cgSgspJ2msm6clMCkdW9'; // "Jessica" voice
+    const response = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
         {
-            text,
-            model_id: 'eleven_turbo_v2_5',
-            output_format: 'mp3_44100_128',
-            voice_settings: {
-                stability: 0.75,
-                similarity_boost: 0.85,
-                style: 0.1,
-                use_speaker_boost: true,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'xi-api-key': ELEVENLABS_API_KEY!,
             },
+            body: JSON.stringify({
+                text,
+                model_id: 'eleven_turbo_v2_5',
+                voice_settings: {
+                    stability: 0.75,
+                    similarity_boost: 0.85,
+                    style: 0.1,
+                    use_speaker_boost: true,
+                },
+            }),
         }
     );
 
-    // Stream → Buffer
-    const chunks: Buffer[] = [];
-    for await (const chunk of audio) {
-        chunks.push(Buffer.from(chunk));
+    if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`ElevenLabs API error ${response.status}: ${errText.slice(0, 200)}`);
     }
-    const buffer = Buffer.concat(chunks);
+
+    const buffer = Buffer.from(await response.arrayBuffer());
     fs.writeFileSync(outPath, buffer);
     console.log(`  ✅ 저장됨: ${outPath} (${(buffer.length / 1024).toFixed(1)}KB)`);
     return outPath;
 }
 
-// ─── Step 2: fal.ai에 오디오 업로드 ───
-async function uploadToFal(filePath: string): Promise<string> {
-    console.log(`  📤 fal.ai 업로드 중: ${path.basename(filePath)}`);
-    const file = new File(
-        [fs.readFileSync(filePath)],
-        path.basename(filePath),
-        { type: filePath.endsWith('.mp3') ? 'audio/mpeg' : 'image/png' }
-    );
-    const url = await fal.storage.upload(file);
-    console.log(`  ✅ 업로드 완료: ${url}`);
-    return url;
+// ─── Step 2: fal.ai에 오디오 업로드 (REST API with retry) ───
+async function uploadToFal(filePath: string, maxRetries = 3): Promise<string> {
+    const fileName = path.basename(filePath);
+    const mimeType = filePath.endsWith('.mp3') ? 'audio/mpeg' : 'image/png';
+    console.log(`  📤 fal.ai 업로드 중: ${fileName}`);
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            // Step 1: Get upload URL
+            const initRes = await fetch('https://rest.fal.ai/storage/upload/initiate', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Key ${FAL_KEY}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    file_name: fileName,
+                    content_type: mimeType,
+                }),
+                signal: AbortSignal.timeout(30000),
+            });
+
+            if (!initRes.ok) {
+                throw new Error(`Init failed: ${initRes.status} ${await initRes.text()}`);
+            }
+
+            const { upload_url, file_url } = await initRes.json() as { upload_url: string; file_url: string };
+
+            // Step 2: Upload file to presigned URL
+            const fileData = fs.readFileSync(filePath);
+            const uploadRes = await fetch(upload_url, {
+                method: 'PUT',
+                headers: { 'Content-Type': mimeType },
+                body: fileData,
+                signal: AbortSignal.timeout(60000),
+            });
+
+            if (!uploadRes.ok) {
+                throw new Error(`Upload failed: ${uploadRes.status}`);
+            }
+
+            console.log(`  ✅ 업로드 완료: ${file_url}`);
+            return file_url;
+        } catch (err) {
+            const error = err as Error;
+            console.error(`  ⚠️  업로드 시도 ${attempt}/${maxRetries} 실패: ${error.message}`);
+            if (attempt === maxRetries) throw error;
+            console.log(`  🔄 ${attempt * 5}초 후 재시도...`);
+            await new Promise(r => setTimeout(r, attempt * 5000));
+        }
+    }
+    throw new Error('Upload failed after all retries');
 }
 
 // ─── Step 3: VEED Fabric 1.0 영상 생성 ───

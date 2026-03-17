@@ -307,14 +307,25 @@ npm run build
 
 ---
 
-## Round 14: AI 립싱크 영상 재생 통합 (하이브리드 R&R) [진행 대기]
+## Round 14: AI 립싱크 영상 재생 통합 (하이브리드 R&R)
 
-> 프로젝트 루트의 `AI_avatar_guide.md.md` 파일을 참고 자료로 사용하세요.
-> 영상 파일(MP4)은 `public/assets/video/`에 들어갈 예정이지만 **아직 없습니다**.
-> 따라서 영상이 없을 때 기존 SVG로 100% 정상 동작하는 폴백 로직이 필수입니다.
+> ⚠️ **진행 일정 (Phased Approach)**
+> 현재 수기(수작업) 영상 80여개가 제작 중입니다. 따라서 이번 접속에서는 **Phase 1(샘플 테스트)**만 진행하고 멈춥니다.
+> 앱 통합 코딩 및 누락분 일괄 생성은 80개 영상이 모두 확보된 후 **Phase 2**에서 진행합니다.
 
-### Task 14-A: representativeWords.ts 신규 생성 (Claude Code)
+### --- Phase 1: 샘플 테스트 (현재 진행) ---
+
+### ~~Task 14-A: representativeWords.ts 신규 생성 (Claude Code) — 완료~~
 **설명**:
+- `HANDOFF.md`에 기재된 대로 웹 세션에 이미 완료되었습니다.
+
+### Task 14-A-2: VEED Fabric 샘플 테스트 스크립트 실행 (Claude Code)
+**설명**:
+- 터미널에서 `npm run test-fabric-sample` (또는 `npx tsx scripts/test-veed-fabric-sample.ts`)을 실행하세요.
+- 이 스크립트는 `thin`, `cat`, `fish` 3개 단어에 대한 MP4 샘플을 `public/assets/video/samples/` 경로에 생성합니다.
+- 실행 중 에러가 발생하면 스크립트를 디버깅하고, 완료되면 Antigravity 챗(사용자)에게 **"샘플 생성이 완료되었습니다. 품질을 확인해 주세요"**라고 알린 후 **이번 세션(Round 14)을 일시정지** 하세요.
+
+### --- Phase 2: 실제 통합 및 일괄 생성 (추후 대기) ---
 - `src/data/representativeWords.ts` 파일을 새로 만드세요.
 - `AI_avatar_guide.md.md` 파일의 `src/data/representativeWords.ts` 코드 블록을 **그대로** 사용하세요.
 - 포함 내용:
@@ -324,7 +335,14 @@ npm run build
   - `getLipSyncVideoPath(word: string): string | null` → `/assets/video/{word}.mp4`
   - `getSoundFocusVideoPath(unitId: string): string | null` → `/assets/video/sound_XX.mp4`
 
-### Task 14-B: MouthVisualizer.tsx 비디오 레이어 추가 (Claude Code)
+### Task 14-B: 발음 참조 이미지 17장 일괄 생성 (Claude Code - Local API Key 활용)
+**설명**:
+- `docs/PRONUNCIATION_IMAGE_GUIDE.md` 파일에 정의된 17개의 발음 이미지 프롬프트 목록과 스타일 가이드를 확인하세요. (모든 프롬프트는 텍스트 라벨 포함 필수 규칙이 추가되어 있습니다.)
+- 현재 사용자의 터미널 환경에 유료 API 설정(예: `GEMINI_API_KEY` 또는 기타 이미지 생성 API 환경 변수)이 되어 있습니다.
+- `scripts/generate-pronunciation-images.ts` 스크립트를 새로 작성하여, 가이드 문서의 프롬프트를 바탕으로 17장의 이미지를 자동 생성하고 `public/assets/images/pronunciation/` 경로에 `.webp` 형식으로 저장하는 일괄 자동화 파이프라인을 구축 및 실행하세요.
+- 실행이 완료되면 Antigravity 챗(사용자)에게 "발음 이미지 17장 생성이 완료되었습니다. 품질 및 텍스트 포함 여부를 검수해 주세요"라고 알리세요.
+
+### Task 14-C: MouthVisualizer.tsx 비디오 레이어 추가 (Claude Code)
 **설명**:
 - `src/app/lesson/[unitId]/MouthVisualizer.tsx`를 수정하세요.
 - 상단에 `import { getLipSyncVideoPath } from '@/data/representativeWords';` 추가
@@ -337,7 +355,7 @@ npm run build
      - 그 외 → 기존 `<FrontViewPlaceholder viseme={viseme} isSpeaking={isSpeaking} />` 유지
 - **기존 MouthCrossSection(단면도)은 영상 옆에 그대로 유지**하세요. 절대 제거하지 마세요.
 
-### Task 14-C: LessonClient.tsx에 MouthVisualizer 삽입 (Claude Code)
+### Task 14-D: LessonClient.tsx에 MouthVisualizer 삽입 (Claude Code)
 **설명**:
 - `src/app/lesson/[unitId]/LessonClient.tsx`를 수정하세요.
 - 상단 import에 `import { getSoundFocusVideoPath } from '@/data/representativeWords';` 추가
@@ -359,10 +377,17 @@ npm run build
 **변경하지 않을 스텝:**
 - magic_e, decode_words, word_family, micro_reader, story_reader, exit_ticket → 아바타 추가 금지
 
+### Task 14-E: 나머지 누락 비디오 생성 스크립트 작성 및 실행 (ElevenLabs + VEED Fabric)
+**설명**:
+- `public/assets/video/` 폴더 내 수작업으로 완성된 80여개의 MP4 파일을 먼저 확인하세요.
+- `representativeWords.ts`의 `allVideoWords` 및 `soundFocusEntries` 목록과 대조하여 **아직 생성되지 않은 누락된 단어/소리 쌍**을 추출하는 스크립트 `scripts/generate-missing-lipsync.ts`를 작성하세요.
+- **ElevenLabs API**로 음성(MP3)을 1차 생성하고, 이 음성과 기준 이미지 URL을 묶어 **VEED Fabric API(fal.ai)**(`fal-ai/veed-fabric/lipsync`)로 보내 최종 MP4를 받아내도록 파이프라인 연계.
+- 모든 누락 MP4 파일을 `public/assets/video/` 에 저장(완전 자동화).
+
 ```bash
 npm run build
 ```
-빌드 에러 0이면 14라운드 완료.
+빌드 에러 0이면 Phase 2 및 14라운드 최종 완료.
 
 ---
 

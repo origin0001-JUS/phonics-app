@@ -33,7 +33,22 @@
       "Bash(ls -la public/assets/video/*.mp4)",
       "Bash(ls public/assets/video/*.mp4 2>/dev/null | sed 's|.*/||;s|\\\\.mp4||' | sort)",
       "Bash(source .env.local 2>/dev/null; export GEMINI_API_KEY; sleep 60\n\necho \"=== veo-2.0 text-only result ===\"\ncurl -s \"https://generativelanguage.googleapis.com/v1beta/models/veo-2.0-generate-001/operations/h8qjva98rvfs?key=$GEMINI_API_KEY\" | node -e \"\nconst j=JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\);\nconsole.log\\('done:', j.done\\);\nif \\(j.error\\) console.log\\('error:', j.error.message\\);\nconst gvr = j.response?.generateVideoResponse || {};\nif \\(gvr.raiMediaFilteredCount\\) console.log\\('FILTERED:', \\(gvr.raiMediaFilteredReasons||[]\\)[0]?.slice\\(0,200\\)\\);\nif \\(gvr.generatedSamples?.length\\) {\n  console.log\\('SUCCESS! samples:', gvr.generatedSamples.length\\);\n  console.log\\('uri:', gvr.generatedSamples[0]?.video?.uri?.slice\\(0,100\\)\\);\n}\n\")",
-      "Skill(pdca)"
+      "Skill(pdca)",
+      "Bash(cd:*)",
+      "WebSearch",
+      "WebFetch(domain:www.speechactive.com)",
+      "WebFetch(domain:icspeech.com)",
+      "WebFetch(domain:rachelsenglish.com)",
+      "WebFetch(domain:mommyspeechtherapy.com)",
+      "WebFetch(domain:allisonfors.com)",
+      "Bash(curl:*)",
+      "WebFetch(domain:adventuresinspeechpathology.com)",
+      "WebFetch(domain:littlemindsatwork.org)",
+      "WebFetch(domain:www.superduperinc.com)",
+      "WebFetch(domain:www.playingspeech.com)",
+      "WebFetch(domain:www.speechietrish.com)",
+      "Bash(ls:*)",
+      "Bash(which ffmpeg:*)"
     ]
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-03-15T12:57:53.572Z",
+  "lastUpdated": "2026-03-17T13:42:04.116Z",
   "activeFeatures": [
     "phonics-app",
     "settings",
@@ -227,9 +227,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-03-06T15:53:11.780Z",
-        "lastUpdated": "2026-03-12T20:35:35.109Z"
+        "lastUpdated": "2026-03-17T13:42:04.116Z"
       },
-      "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\scripts\\generate-lipsync-videos.ts"
+      "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\scripts\\generate-missing-lipsync.ts"
     },
     "v2-5": {
       "phase": "completed",
@@ -375,7 +375,7 @@
   "session": {
     "startedAt": "2026-03-04T14:22:09.430Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-03-15T12:57:53.572Z"
+    "lastActivity": "2026-03-17T13:42:04.116Z"
   },
   "history": [
     {
@@ -1713,6 +1713,102 @@
     {
       "timestamp": "2026-03-15T12:57:53.572Z",
       "feature": "[unitId]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-16T22:26:09.195Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-16T22:34:47.285Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-16T22:35:18.224Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-16T22:35:32.845Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-16T22:35:36.093Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-16T22:35:45.001Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-17T05:18:54.356Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-17T05:19:06.039Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-17T05:19:26.086Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-17T12:28:45.107Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-17T12:59:30.616Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-17T13:22:38.687Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-17T13:36:13.291Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-17T13:40:52.656Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-17T13:41:10.252Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-17T13:42:04.116Z",
+      "feature": "scripts",
       "phase": "do",
       "action": "updated"
     }

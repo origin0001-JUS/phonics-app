@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^8.1.0",
-    "@elevenlabs/elevenlabs-js": "^2.38.1",
+    "@elevenlabs/elevenlabs-js": "^2.39.0",
     "@google-cloud/text-to-speech": "^6.4.0",
     "@google/generative-ai": "^0.24.1",
     "@tailwindcss/postcss": "^4",
