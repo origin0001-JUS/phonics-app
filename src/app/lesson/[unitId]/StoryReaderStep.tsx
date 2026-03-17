@@ -2,48 +2,9 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Volume2, ArrowRight, BookOpen, Pause, Play } from "lucide-react";
+import { Volume2, ArrowRight, BookOpen, Pause, Play, Lightbulb } from "lucide-react";
 import { playSentenceAudio, playSFX } from "@/lib/audio";
-import { decodableReaderTemplates } from "@/data/decodableReaders";
-import { EXTENDED_STORIES } from "@/data/extendedStories";
-
-// Fallback stories for units not covered by phonics300_upgrade_data.json extended_stories.
-// The JSON-sourced EXTENDED_STORIES (keyed by unit_XX) takes priority when available.
-const DECODABLE_STORIES_FALLBACK: Record<string, string[]> = {
-    'L1_U2': [
-        "A pig is big.",
-        "The pig did a jig.",
-        "It hid in a pit.",
-        "A kid bit a fig.",
-        "The pig and the kid sit.",
-        "It is a big pig!",
-    ],
-    'L1_U3': [
-        "A dog sat on a log.",
-        "It is hot on top.",
-        "A fox got a box.",
-        "The dog is not on the log.",
-        "The fox hid in the box.",
-        "The dog and the fox jog.",
-    ],
-    'L1_U5': [
-        "A hen is in a pen.",
-        "The hen is red.",
-        "A net is on the bed.",
-        "The hen got wet.",
-        "Ten men met the hen.",
-        "The red hen is in bed.",
-    ],
-    'L2_U3': [
-        "I am home.",
-        "A bone is by the rose.",
-        "He woke and spoke.",
-        "A mole is in a hole!",
-        "He used a rope.",
-        "She called on the phone.",
-        "The cute mole is home.",
-    ],
-};
+import { DECODABLE_STORIES } from "@/data/decodableStories";
 
 interface StoryReaderStepProps {
     unitId: string;
@@ -51,38 +12,28 @@ interface StoryReaderStepProps {
 }
 
 export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps) {
-    // Map unit_XX format to L?_U? format
-    const template = useMemo(() => {
-        const unitNum = parseInt(unitId.replace('unit_', ''), 10);
-        // unit_01~05 = L1_U1~U5, unit_07~11 = L2_U1~U5 (approximate mapping)
-        let templateId = '';
-        if (unitNum >= 1 && unitNum <= 5) {
-            templateId = `L1_U${unitNum}`;
-        } else if (unitNum >= 7 && unitNum <= 9) {
-            templateId = `L2_U${unitNum - 6}`;
-        }
-        return decodableReaderTemplates.find(t => t.unitId === templateId) || null;
+    const storyPages = useMemo(() => {
+        return DECODABLE_STORIES[unitId] || [];
     }, [unitId]);
 
-    const sentences = useMemo(() => {
-        // Priority 1: phonics300_upgrade_data.json extended_stories (keyed by raw unitId)
-        if (EXTENDED_STORIES[unitId]) {
-            return EXTENDED_STORIES[unitId];
-        }
-        // Priority 2: fallback hardcoded stories (keyed by template L?_U? id)
-        if (!template) return [];
-        return DECODABLE_STORIES_FALLBACK[template.unitId] || [];
-    }, [unitId, template]);
+    const sentences = useMemo(() => storyPages.map(p => p.text), [storyPages]);
 
     const [currentPanel, setCurrentPanel] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [highlightedWord, setHighlightedWord] = useState(-1);
     const [autoPlay, setAutoPlay] = useState(false);
     const [panelsRead, setPanelsRead] = useState<Set<number>>(new Set());
+    const [showTranslation, setShowTranslation] = useState(false);
     const stopRef = useRef(false);
 
     const sentence = sentences[currentPanel] || "";
     const sentenceWords = sentence.split(' ');
+    const translation = storyPages[currentPanel]?.translation || "";
+
+    // 패널 변경 시 번역 숨기기
+    useEffect(() => {
+        setShowTranslation(false);
+    }, [currentPanel]);
 
     // Karaoke highlight: word-by-word highlighting during TTS playback
     const playWithKaraoke = useCallback(async (text: string) => {
@@ -94,11 +45,11 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
         const { promise: audioPromise, audio } = playSentenceAudio(unitId, currentPanel, text);
 
         let duration = 0;
-        
+
         // Wait for audio metadata to load to get accurate duration
         if (audio) {
             await new Promise<void>((resolve) => {
-                if (audio.readyState >= 1) { // HAVE_METADATA
+                if (audio.readyState >= 1) {
                     duration = audio.duration;
                     resolve();
                 } else {
@@ -106,33 +57,26 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
                         duration = audio.duration;
                         resolve();
                     });
-                    // Fallback resolve in case of error
                     audio.addEventListener('error', () => resolve());
-                    setTimeout(resolve, 500); // 500ms timeout
+                    setTimeout(resolve, 500);
                 }
             });
         }
 
-        // Calculate delay per word based on total duration (if available)
-        // Give 250ms initial buffer, and assume last word finishes slightly before the very end.
         const totalMs = duration > 0 ? duration * 1000 : words.length * 300;
-        
-        // Initial delay to let the audio buffer and start playing
+
         await new Promise(resolve => setTimeout(resolve, 250));
-        
+
         const effectiveMs = Math.max(0, totalMs - 250);
         const perWordDelay = Math.max(150, effectiveMs / Math.max(1, words.length));
 
         for (let i = 0; i < words.length; i++) {
             if (stopRef.current) break;
             setHighlightedWord(i);
-            
             await new Promise(resolve => setTimeout(resolve, perWordDelay));
         }
 
         setHighlightedWord(-1);
-        
-        // Wait for the actual audio to finish before re-enabling controls or auto-playing next
         await audioPromise;
 
         if (!stopRef.current) {
@@ -141,7 +85,7 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
         }
     }, [currentPanel, unitId]);
 
-    // Auto-play mode: advance through panels automatically
+    // Auto-play mode
     useEffect(() => {
         if (!autoPlay || isPlaying || sentences.length === 0) return;
         if (currentPanel >= sentences.length) {
@@ -154,7 +98,7 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
         return () => clearTimeout(timer);
     }, [autoPlay, isPlaying, currentPanel, sentences, playWithKaraoke]);
 
-    // When karaoke finishes and autoplay is on, advance to next panel
+    // Auto-advance after karaoke finishes
     useEffect(() => {
         if (autoPlay && !isPlaying && panelsRead.has(currentPanel) && currentPanel < sentences.length - 1) {
             const timer = setTimeout(() => {
@@ -195,7 +139,7 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
         }
     };
 
-    // Fallback if no story for this unit
+    // 스토리가 없는 유닛 폴백
     if (sentences.length === 0) {
         return (
             <div className="flex-1 flex flex-col items-center justify-center gap-6">
@@ -213,7 +157,7 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
         );
     }
 
-    // Panel color based on story beat (setup/conflict/resolution)
+    // 패널 스타일 (도입/전개/결말)
     const getPanelStyle = (idx: number): string => {
         const total = sentences.length;
         if (idx < Math.ceil(total * 0.3)) return "from-sky-100 to-sky-50 border-sky-200";
@@ -223,13 +167,13 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
-            {/* Story header */}
+            {/* 스토리 헤더 */}
             <div className="flex items-center gap-2 mb-1">
                 <BookOpen className="w-5 h-5 text-white/80" />
                 <p className="text-white/90 font-bold text-sm">Decodable Story</p>
             </div>
 
-            {/* Panel progress dots */}
+            {/* 패널 진행 도트 */}
             <div className="flex gap-1.5">
                 {sentences.map((_, i) => (
                     <div
@@ -245,7 +189,7 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
                 ))}
             </div>
 
-            {/* Main story panel */}
+            {/* 메인 스토리 패널 */}
             <AnimatePresence mode="wait">
                 <motion.div
                     key={currentPanel}
@@ -256,15 +200,15 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
                     onClick={handlePanelTap}
                     className={`bg-gradient-to-b ${getPanelStyle(currentPanel)} rounded-[2rem] p-8 w-full shadow-[0_8px_0_#e2e8f0] border-4 flex flex-col items-center cursor-pointer min-h-[200px] justify-center`}
                 >
-                    {/* Panel illustration area */}
+                    {/* 패널 이미지 영역 */}
                     <div className="w-full aspect-video max-w-[280px] mx-auto bg-white/50 rounded-2xl mb-6 flex items-center justify-center border-4 border-white/60 overflow-hidden shadow-sm relative">
                         <span className="text-4xl absolute z-0 text-slate-300 opacity-50">
                             {currentPanel < Math.ceil(sentences.length * 0.3) ? "🌅" :
                              currentPanel < Math.ceil(sentences.length * 0.7) ? "⚡" : "🌟"}
                         </span>
-                        <img 
+                        <img
                             key={`/assets/stories/${unitId}/panel_${currentPanel + 1}.png`}
-                            src={`/assets/stories/${unitId}/panel_${currentPanel + 1}.png`} 
+                            src={`/assets/stories/${unitId}/panel_${currentPanel + 1}.png`}
                             alt={`Story panel ${currentPanel + 1}`}
                             className="w-full h-full object-cover absolute inset-0 z-10 transition-opacity duration-300"
                             onError={(e) => {
@@ -273,7 +217,7 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
                         />
                     </div>
 
-                    {/* Sentence with karaoke highlighting */}
+                    {/* 카라오케 하이라이트 문장 */}
                     <p className="text-center leading-relaxed">
                         {sentenceWords.map((word, i) => (
                             <motion.span
@@ -289,7 +233,7 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
                         ))}
                     </p>
 
-                    {/* Tap to listen hint */}
+                    {/* 탭하여 듣기 힌트 */}
                     <div className="flex items-center gap-1 mt-4 text-slate-400">
                         <Volume2 className="w-4 h-4" />
                         <span className="text-xs font-bold">
@@ -299,9 +243,28 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
                 </motion.div>
             </AnimatePresence>
 
-            {/* Controls */}
+            {/* 해석 도우미 버블 */}
+            <AnimatePresence>
+                {showTranslation && translation && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                        className="w-full bg-white/95 dark:bg-slate-800/95 rounded-2xl px-5 py-3 shadow-lg border-2 border-amber-200 dark:border-amber-600 relative"
+                    >
+                        {/* 말풍선 꼬리 */}
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white/95 dark:bg-slate-800/95 border-l-2 border-t-2 border-amber-200 dark:border-amber-600 rotate-45" />
+                        <p className="text-base font-bold text-slate-700 dark:text-slate-200 text-center leading-relaxed">
+                            {translation}
+                        </p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* 컨트롤 */}
             <div className="flex gap-3 w-full">
-                {/* Auto-play toggle */}
+                {/* 자동 재생 토글 */}
                 <button
                     onClick={toggleAutoPlay}
                     className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold transition-all active:scale-95 ${
@@ -314,7 +277,20 @@ export default function StoryReaderStep({ unitId, onNext }: StoryReaderStepProps
                     <span className="text-sm">{autoPlay ? "Stop" : "Auto"}</span>
                 </button>
 
-                {/* Next button */}
+                {/* 해석 도우미 토글 */}
+                <button
+                    onClick={() => setShowTranslation(prev => !prev)}
+                    className={`flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl font-bold transition-all active:scale-95 ${
+                        showTranslation
+                            ? "bg-amber-400 text-amber-900 shadow-[0_4px_0_#d97706]"
+                            : "bg-white/30 text-white"
+                    }`}
+                >
+                    <Lightbulb className="w-4 h-4" />
+                    <span className="text-xs">해석</span>
+                </button>
+
+                {/* 다음 페이지 버튼 */}
                 <button
                     onClick={handleNext}
                     className="flex-1 bg-[#fcd34d] text-amber-900 font-black text-lg py-3 rounded-2xl shadow-[0_6px_0_#d97706] active:shadow-none active:translate-y-[6px] transition-all flex items-center justify-center gap-2"

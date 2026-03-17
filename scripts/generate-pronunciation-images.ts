@@ -137,7 +137,10 @@ async function generateImage(imageDef: ImageDef) {
   const fullPrompt = `${STYLE_PREFIX} ${imageDef.prompt}`;
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`, {
+    // Note: Imagen 3 generation is typically accessed via Vertex AI. 
+    // If using Google AI Studio (generativelanguage), the endpoint is different or unavailable without whitelist.
+    // Let's try the v1beta endpoint for imagen.
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
