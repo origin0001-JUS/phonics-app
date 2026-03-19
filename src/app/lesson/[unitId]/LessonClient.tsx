@@ -839,18 +839,7 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
                         className="flex flex-col items-center mt-2 w-full"
                     >
                         <div className="flex gap-4 items-center mb-4">
-                            {!imageError && (
-                                <div className="w-32 h-32 bg-sky-50 rounded-3xl border-4 border-sky-100 shadow-[0_8px_20px_rgba(0,0,0,0.1)] overflow-hidden flex items-center justify-center p-2 relative">
-                                    <img
-                                        src={`/assets/images/${word.id}.png`}
-                                        alt={word.word}
-                                        className="w-full h-full object-contain drop-shadow-md"
-                                        onError={() => setImageError(true)}
-                                    />
-                                    {/* Optional: Subtle shine effect overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-0 animate-[shine_2s_ease-in-out_infinite]" />
-                                </div>
-                            )}
+                            <WordImage wordId={word.id} alt={word.word} size="lg" animate={false} />
                             <MouthVisualizer 
                                 currentWord={word.word} 
                                 isSpeaking={isSpeakingWord} 
