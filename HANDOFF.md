@@ -5,26 +5,27 @@
 ---
 
 ## 마지막 작업 환경
-- **환경**: Claude Code (터미널)
-- **시간**: 2026-03-19 (Round 14 Phase 2 빌드 검증 완료)
+- **환경**: 랩탑 Antigravity (GUI)
+- **시간**: 2026-03-19 (KST 기준)
 - **브랜치**: `claude/multi-environment-setup-Nlrfn`
 
 ---
 
-## 현재 진행 상태 (Round 14 Phase 2 완료)
+## 현재 진행 상태 (Round 14 Phase 2 완료 및 QA5 완전 종료)
 
-### 이번 세션 완료한 작업 (Phase 2 빌드 검증)
-- [x] **Round 14 Phase 2 전체 코드 검증**: representativeWords.ts, MouthVisualizer.tsx 비디오 레이어, LessonClient.tsx 연동 모두 이전 세션에서 구현 완료 확인
-- [x] **pronunciationGuide.ts UTF-8 인코딩 복구**: 한글 깨짐 발생 → git 원본(db51228)에서 복원
-- [x] **`npm run build` 성공**: 에러 0건, 48개 정적 페이지 생성 확인
+### 이번 세션 완료한 작업
+- [x] **QA5 (Round 5 QA) 스토리 이미지 복구 완료**: Gemini API Rate Limit으로 중단되었던 디코더블 스토리 판넬 이미지 (Unit 1~5, 7) 총 36장 100% 정상 발급 및 파일 시스템 추가.
+- [x] **Round 14 Phase 2 전체 코드 검증**: representativeWords.ts, MouthVisualizer.tsx 비디오 레이어, LessonClient.tsx 연동 모두 이전 세션에서 구현 완료 숙지.
+- [x] **pronunciationGuide.ts UTF-8 인코딩 복구**: 한글 깨짐 발생 → git 원본(db51228)에서 복원.
+- [x] **`npm run build` 성공**: 에러 0건, 48개 정적 페이지 생성 확인.
 
-### Round 14 Phase 2 태스크 상태
+### 단계별 태스크 상태
 | Task | 상태 |
 |------|------|
 | representativeWords.ts (유닛별 대표 단어 맵) | ✅ 완료 |
 | 14-C: MouthVisualizer 비디오 레이어 | ✅ 완료 |
 | 14-D: LessonClient blend_tap/say_check 연동 | ✅ 완료 |
-| 빌드 검증 | ✅ 통과 |
+| 빌드 검증 및 QA5 스토리 에셋 완전 복구 | ✅ 완료 |
 
 ---
 

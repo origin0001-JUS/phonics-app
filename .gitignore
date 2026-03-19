@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+/flow_asset
 
 # debug
 npm-debug.log*

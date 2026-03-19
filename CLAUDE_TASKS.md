@@ -310,10 +310,10 @@ npm run build
 ## Round 14: AI 립싱크 영상 재생 통합 (하이브리드 R&R)
 
 > ⚠️ **진행 일정 (Phased Approach)**
-> 현재 수기(수작업) 영상 80여개가 제작 중입니다. 따라서 이번 접속에서는 **Phase 1(샘플 테스트)**만 진행하고 멈춥니다.
-> 앱 통합 코딩 및 누락분 일괄 생성은 80개 영상이 모두 확보된 후 **Phase 2**에서 진행합니다.
+> - **Phase 1**: 샘플 생성 완료
+> - **Phase 2 (현재 진행)**: 준비된 92개 영상 통합 적용
 
-### --- Phase 1: 샘플 테스트 (현재 진행) ---
+### --- Phase 1: 샘플 테스트 (종료됨) ---
 
 ### ~~Task 14-A: representativeWords.ts 신규 생성 (Claude Code) — 완료~~
 **설명**:
@@ -323,9 +323,9 @@ npm run build
 **설명**:
 - 터미널에서 `npm run test-fabric-sample` (또는 `npx tsx scripts/test-veed-fabric-sample.ts`)을 실행하세요.
 - 이 스크립트는 `thin`, `cat`, `fish` 3개 단어에 대한 MP4 샘플을 `public/assets/video/samples/` 경로에 생성합니다.
-- 실행 중 에러가 발생하면 스크립트를 디버깅하고, 완료되면 Antigravity 챗(사용자)에게 **"샘플 생성이 완료되었습니다. 품질을 확인해 주세요"**라고 알린 후 **이번 세션(Round 14)을 일시정지** 하세요.
+- 실행 중 에러가 발생하면 스크립트를 디버깅하고, 완료되면 샘플을 확인합니다.
 
-### --- Phase 2: 실제 통합 및 일괄 생성 (추후 대기) ---
+### --- Phase 2: 실제 통합 (현재 진행) ---
 - `src/data/representativeWords.ts` 파일을 새로 만드세요.
 - `AI_avatar_guide.md.md` 파일의 `src/data/representativeWords.ts` 코드 블록을 **그대로** 사용하세요.
 - 포함 내용:
@@ -361,11 +361,7 @@ npm run build
 - 상단 import에 `import { getSoundFocusVideoPath } from '@/data/representativeWords';` 추가
 
 **sound_focus 스텝 수정:**
-- `SoundFocusStep` 컴포넌트 내부(퀴즈 전 메인 화면)에서 소리 소개 영상을 추가하세요.
-- `getSoundFocusVideoPath(unit.id)`가 null이 아니면:
-  - `<video>` 태그로 재생 (autoPlay, playsInline, loop, className="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg")
-  - `onError` 시 해당 `<video>`를 숨기는 폴백 처리
-- 영상이 null이면 기존 UI 그대로 유지
+- (Sound Focus용 영상은 전면 생략되었으므로 별도의 영상 추가 작업을 하지 마세요. 기존 UI 그대로 유지)
 
 **blend_tap 스텝 수정:**
 - `BlendTapStep` 컴포넌트에서 현재 단어 표시 영역 근처(예: 타일들 위)에 `<MouthVisualizer currentWord={word.word} currentPhoneme={...} isSpeaking={...} compact />` 삽입
@@ -375,14 +371,7 @@ npm run build
 - 이미 MouthVisualizer를 사용 중이므로 `currentWord` prop이 전달되고 있는지만 확인하세요. 전달되고 있다면 자동으로 영상이 적용됩니다.
 
 **변경하지 않을 스텝:**
-- magic_e, decode_words, word_family, micro_reader, story_reader, exit_ticket → 아바타 추가 금지
-
-### Task 14-E: 나머지 누락 비디오 생성 스크립트 작성 및 실행 (ElevenLabs + VEED Fabric)
-**설명**:
-- `public/assets/video/` 폴더 내 수작업으로 완성된 80여개의 MP4 파일을 먼저 확인하세요.
-- `representativeWords.ts`의 `allVideoWords` 및 `soundFocusEntries` 목록과 대조하여 **아직 생성되지 않은 누락된 단어/소리 쌍**을 추출하는 스크립트 `scripts/generate-missing-lipsync.ts`를 작성하세요.
-- **ElevenLabs API**로 음성(MP3)을 1차 생성하고, 이 음성과 기준 이미지 URL을 묶어 **VEED Fabric API(fal.ai)**(`fal-ai/veed-fabric/lipsync`)로 보내 최종 MP4를 받아내도록 파이프라인 연계.
-- 모든 누락 MP4 파일을 `public/assets/video/` 에 저장(완전 자동화).
+- sound_focus, magic_e, decode_words, word_family, micro_reader, story_reader, exit_ticket → 아바타 추가 금지
 
 ```bash
 npm run build

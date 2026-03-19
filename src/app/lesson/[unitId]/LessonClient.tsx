@@ -502,8 +502,11 @@ function getPhonicsTTS(text: string): string {
 }
 
 function playPhonemeSound(phoneme: string) {
-    const text = PHONEME_SPEAK_MAP[phoneme] || phoneme;
-    fallbackTTS(text);
+    if (PHONEME_SPEAK_MAP[phoneme]) {
+        fallbackTTS(PHONEME_SPEAK_MAP[phoneme]);
+        return;
+    }
+    fallbackTTS(getPhonicsTTS(phoneme));
 }
 
 // ═══════════════════════════════════════
