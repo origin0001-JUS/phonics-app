@@ -5,38 +5,77 @@
 ---
 
 ## 마지막 작업 환경
-- **환경**: 랩탑 Antigravity (GUI)
-- **시간**: 2026-03-19 (KST 기준)
+- **환경**: Claude Code (CLI)
+- **시간**: 2026-03-21 (KST 기준)
 - **브랜치**: `claude/multi-environment-setup-Nlrfn`
 
 ---
 
-## 현재 진행 상태 (Round 14 Phase 2 완료 및 QA5 완전 종료)
+## 현재 진행 상태 (Seed 기반 발음 입모양 이미지 — PDCA 완료)
 
 ### 이번 세션 완료한 작업
-- [x] **QA5 (Round 5 QA) 스토리 이미지 복구 완료**: Gemini API Rate Limit으로 중단되었던 디코더블 스토리 판넬 이미지 (Unit 1~5, 7) 총 36장 100% 정상 발급 및 파일 시스템 추가.
-- [x] **Round 14 Phase 2 전체 코드 검증**: representativeWords.ts, MouthVisualizer.tsx 비디오 레이어, LessonClient.tsx 연동 모두 이전 세션에서 구현 완료 숙지.
-- [x] **pronunciationGuide.ts UTF-8 인코딩 복구**: 한글 깨짐 발생 → git 원본(db51228)에서 복원.
-- [x] **`npm run build` 성공**: 에러 0건, 48개 정적 페이지 생성 확인.
 
-### 단계별 태스크 상태
-| Task | 상태 |
+- [x] **발음 입모양 시스템 전면 교체**: SVG 코드 기반 → seed_final.jpeg 캐릭터 기반 AI 생성 이미지
+- [x] **Gemini 2.5 Flash Image API로 15개 viseme 이미지 생성**: 14/14 성공 (rest는 seed 원본)
+- [x] **HumanMouthCharacter.tsx 완전 교체**: SVG 렌더링 → `<img>` 이미지 로드 방식
+- [x] **MouthVisualizer.tsx 복합 음소 처리 추가**: "θ ð w" → 첫 번째 매칭 음소 사용
+- [x] **Playwright 설치 및 브라우저 자동 QA 체계 구축**: 16개 유닛 자동 스크린샷
+- [x] **PDCA 전체 사이클 완료**: Plan → Do → Check (97%) → Report
+- [x] **QA 분석 문서 작성**: `docs/pronunciation-qa/PRONUNCIATION_VISUAL_QA_REPORT.md` (16장 스크린샷 포함)
+- [x] **npm run build 성공**: 에러 0건
+
+### PDCA 문서
+
+| Phase | 파일 |
+|-------|------|
+| Plan | `docs/01-plan/features/seed-based-mouth-images.plan.md` |
+| Analysis | `docs/03-analysis/seed-based-mouth-images.analysis.md` |
+| Report | `docs/04-report/seed-based-mouth-images.report.md` |
+| QA 상세 | `docs/pronunciation-qa/PRONUNCIATION_VISUAL_QA_REPORT.md` |
+
+### 변경된 핵심 파일
+
+| 파일 | 변경 |
 |------|------|
-| representativeWords.ts (유닛별 대표 단어 맵) | ✅ 완료 |
-| 14-C: MouthVisualizer 비디오 레이어 | ✅ 완료 |
-| 14-D: LessonClient blend_tap/say_check 연동 | ✅ 완료 |
-| 빌드 검증 및 QA5 스토리 에셋 완전 복구 | ✅ 완료 |
+| `src/app/lesson/[unitId]/HumanMouthCharacter.tsx` | SVG → 이미지 기반 완전 교체 |
+| `src/app/lesson/[unitId]/MouthVisualizer.tsx` | 복합 음소 처리, 이미지 fallback |
+| `public/assets/images/mouth/*.jpeg` | **15장 신규** (Gemini API 생성) |
+| `scripts/gen-mouth.ts` | 이미지 생성 스크립트 |
+| `scripts/screenshot-test.ts` | Playwright QA 스크린샷 |
 
 ---
 
-## 🔥 다음 할 일
+## 🔥 다음 할 일 (후속 작업)
 
-### 1. Round 14 최종 완료 → Round 15 진입
-- Round 14 Phase 2 빌드 검증 완료. **Round 15 (V2 코어 로직 개발)** 로 넘어갈 준비 완료.
-- Task 15-A: Magic e 퀴즈 컴포넌트, 15-B: Decodable 스토리북 엔진, 15-C: Word Family Builder
+### 1. 이미지 용량 최적화 (우선순위 높음)
+- 현재: 각 ~1.7MB × 15장 = **~24MB** — PWA 앱에 과다
+- 목표: WebP 변환 + 품질 조정으로 각 **50-100KB** (총 ~1MB)
+- 방법: `sharp` 또는 `cwebp` 사용, 스크립트 작성 필요
 
-### 2. QA 검수 (선택)
-- `npm run dev`로 실제 브라우저에서 92개 영상 재생 확인 (blend_tap, say_check 스텝)
+### 2. 차별화 부족 viseme 재생성 (우선순위 중간)
+- `bilabial` (m/b/p): rest와 거의 동일 → 입술 더 꽉 다문 모습으로
+- `postalveolar` (sh/ch): rest와 비슷 → 입술을 더 둥글게 앞으로
+- `open_back` (ɒ): 구별 어려움 → 더 둥근 O 모양으로
+- 방법: `scripts/gen-mouth.ts`에서 해당 viseme만 삭제 후 프롬프트 강화 재실행
+
+### 3. L3/L4 오디오 공유 로직 (우선순위 중간)
+- 81개 L3/L4 단어에 오디오 미확보 (`l3_black`, `l4_car` 등)
+- Core 단어와 동일 발음 → `audio.ts`에서 prefix 제거 fallback 로직 추가
+- 예: `l3_black` → `black.mp3` 로 자동 연결
+
+### 4. 폐기된 관련 Plan 정리 (우선순위 낮음)
+- `pronunciation-character-animation` (SVG 기반) → 폐기됨
+- `pronunciation-image-v2` (정적 이미지) → seed 기반으로 대체됨
+- 필요 시 archive 처리
+
+---
+
+## 누가 뭘 하고 있나 (Who is doing what)
+
+| 에이전트 | 상태 |
+|----------|------|
+| **Claude Code** | [대기 상태] (Idle) — seed-based-mouth-images PDCA 완료 |
+| **Antigravity** | [대기 상태] — 합류 시 이미지 용량 최적화 또는 QA |
 
 ---
 
