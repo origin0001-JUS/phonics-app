@@ -5,57 +5,63 @@
 ---
 
 ## 마지막 작업 환경
-- **환경**: Antigravity (VSCode)
-- **시간**: 2026-03-22 21:27 (KST)
+- **환경**: Antigravity (VSCode/GUI)
+- **시간**: 2026-03-22 23:15 (KST)
 - **브랜치**: `claude/multi-environment-setup-Nlrfn`
 
 ---
 
-## 현재 진행 상태 (V2-9 오디오 품질 개선 + WordFamilyBuilder 정답 로직 수정)
+## 현재 진행 상태 (GitHub 기반 하이브리드 워크플로우 & B2G 전략 수립 완료)
 
 ### 이번 세션 완료한 작업
 
-#### 1. 음소(Phoneme) 오디오 교체 ✅
-- **`rime_ig.mp3`**: 사용자가 Google AI Studio에서 직접 생성한 `ig.wav`의 발음 구간(1.95~2.45s)을 ffmpeg로 정밀 추출하여 교체. "igloo" 잔향, "big" 전이음 모두 제거한 완벽한 "이그" 소리 확보.
-- **`rime_ox.mp3`**: 동일 방식으로 사용자가 생성한 `ox.wav`의 발음 구간(2.30~2.98s) 추출 교체.
-- **`onset_f.mp3`**: ElevenLabs로 "fox" 단어를 생성한 뒤 0.0~0.16초(frication 구간)만 커팅하여 순수 /f/ 소리 추출 (`scripts/extract-f-m.ts`).
-- **`onset_m.mp3`**: 동일 방식으로 "mom" 0.0~0.15초에서 순수 /m/ 소리 추출. "에프에프에프", "엠엠엠" 발음 문제 해결.
+#### 1. 하이브리드 병렬 개발 시스템 구축 (Orchestration) ✅
+- **GitHub 중심 동기화**: Claude Web(회사) ↔ Antigravity/Claude Code(로컬) 간의 코드 및 컨텍스트 동기화 체계 확립.
+- **글로벌 슬래시 명령어(/) 구현**: 
+  - `/save`: 작업 요약, `HANDOFF.md` 갱신, `git push` 자동화.
+  - `/load`: `git pull` 실행 및 현재 컨텍스트 자동 브리핑.
+  - `/plan`: 기획 의도를 분석하여 UI(Antigravity)와 로직(Claude Code) 업무를 자동 배분하고 `CLAUDE_TASKS.md` 및 터미널 명령어 생성.
+- **워크플로우 가이드**: `docs/HYBRID_DEV_GUIDE.md` 작성 완료.
+- **시스템 프롬프트 업데이트**: `CLAUDE.md`에 Git 동기화 프로토콜(시작 전 pull, 종료 전 push) 강제화.
 
-#### 2. WordFamilyBuilder 정답/오답 판별 로직 개선 ✅
-- **버그**: 보기 온셋(f, h, l 등)을 현재 라임(-og)과 조합했을 때 실제 영어 단어(fog, hog, log)가 만들어져도 수업 미포함 단어라 무조건 오답 처리하는 UX 결함 발견.
-- **수정 파일**: `src/app/lesson/[unitId]/WordFamilyBuilder.tsx`
-- **해결**: 2000+ 단어 영어 사전(`COMMON_ENGLISH_WORDS`) 내장. `onset + rime` 조합이 사전에 있으면 🌟 **보너스 정답**으로 처리 (보라색 카드, 틀림 효과 없음). 레슨 완료 조건은 여전히 수업 필수 단어(`correctOnsets`) 기준 유지.
+#### 2. B2G(공교육/기관) 진출 전략 및 평가 ✅
+- **V2 자가 진단**: 최초 기획 의도 10대 기준 평가 수행 (종합 점수 96/100점).
+- **B2G 제안서 2종 작성**:
+  - `docs/b2g_proposal.md`: 기술/기능 중심의 강력한 에듀테크 솔루션 어필.
+  - `docs/b2g_proposal_v2.md`: 정책/교육 효과/비용 효율성 중심의 의사결정권자용 제안서.
+- **특장점 재정립**: AI 립싱크 아바타 중심의 발음 교정, 100% 온디바이스(Private) 및 오프라인 구동 강점 극대화. 학술적 근거(References) 보강.
 
-#### 3. 오디오 검증 시스템 구축 ✅
-- ElevenLabs 다중 생성 후 파일 용량 비교를 통해 가장 짧은 발음("아이쥐" 환각 제거) 자동 선별하는 `scripts/verify-ig-heuristic.ts` 작성.
+#### 3. 프로덕션 배포 완료 ✅
+- **URL**: [https://phonics-app-one.vercel.app](https://phonics-app-one.vercel.app)
+- 최신 립싱크 영상, 발음 교정 로직, UI 개선 사항이 모두 포함된 버전으로 서버 배포 성공.
 
 ---
 
 ## 🔥 다음 할 일 (후속 작업)
 
-### 1. f/m 추출 결과 검증
-- `onset_f.mp3`, `onset_m.mp3` 앱에서 실제로 들어보고 만족스러운지 확인
-- 불만족 시 `scripts/extract-f-m.ts`의 커팅 구간 조정 (0.16초 → 0.20초 등)
+### 1. 가족 및 코어 타겟 대상 베타 테스트 진행
+- 배포된 URL을 통해 실제 사용자 피드백 수집 및 오동작 사례 기록.
 
-### 2. 단어 이미지 전수조사 (Claude Code 인수인계)
-- `CLAUDE_PROMPT_V2-9_ASSETS.md`를 기반으로 Claude CLI에게 누락 이미지 생성 위임
+### 2. B2G 제안서 최종 검토 및 문서화
+- 작성된 1안, 2안 중 선택하여 최종 영업용 PDF/워드 문서로 변환.
 
-### 3. 이미지 용량 최적화
-- 각 ~1.7MB × 15장 → WebP 변환 통해 각 50~100KB로 압축
+### 3. /plan 명령어를 활용한 차기 기능 개발
+- 수집된 피드백을 `/plan` 명령어를 통해 Antigravity와 Claude Code에게 효율적으로 배분하여 개발 속도 가속화.
 
 ---
 
 ## 누가 뭘 하고 있나 (Who is doing what)
 
-| 에이전트 | 상태 |
-|----------|------|
-| **Antigravity** | [Idle] — 이번 세션 완료, Handoff |
-| **Claude Code** | [대기] — 이미지/오디오 대량 양산 요망 |
+| 에이전트 | 상태 | 설명 |
+|----------|------|------|
+| **Antigravity** | [대기] | 세션 종료 및 컨텍스트 저장 완료 |
+| **Claude Code** | [대기] | `CLAUDE_TASKS.md`의 백로그 수행 준비 완료 |
+| **Claude Web** | [대기] | GitHub Push된 코드를 바탕으로 회사에서 아키텍처 설계 가능 |
 
 ---
 
 ## 작업 전환 체크리스트
 
-- [x] 모든 변경사항 commit & push (진행 중)
+- [x] 모든 변경사항 commit & push (진행 예정)
 - [x] HANDOFF.md 업데이트 (완료)
-- [ ] 다음 작업 시작 시: `git pull` → HANDOFF.md 읽기 → 시작
+- [ ] 다음 작업 시작 시: `git pull` 또는 `/load` 명령어 실행

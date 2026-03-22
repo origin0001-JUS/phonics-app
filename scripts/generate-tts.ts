@@ -51,10 +51,21 @@ if (!apiKey && !process.argv.includes('--dry-run')) {
 const elevenlabs = new ElevenLabsClient({ apiKey });
 
 // ─── 음성 매핑 (Voice IDs) ───
-// Charlotte: 또박또박 교육용 여성 — 사용자가 5개 후보 중 선택
+// ⚠️ Charlotte (XB0fDUnXU5powFXDhCwa) = en-british 확인됨 → Rachel로 전환
+// Rachel (21m00Tcm4TlvDq8ikWAM) = en-american 확인됨 ✅
 const VOICES = {
-    CHARLOTTE: 'XB0fDUnXU5powFXDhCwa', // 또박또박 교육용 여성 (전체 통일)
+    RACHEL: '21m00Tcm4TlvDq8ikWAM', // 미국식 여성 (전체 통일)
 };
+
+// ─── 보호 목록 (이미 미국식으로 확인된 파일 — --force에서도 절대 건너뜀) ───
+// • Charlotte 이전에 Rachel로 생성된 것들 (구 Rachel = 미국식)
+// • 수동으로 재생성/검수된 단어들
+const SKIP_LIST = new Set<string>([
+    // ── 수동 재생성 완료 (American) ──
+    'van',        // 미국식으로 검수/재생성 쪽 (Fixing Pronunciation and Images 세션)
+    // ── 추가 보호 필요시 여기에 추가 ──
+    // 'cat', 'bat', ...
+]);
 
 // ─── TTS 설정 ───
 // 고품질 모델 + 느린 속도로 또박또박 발음
@@ -76,10 +87,17 @@ async function extractJobsFromCurriculum(): Promise<TtsJob[]> {
     for (let u = 0; u < curriculum.length; u++) {
         const unit = curriculum[u];
 
-        // 1. 단어 처리 (Charlotte 음성으로 통일)
+        // 1. 단어 처리 (Rachel 미국식 음성으로 통일)
         for (const word of unit.words) {
             if (!processedWords.has(word.word)) {
                 processedWords.add(word.word);
+
+                // ─── 보호 목록에 있는 단어는 건너뜀 ───
+                if (SKIP_LIST.has(word.word.toLowerCase())) {
+                    console.log(`🔒 Protected (skip): ${word.id}.mp3 ("${word.word}")`);
+                    continue;
+                }
+
                 let safeText = word.word.charAt(0).toUpperCase() + word.word.slice(1) + '.';
 
                 // Fix weird pronunciations
@@ -93,15 +111,15 @@ async function extractJobsFromCurriculum(): Promise<TtsJob[]> {
                     text: safeText,
                     filename: `${word.id}.mp3`,
                     type: 'word',
-                    voiceId: VOICES.CHARLOTTE,
-                    voiceName: 'Charlotte (Word)'
+                    voiceId: VOICES.RACHEL,
+                    voiceName: 'Rachel (Word) [en-american]'
                 });
             }
         }
 
-        // 2. MicroReading 문장 처리 (Charlotte 음성으로 통일)
-        const sentenceVoice = VOICES.CHARLOTTE;
-        const sentenceVoiceName = 'Charlotte (Sentence)';
+        // 2. MicroReading 문장 처리 (Rachel 미국식 음성으로 통일)
+        const sentenceVoice = VOICES.RACHEL;
+        const sentenceVoiceName = 'Rachel (Sentence) [en-american]';
 
         // 문장 파일명 명명 규칙: "문장텍스트를_안전한_파일명으로.mp3"
         // (audit-audio.ts와 완전히 동일한 로직이어야 파일명을 일치시킬 수 있음)
@@ -135,11 +153,11 @@ async function synthesizeToMp3(job: TtsJob, outputPath: string): Promise<void> {
     const responseStream = await elevenlabs.textToSpeech.stream(
         job.voiceId,
         {
-            model_id: MODEL_ID,
+            modelId: MODEL_ID,
             text: job.text,
-            voice_settings: {
+            voiceSettings: {
                 stability: 0.7,
-                similarity_boost: 0.8,
+                similarityBoost: 0.8,
                 speed: TTS_SPEED,
             }
         }
@@ -148,7 +166,13 @@ async function synthesizeToMp3(job: TtsJob, outputPath: string): Promise<void> {
     // Read stream to buffer and write
     const chunks: Buffer[] = [];
     for await (const chunk of responseStream) {
-        chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+        if (typeof chunk === 'string') {
+            chunks.push(Buffer.from(chunk));
+        } else if (chunk instanceof Buffer) {
+            chunks.push(chunk);
+        } else {
+            chunks.push(Buffer.from(chunk as Uint8Array));
+        }
     }
     const buffer = Buffer.concat(chunks);
     fs.writeFileSync(outputPath, buffer);
