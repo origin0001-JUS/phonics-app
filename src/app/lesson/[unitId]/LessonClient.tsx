@@ -14,7 +14,7 @@ import { db } from "@/lib/db";
 import { createNewCard, calculateNextReview } from "@/lib/srs";
 import { REWARDS } from "@/data/rewards";
 import { playWordAudio, playSentenceAudio, playSFX, fallbackTTS, listenAndCompare, isSTTSupported, preloadAudioFiles, type STTResult } from "@/lib/audio";
-import { getSoundFocusVideoPath } from "@/data/representativeWords";
+import { getSoundFocusVideoPath, getLipSyncVideoPath } from "@/data/representativeWords";
 
 import MouthVisualizer, { usePhonemeSequence } from "./MouthVisualizer";
 import MagicEStep from "./MagicEStep";
@@ -226,6 +226,14 @@ export default function LessonPage() {
     // ─── QA-R2: Save lesson state to localStorage on change ───
     useEffect(() => {
         if (!sessionRestored) return;
+        
+        // Prevent saving if the lesson is complete. This fixes the "Learn Again" bug
+        // where it instantly jumped back to the results screen on reload.
+        if (stepOrder[stepIndex] === "results") {
+            try { localStorage.removeItem(storageKey); } catch { /* ignore */ }
+            return;
+        }
+
         try {
             const wordResultsObj: Record<string, WordResult> = {};
             for (const [k, v] of wordResultsRef.current) {
@@ -235,7 +243,7 @@ export default function LessonPage() {
                 stepIndex, subStepIndex, score, totalQuestions, wordResults: wordResultsObj,
             }));
         } catch { /* ignore */ }
-    }, [stepIndex, subStepIndex, score, totalQuestions, storageKey, sessionRestored]);
+    }, [stepIndex, subStepIndex, score, totalQuestions, storageKey, sessionRestored, stepOrder]);
 
     const currentStep = stepOrder[stepIndex];
     const progress = ((stepIndex) / (stepOrder.length - 1)) * 100;
@@ -400,8 +408,8 @@ export default function LessonPage() {
                 {currentStep === "sound_focus" && (
                     <SoundFocusStep unit={unit} words={lessonWords} onNext={goNext} />
                 )}
-                {currentStep === "blend_tap" && (
-                    <BlendTapStep words={lessonWords} onNext={goNext} />
+                {currentStep === "blend_tap" && unit && (
+                    <BlendTapStep unit={unit} words={lessonWords} onNext={goNext} />
                 )}
                 {currentStep === "magic_e" && (
                     <MagicEStep words={lessonWords} onNext={goNext} />
@@ -477,18 +485,21 @@ const PHONEME_SPEAK_MAP: Record<string, string> = {
 /** Convert onset/rime text into phonics-friendly TTS spellings */
 function getPhonicsTTS(text: string): string {
     const t = text.toLowerCase();
+    // IMPORTANT: Single consonants MUST use phonetic approximations 
+    // that TTS won't read as letter names. E.g. 'm' alone → TTS says "em",
+    // but 'muh' → TTS says the /m/ sound followed by a schwa.
     const map: Record<string, string> = {
         'a': 'ah', 'e': 'eh', 'i': 'ih', 'o': 'aw', 'u': 'uh',
         'b': 'buh', 'c': 'kuh', 'd': 'duh', 'f': 'fuh', 'g': 'guh',
-        'h': 'huh', 'j': 'juh', 'k': 'kuh', 'l': 'lll', 'm': 'mmm',
-        'n': 'nnn', 'p': 'puh', 'q': 'kwuh', 'r': 'rrr', 's': 'sss',
-        't': 'tuh', 'v': 'vuh', 'w': 'wuh', 'x': 'ks', 'y': 'yuh', 'z': 'zzz',
+        'h': 'huh', 'j': 'juh', 'k': 'kuh', 'l': 'luh', 'm': 'muh',
+        'n': 'nuh', 'p': 'puh', 'q': 'kwuh', 'r': 'ruh', 's': 'suh',
+        't': 'tuh', 'v': 'vuh', 'w': 'wuh', 'x': 'ks', 'y': 'yuh', 'z': 'zuh',
         'sh': 'shh', 'ch': 'ch', 'th': 'th', 'wh': 'wuh', 'ph': 'fff',
         'bl': 'bll', 'cl': 'kll', 'fl': 'fll', 'gl': 'gll', 'pl': 'pll', 'sl': 'sll',
         'br': 'brr', 'cr': 'krr', 'dr': 'drr', 'fr': 'frr', 'gr': 'grr', 'pr': 'prr', 'tr': 'trr',
         'sk': 'skk', 'sm': 'smm', 'sn': 'snn', 'sp': 'spp', 'st': 'stt', 'sw': 'sww',
         // Rimes
-        'ag': 'ag', 'ig': 'igg', 'og': 'og', 'ug': 'ug', 'eg': 'eg',
+        'ag': 'ag', 'ig': 'ig', 'og': 'og', 'ug': 'ug', 'eg': 'eg',
         'ad': 'ad', 'id': 'idd', 'od': 'od', 'ud': 'ud', 'ed': 'ed',
         'at': 'at', 'it': 'it', 'ot': 'ot', 'ut': 'ut', 'et': 'et',
         'ap': 'ap', 'ip': 'ip', 'op': 'op', 'up': 'up', 'ep': 'ep',
@@ -501,12 +512,45 @@ function getPhonicsTTS(text: string): string {
     return map[t] || t;
 }
 
+const CORE_PHONEME_MAP: Record<string, string> = {
+    'æ': 'ae', 'ɛ': 'eh', 'ɪ': 'ih', 'ɒ': 'aw', 'ʌ': 'uh',
+    'eɪ': 'ay', 'aɪ': 'eye', 'oʊ': 'oh', 'juː': 'you', 'uː': 'oo',
+    'iː': 'ee', 'ɑːr': 'ar', 'ɔːr': 'or', 'ɜːr': 'er',
+    'ɔɪ': 'oy', 'aʊ': 'ow',
+    'ʃ': 'sh', 'tʃ': 'ch', 'θ': 'th', 'ð': 'th_v',
+    'dʒ': 'j', 'ŋ': 'ng'
+};
+
+const KNOWN_ONSETS = new Set([
+    'b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','y','z',
+    'sh','ch','th','wh','ph',
+    'bl','cl','fl','gl','pl','sl',
+    'br','cr','dr','fr','gr','pr','tr',
+    'sk','sm','sn','sp','st','sw',
+    'str','spr','spl','scr','shr','squ'
+]);
+
 function playPhonemeSound(phoneme: string) {
-    if (PHONEME_SPEAK_MAP[phoneme]) {
-        fallbackTTS(PHONEME_SPEAK_MAP[phoneme]);
+    const p = phoneme.toLowerCase();
+
+    // 1. Check if it's a core phoneme (vowels, digraphs etc)
+    if (CORE_PHONEME_MAP[p]) {
+        const audio = new Audio(`/assets/audio/phonemes/core_${CORE_PHONEME_MAP[p]}.mp3`);
+        audio.play().catch(() => fallbackTTS(PHONEME_SPEAK_MAP[phoneme] || getPhonicsTTS(phoneme)));
         return;
     }
-    fallbackTTS(getPhonicsTTS(phoneme));
+
+    // 2. Identify if it's an onset or a rime
+    const prefix = KNOWN_ONSETS.has(p) ? 'onset' : 'rime';
+    // Add cache-busting to bypass aggressive Next.js dev server or browser 404 caching
+    const audio = new Audio(`/assets/audio/phonemes/${prefix}_${p}.mp3?v=${Date.now()}`);
+    
+    // Play immediately to preserve user gesture token
+    audio.play().catch((err) => {
+        console.warn(`Phoneme audio missing or failed for ${p}:`, err);
+        // Absolute fallback to browser TTS if file completely fails
+        fallbackTTS(getPhonicsTTS(phoneme));
+    });
 }
 
 // ═══════════════════════════════════════
@@ -631,39 +675,31 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
             {/* Giant Sound Display with Video option */}
-            <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-8 w-full max-w-xs shadow-[0_10px_0_#e2e8f0] dark:shadow-[0_10px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
-                <p className="text-slate-400 dark:text-slate-500 font-bold mb-4">Today&apos;s Sound</p>
+            <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 w-full max-w-xs shadow-[0_10px_0_#e2e8f0] dark:shadow-[0_10px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
+                <p className="text-slate-400 dark:text-slate-500 font-bold mb-2">Today&apos;s Sound</p>
+                <p className="text-xl font-black text-slate-800 dark:text-slate-100 mb-3">{unit.title}</p>
                 
-                {videoPath ? (
-                    <div className="mb-4 flex flex-col items-center w-full">
-                        <MouthVisualizer 
-                            currentPhoneme={unit.targetSound}
-                            videoPath={videoPath}
-                            isSpeaking={isSpeakingVideo}
-                            compact={false}
-                        />
-                        <button 
-                            onClick={() => {
-                                setIsSpeakingVideo(true);
-                                playPhonemeSound(unit.targetSound);
-                                setTimeout(() => setIsSpeakingVideo(false), 2000);
-                            }}
-                            className="mt-6 flex items-center justify-center gap-2 bg-indigo-100 text-indigo-700 px-6 py-3 rounded-full font-bold w-full active:scale-95 transition-transform"
-                        >
-                            <Volume2 className="w-5 h-5" /> Listen to /{unit.targetSound}/
-                        </button>
-                    </div>
-                ) : (
-                    <>
-                        <div className="w-32 h-32 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
-                            <span className="text-6xl font-black text-white drop-shadow-md">
-                                {unit.title.split(" ").pop()}
-                            </span>
-                        </div>
-                        <p className="text-2xl font-black text-slate-800 dark:text-slate-100 mb-1">{unit.title}</p>
-                        <p className="text-slate-500 font-medium text-sm">/{unit.targetSound}/</p>
-                    </>
-                )}
+                {/* MouthVisualizer — always shown, with video if available */}
+                <MouthVisualizer 
+                    currentPhoneme={unit.targetSound}
+                    videoPath={videoPath}
+                    isSpeaking={isSpeakingVideo}
+                    compact={false}
+                />
+
+                <button 
+                    onClick={() => {
+                        setIsSpeakingVideo(true);
+                        // Only play TTS when no video exists — video plays its own audio
+                        if (!videoPath) {
+                            playPhonemeSound(unit.targetSound);
+                        }
+                        setTimeout(() => setIsSpeakingVideo(false), 2000);
+                    }}
+                    className="mt-4 flex items-center justify-center gap-2 bg-indigo-100 text-indigo-700 px-6 py-3 rounded-full font-bold w-full active:scale-95 transition-transform"
+                >
+                    <Volume2 className="w-5 h-5" /> Listen: /{unit.targetSound}/
+                </button>
             </div>
 
             {/* Example word with image (V2-9) */}
@@ -690,7 +726,7 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
 // ═══════════════════════════════════════
 // STEP 2: Blend & Tap (2 min)
 // ═══════════════════════════════════════
-function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void }) {
+function BlendTapStep({ unit, words, onNext }: { unit: { targetSound: string }, words: WordData[]; onNext: () => void }) {
     const [currentIdx, setCurrentIdx] = useState(0);
     const [tappedPhonemes, setTappedPhonemes] = useState<number[]>([]);
     const [onsetTapped, setOnsetTapped] = useState(false);
@@ -751,7 +787,10 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
             setTimeout(() => playSFX('correct'), 800);
             setTimeout(() => {
                 setIsSpeakingWord(true);
-                playTTS(word.word);
+                const hasVideo = getLipSyncVideoPath(word.word) !== null;
+                if (!hasVideo) {
+                    playTTS(word.word);
+                }
                 setTimeout(() => setIsSpeakingWord(false), 2000);
             }, 1800);
         }
@@ -775,80 +814,107 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
     return (
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
             <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
-                <p className="text-slate-400 font-bold mb-4 text-sm">
-                    {useOnsetRime ? "Tap both parts to blend!" : "Tap each sound!"} 👆
-                </p>
-                <p className="text-lg font-bold text-slate-600 dark:text-slate-300 mb-1">{word.meaning}</p>
+                {/* Layout Redesign (V2-10): Word Image at top, Korean meaning removed */}
+                <div className="flex flex-col items-center w-full">
+                    {!imageError && (
+                        <div className="w-40 h-40 bg-white/50 rounded-3xl border-4 border-white/80 shadow-lg overflow-hidden flex items-center justify-center p-4 mb-4">
+                            <img
+                                src={`/assets/images/${word.id}.png`}
+                                alt={word.word}
+                                className="w-full h-full object-contain drop-shadow-md"
+                                onError={() => setImageError(true)}
+                            />
+                        </div>
+                    )}
 
-                {useOnsetRime ? (
-                    /* Onset-Rime Mode (2 tiles) */
-                    <div className="flex gap-4 my-6 items-center">
-                        {/* Onset tile */}
-                        <button
-                            onClick={tapOnset}
-                            className={`w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-black transition-all border-4 ${onsetTapped
-                                ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
-                                : `bg-blue-50 border-blue-200 shadow-[0_4px_0_#93c5fd] ${getPhonemeColorClass(getPhonemeCategory(word.onset!, { isRime: false }))}`
-                                } active:scale-95`}
-                        >
-                            {word.onset}
-                        </button>
+                    {useOnsetRime ? (
+                        /* Onset-Rime Mode (2 tiles) */
+                        <div className="flex gap-4 mb-6 items-center">
+                            {/* Onset tile */}
+                            <button
+                                onClick={allTapped ? () => {
+                                    const audio = new Audio(`/assets/audio/phonemes/onset_${word.onset?.toLowerCase()}.mp3`);
+                                    audio.play().catch(() => fallbackTTS(getPhonicsTTS(word.onset!)));
+                                } : tapOnset}
+                                className={`w-24 h-24 rounded-2xl flex items-center justify-center text-4xl font-black transition-all border-4 ${onsetTapped
+                                    ? "bg-green-400 border-green-500 text-white scale-105 shadow-[0_4px_0_#16a34a]"
+                                    : `bg-blue-50 border-blue-200 shadow-[0_4px_0_#93c5fd] ${getPhonemeColorClass(getPhonemeCategory(word.onset!, { isRime: false }))}`
+                                    } active:scale-95`}
+                            >
+                                {word.onset}
+                            </button>
 
-                        <span className="text-2xl font-black text-white/60">+</span>
+                            <span className="text-3xl font-black text-slate-300">+</span>
 
-                        {/* Rime tile (interactive button) */}
-                        <button
-                            onClick={tapRime}
-                            className={`w-24 h-20 rounded-2xl flex items-center justify-center text-3xl font-black transition-all border-4 ${rimeTapped
-                                ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
-                                : `bg-amber-50 border-amber-200 shadow-[0_4px_0_#fbbf24] ${getPhonemeColorClass('rime')}`
-                                } active:scale-95`}
-                        >
-                            {word.rime}
-                        </button>
-                    </div>
-                ) : (
-                    /* Phoneme Mode (n tiles) with color coding */
-                    <div className="flex gap-3 my-6">
-                        {word.phonemes.map((p, i) => {
-                            const isTapped = tappedPhonemes.includes(i);
-                            const category = getPhonemeCategory(p);
-                            const colorClass = getPhonemeColorClass(category);
-                            return (
-                                <button
-                                    key={i}
-                                    onClick={() => tapPhoneme(i)}
-                                    className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black transition-all border-4 ${isTapped
-                                        ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
-                                        : `bg-slate-100 border-slate-200 shadow-[0_4px_0_#cbd5e1] ${colorClass}`
-                                        } active:scale-95`}
-                                >
-                                    {p}
-                                </button>
-                            );
-                        })}
+                            {/* Rime tile */}
+                            <button
+                                onClick={allTapped ? () => {
+                                    const audio = new Audio(`/assets/audio/phonemes/rime_${word.rime?.toLowerCase()}.mp3`);
+                                    audio.play().catch(() => fallbackTTS(getPhonicsTTS(word.rime!)));
+                                } : tapRime}
+                                className={`w-28 h-24 rounded-2xl flex items-center justify-center text-4xl font-black transition-all border-4 ${rimeTapped
+                                    ? "bg-green-400 border-green-500 text-white scale-105 shadow-[0_4px_0_#16a34a]"
+                                    : `bg-amber-50 border-amber-200 shadow-[0_4px_0_#fbbf24] ${getPhonemeColorClass('rime')}`
+                                    } active:scale-95`}
+                            >
+                                {word.rime}
+                            </button>
+                        </div>
+                    ) : (
+                        /* Phoneme Mode (n tiles) */
+                        <div className="flex gap-3 mb-6">
+                            {word.phonemes.map((p, i) => {
+                                const isTapped = tappedPhonemes.includes(i);
+                                const category = getPhonemeCategory(p);
+                                const colorClass = getPhonemeColorClass(category);
+                                return (
+                                    <button
+                                        key={i}
+                                        onClick={allTapped ? () => playPhonemeSound(p) : () => tapPhoneme(i)}
+                                        className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black transition-all border-4 ${isTapped
+                                            ? "bg-green-400 border-green-500 text-white scale-110 shadow-[0_4px_0_#16a34a]"
+                                            : `bg-slate-100 border-slate-200 shadow-[0_4px_0_#cbd5e1] ${colorClass}`
+                                            } active:scale-95`}
+                                    >
+                                        {p}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+
+                {/* MouthVisualizer - Shown at bottom after blend */}
+                {allTapped && (
+                    <div 
+                        className="w-full flex justify-center mt-2 cursor-pointer active:scale-95 transition-transform"
+                        onClick={() => {
+                            setIsSpeakingWord(true);
+                            const hasVideo = getLipSyncVideoPath(word.word) !== null;
+                            if (!hasVideo) {
+                                playTTS(word.word);
+                            }
+                            setTimeout(() => setIsSpeakingWord(false), 2000);
+                        }}
+                    >
+                        <MouthVisualizer 
+                            currentWord={word.word} 
+                            currentPhoneme={unit.targetSound}
+                            isSpeaking={isSpeakingWord} 
+                            compact={false}
+                        />
                     </div>
                 )}
 
-                {/* Blended result with 3D Image Popup and MouthVisualizer */}
                 {allTapped && (
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.5, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className="flex flex-col items-center mt-2 w-full"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="flex flex-col items-center mt-4 w-full"
                     >
-                        <div className="flex gap-4 items-center mb-4">
-                            <WordImage wordId={word.id} alt={word.word} size="lg" animate={false} />
-                            <MouthVisualizer 
-                                currentWord={word.word} 
-                                isSpeaking={isSpeakingWord} 
-                                compact={true}
-                            />
-                        </div>
-                        <div className="bg-green-50 border-4 border-green-200 shadow-[0_4px_0_#bbf7d0] rounded-2xl px-8 py-3 flex items-center gap-3">
-                            <Check className="w-6 h-6 text-green-500" strokeWidth={4} />
-                            <span className="font-black text-green-700 text-2xl tracking-wide">{word.word}</span>
+                        <div className="bg-green-50 border-4 border-green-200 shadow-[0_4px_0_#bbf7d0] rounded-2xl px-10 py-3 flex items-center gap-3">
+                            <Check className="w-8 h-8 text-green-500" strokeWidth={4} />
+                            <span className="font-black text-green-700 text-3xl tracking-wide">{word.word}</span>
                         </div>
                     </motion.div>
                 )}
@@ -866,9 +932,11 @@ function BlendTapStep({ words, onNext }: { words: WordData[]; onNext: () => void
 
             <p className="text-white/70 font-bold text-sm">{currentIdx + 1} / {Math.min(words.length, 4)}</p>
 
-            <BigButton onClick={handleNext}>
-                {allTapped ? <>Next <ArrowRight className="w-5 h-5" /></> : useOnsetRime ? "Tap both parts!" : "Tap the sounds!"}
-            </BigButton>
+            <div className="sticky bottom-6 w-full z-20 mt-auto">
+                <BigButton onClick={handleNext}>
+                    {allTapped ? <>Next <ArrowRight className="w-5 h-5" /></> : useOnsetRime ? "Tap both parts!" : "Tap the sounds!"}
+                </BigButton>
+            </div>
         </div>
     );
 }
@@ -969,6 +1037,7 @@ function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { 
     const [hasListened, setHasListened] = useState(false);
     const word = words[idx];
     const currentPhoneme = usePhonemeSequence(word.phonemes, isSpeaking);
+    const videoPath = useMemo(() => getLipSyncVideoPath(word.word), [word.word]);
 
     // Reset when word changes + auto-play word audio (Part Q fix)
     useEffect(() => {
@@ -977,7 +1046,10 @@ function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { 
         // Auto-play word audio with small delay for browser autoplay policy
         const timer = setTimeout(() => {
             setIsSpeaking(true);
-            playTTS(words[idx]?.word ?? '');
+            const currentVideoPath = getLipSyncVideoPath(words[idx]?.word ?? '');
+            if (!currentVideoPath) {
+                playTTS(words[idx]?.word ?? '');
+            }
             setTimeout(() => {
                 setIsSpeaking(false);
                 setHasListened(true);
@@ -991,7 +1063,9 @@ function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { 
 
     const handleListen = () => {
         setIsSpeaking(true);
-        playTTS(word.word);
+        if (!videoPath) {
+            playTTS(word.word);
+        }
         // Approximate TTS duration, then stop speaking animation and enable mic
         setTimeout(() => {
             setIsSpeaking(false);
@@ -1002,7 +1076,7 @@ function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { 
     const handleRecord = async () => {
         if (listening) return;
         setListening(true);
-        setIsSpeaking(true);
+        setIsSpeaking(false); // Prevent video & audio playing while user speaks
         setResult(null);
 
         try {
@@ -1353,9 +1427,14 @@ function ResultsStep({ score, total, unitTitle, onFinish, onMount, newRewards }:
                 </div>
             </div>
 
-            <BigButton onClick={onFinish} color="bg-green-400" shadow="shadow-[0_6px_0_#16a34a]">
-                <span className="text-white">Back to Units</span>
-            </BigButton>
+            <div className="w-full flex flex-col gap-3">
+                <BigButton onClick={() => window.location.reload()} color="bg-sky-400" shadow="shadow-[0_6px_0_#0284c7]">
+                    <span className="text-white">Learn Again</span>
+                </BigButton>
+                <BigButton onClick={onFinish} color="bg-green-400" shadow="shadow-[0_6px_0_#16a34a]">
+                    <span className="text-white">Back to Units</span>
+                </BigButton>
+            </div>
 
             {/* Trophy Celebration Modal */}
             <AnimatePresence>

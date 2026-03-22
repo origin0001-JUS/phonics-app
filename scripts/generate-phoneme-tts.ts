@@ -50,8 +50,8 @@ if (!apiKey && !process.argv.includes('--dry-run')) {
 const elevenlabs = new ElevenLabsClient({ apiKey });
 
 // ─── Voice & Model ───
-const VOICE_RACHEL = '21m00Tcm4TlvDq8ikWAM';
-const MODEL_ID = 'eleven_turbo_v2_5';
+const VOICE_CHARLOTTE = 'XB0fDUnXU5powFXDhCwa';
+const MODEL_MONO = 'eleven_monolingual_v1';
 
 // ─── IPA 매핑: Onset (자음/자음군) ───
 // 각 onset에 대해 자음 소리만 나도록 IPA 표기를 사용합니다.
@@ -229,9 +229,9 @@ function buildJobs(audit: { allOnsets: string[]; allRimes: string[] }): PhonemeJ
 
 async function synthesizePhoneme(job: PhonemeJob, outputPath: string): Promise<void> {
     const responseStream = await elevenlabs.textToSpeech.stream(
-        VOICE_RACHEL,
+        VOICE_CHARLOTTE,
         {
-            model_id: MODEL_ID,
+            model_id: MODEL_MONO,
             text: job.promptText,
             voice_settings: {
                 stability: 0.85,        // High stability for consistent short sounds

@@ -49,7 +49,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // th (voiceless) — /θ/
     {
         phoneme: 'θ',
-        imagePath: '/assets/images/pronunciation/th_voiceless.webp',
+        imagePath: '/assets/images/pronunciation/th_voiceless.svg',
         imageType: 'front',
         visualKey: '혀끝이 윗니-아랫니 사이로 보여요',
         commonMistake: 'ㅅ(s) 또는 ㅌ(t)으로 대체 → "think"를 "sink"이나 "tink"으로 발음',
@@ -62,7 +62,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // th (voiced) — /ð/
     {
         phoneme: 'ð',
-        imagePath: '/assets/images/pronunciation/th_voiced.webp',
+        imagePath: '/assets/images/pronunciation/th_voiced.svg',
         imageType: 'front',
         visualKey: '혀끝이 치아 사이 + 목이 울려요',
         commonMistake: 'ㄷ(d)으로 대체 → "this"를 "dis"로 발음',
@@ -75,7 +75,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // r — /r/
     {
         phoneme: 'r',
-        imagePath: '/assets/images/pronunciation/r_sound.webp',
+        imagePath: '/assets/images/pronunciation/r_sound.svg',
         imageType: 'comparison',
         visualKey: '입술이 살짝 둥글게 + 혀가 아무데도 안 닿아요',
         commonMistake: 'ㄹ(l)과 구별 못함 → "right"와 "light" 같게 발음',
@@ -88,7 +88,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // l — /l/
     {
         phoneme: 'l',
-        imagePath: '/assets/images/pronunciation/l_sound.webp',
+        imagePath: '/assets/images/pronunciation/l_sound.svg',
         imageType: 'front',
         visualKey: '혀끝이 윗잇몸에 딱 붙어 보여요',
         commonMistake: 'ㄹ로 대체 (한국어 ㄹ은 탄설음, 영어 l은 설측음)',
@@ -101,7 +101,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // f — /f/
     {
         phoneme: 'f',
-        imagePath: '/assets/images/pronunciation/f_sound.webp',
+        imagePath: '/assets/images/pronunciation/f_sound.svg',
         imageType: 'front',
         visualKey: '윗니가 아랫입술 위에 살짝 올려져요',
         commonMistake: 'ㅍ(p)으로 대체 → "fine"을 "pine"으로 발음',
@@ -114,7 +114,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // v — /v/
     {
         phoneme: 'v',
-        imagePath: '/assets/images/pronunciation/v_sound.webp',
+        imagePath: '/assets/images/pronunciation/v_sound.svg',
         imageType: 'front',
         visualKey: '윗니 + 아랫입술 + 목 진동',
         commonMistake: 'ㅂ(b)으로 대체 → "very"를 "berry"로 발음',
@@ -127,7 +127,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // z — /z/
     {
         phoneme: 'z',
-        imagePath: '/assets/images/pronunciation/z_sound.webp',
+        imagePath: '/assets/images/pronunciation/z_sound.svg',
         imageType: 'front',
         visualKey: '이빨이 거의 닫히고 + 목 진동',
         commonMistake: 'ㅈ(j/ch) 또는 ㅅ(s)으로 대체',
@@ -144,7 +144,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // short a /æ/ vs short e /ɛ/
     {
         phoneme: 'æ',
-        imagePath: '/assets/images/pronunciation/vowel_ae.webp',
+        imagePath: '/assets/images/pronunciation/vowel_ae.svg',
         imageType: 'comparison',
         visualKey: '입을 가장 크게 벌리고 + 입꼬리 살짝 당김',
         commonMistake: '/ɛ/(에)로 대체 → "bat"를 "bet"처럼 발음',
@@ -156,7 +156,7 @@ export const pronunciationGuide: PronunciationRef[] = [
 
     {
         phoneme: 'ɛ',
-        imagePath: '/assets/images/pronunciation/vowel_e.webp',
+        imagePath: '/assets/images/pronunciation/vowel_e.svg',
         imageType: 'comparison',
         visualKey: '입을 중간만 벌림 (æ보다 작게)',
         commonMistake: '/æ/(애)와 구별 못함 → "bed"와 "bad" 같게 발음',
@@ -169,7 +169,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // short i /ɪ/ vs short e /ɛ/
     {
         phoneme: 'ɪ',
-        imagePath: '/assets/images/pronunciation/vowel_i.webp',
+        imagePath: '/assets/images/pronunciation/vowel_i.svg',
         imageType: 'comparison',
         visualKey: '입꼬리가 옆으로 살짝 (웃는 모양)',
         commonMistake: '/ɛ/(에)와 혼동 → "sit"를 "set"처럼 발음',
@@ -182,7 +182,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // short o /ɒ/ — 둥근 입
     {
         phoneme: 'ɒ',
-        imagePath: '/assets/images/pronunciation/vowel_o.webp',
+        imagePath: '/assets/images/pronunciation/vowel_o.svg',
         imageType: 'front',
         visualKey: '입을 동그랗게 크게 벌림 (하품처럼)',
         commonMistake: '한국어 "오"보다 입이 더 크고 둥글어야 함',
@@ -195,7 +195,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // short u /ʌ/ vs /ʊ/
     {
         phoneme: 'ʌ',
-        imagePath: '/assets/images/pronunciation/vowel_u.webp',
+        imagePath: '/assets/images/pronunciation/vowel_u.svg',
         imageType: 'front',
         visualKey: '입을 살짝만 벌리고 힘 빼기',
         commonMistake: '한국어 "어"로 대체하거나 /ɒ/와 혼동',
@@ -212,7 +212,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // sh /ʃ/ vs s /s/
     {
         phoneme: 'ʃ',
-        imagePath: '/assets/images/pronunciation/sh_sound.webp',
+        imagePath: '/assets/images/pronunciation/sh_sound.svg',
         imageType: 'comparison',
         visualKey: '입술을 동그랗게 앞으로 내밀어요',
         commonMistake: 's와 구별 없이 발음',
@@ -225,7 +225,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // ch /tʃ/
     {
         phoneme: 'tʃ',
-        imagePath: '/assets/images/pronunciation/ch_sound.webp',
+        imagePath: '/assets/images/pronunciation/ch_sound.svg',
         imageType: 'front',
         visualKey: 'sh와 같은 둥근 입 + 처음에 막힘',
         commonMistake: '한국어 ㅊ보다 입술이 더 둥글어야 함',
@@ -238,7 +238,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // long vowels — /eɪ/ (cake)
     {
         phoneme: 'eɪ',
-        imagePath: '/assets/images/pronunciation/vowel_ay.webp',
+        imagePath: '/assets/images/pronunciation/vowel_ay.svg',
         imageType: 'front',
         visualKey: '입이 중간에서 시작 → 웃는 모양으로 변해요',
         commonMistake: '한국어 "에이"처럼 끊어서 발음 (매끄럽게 이어져야 함)',
@@ -251,7 +251,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // /aɪ/ (bike)
     {
         phoneme: 'aɪ',
-        imagePath: '/assets/images/pronunciation/vowel_ai.webp',
+        imagePath: '/assets/images/pronunciation/vowel_ai.svg',
         imageType: 'front',
         visualKey: '입을 크게 → 웃는 모양으로 변화',
         commonMistake: '이중모음 움직임이 부족할 수 있음',
@@ -264,7 +264,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // /oʊ/ (bone)
     {
         phoneme: 'oʊ',
-        imagePath: '/assets/images/pronunciation/vowel_oh.webp',
+        imagePath: '/assets/images/pronunciation/vowel_oh.svg',
         imageType: 'front',
         visualKey: '입이 둥근 O에서 더 좁은 U로 변해요',
         commonMistake: '한국어 "오"처럼 고정된 입으로 발음 (움직여야 함)',
@@ -281,7 +281,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // /iː/ (bee) vs /ɪ/ (bit)
     {
         phoneme: 'iː',
-        imagePath: '/assets/images/pronunciation/vowel_ee.webp',
+        imagePath: '/assets/images/pronunciation/vowel_ee.svg',
         imageType: 'comparison',
         visualKey: '입꼬리를 확실하게 옆으로! (치즈~)',
         commonMistake: '/ɪ/와 구별 못해 "sheep"이 "ship"이 됨',
@@ -294,7 +294,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // /b/ vs /p/ (무성/유성)
     {
         phoneme: 'b',
-        imagePath: '/assets/images/pronunciation/b_p_compare.webp',
+        imagePath: '/assets/images/pronunciation/b_p_compare.svg',
         imageType: 'comparison',
         visualKey: '두 입술 붙였다 뗌 (입 모양은 p와 같아요)',
         commonMistake: '단어 끝에서 b→p로 바뀜 (lab→lap)',
@@ -307,7 +307,7 @@ export const pronunciationGuide: PronunciationRef[] = [
     // /w/ (whale)
     {
         phoneme: 'w',
-        imagePath: '/assets/images/pronunciation/w_sound.webp',
+        imagePath: '/assets/images/pronunciation/w_sound.svg',
         imageType: 'front',
         visualKey: '입술을 쭉 모아서 동그랗게 (휘파람 모양)',
         commonMistake: '비교적 쉬우나 wh- 시작 단어에서 h를 빠뜨리거나 추가',

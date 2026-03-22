@@ -15,7 +15,126 @@ interface BuiltWord {
     word: string;
     onset: string;
     rime: string;
+    isBonus?: boolean;    // true if this word wasn't in the lesson but is a real word
 }
+
+// A broad set of common English CVC/CVCC words to validate "bonus" correct answers.
+// Any distractor onset that combines with the current rime to form one of these words
+// will be treated as a VALID (bonus) answer instead of a wrong one.
+const COMMON_ENGLISH_WORDS = new Set([
+    // -ag
+    'bag','gag','hag','lag','nag','rag','sag','tag','wag','jag',
+    // -am
+    'ham','jam','ram','yam','clam','slam','tram',
+    // -an
+    'ban','can','fan','man','pan','ran','tan','van',
+    // -ap
+    'cap','gap','lap','map','nap','rap','sap','tap','zap','clap','slap','snap','trap',
+    // -at
+    'bat','cat','fat','hat','mat','pat','rat','sat','vat','flat','that',
+    // -ad
+    'bad','dad','fad','had','lad','mad','pad','sad',
+    // -ed
+    'bed','fed','led','red','wed',
+    // -en
+    'den','hen','men','pen','ten','yen',
+    // -et
+    'bet','get','jet','let','met','net','pet','set','vet','wet',
+    // -eg
+    'beg','keg','leg','peg',
+    // -ig
+    'big','dig','fig','gig','jig','pig','rig','wig',
+    // -in
+    'bin','fin','pin','sin','tin','win',
+    // -ip
+    'dip','hip','lip','nip','rip','sip','tip','zip','chip','drip','grip','skip','slip','trip','whip',
+    // -it
+    'bit','fit','hit','kit','lit','pit','sit','wit','grit','knit','spit',
+    // -id
+    'bid','did','hid','kid','lid','rid',
+    // -ob
+    'mob','rob','sob','job','lob',
+    // -og
+    'bog','cog','fog','hog','jog','log','smog',
+    // -op
+    'cop','hop','mop','pop','top','crop','drop','flop','shop','stop',
+    // -ot
+    'cot','dot','got','hot','lot','not','pot','rot','blot','knot','plot','shot','slot','trot',
+    // -ub
+    'cub','rub','sub','tub','club','grub','shrub','stub',
+    // -ug
+    'bug','hug','jug','mug','pug','rug','tug','drug','plug','shrug','slug','snug',
+    // -um
+    'gum','hum','mum','sum','drum','plum','scum','slum',
+    // -un
+    'bun','fun','gun','nun','run','sun','pun','spun','stun',
+    // -ut
+    'but','cut','hut','nut','rut','gut','jut',
+    // -ack
+    'back','hack','jack','lack','mack','pack','rack','sack','tack','black','crack','knack','slack','smack','snack','stack','track',
+    // -ake
+    'bake','cake','fake','lake','make','rake','sake','take','wake','blake','brake','flake','shake','snake','stake',
+    // -ale
+    'bale','dale','gale','male','pale','sale','tale','vale','whale','scale','stale',
+    // -ame
+    'came','dame','fame','game','name','same','tame','blame','flame','frame','shame',
+    // -ane
+    'cane','lane','mane','pane','sane','vane','wane','crane','plane','plane',
+    // -ape
+    'cape','gape','tape','drape','grape','shape',
+    // -are
+    'bare','care','dare','fare','hare','mare','rare','ware','flare','share','spare','stare',
+    // -ate
+    'date','fate','gate','hate','late','mate','rate','crate','grate','plate','skate','slate','state',
+    // -ave
+    'cave','gave','pave','rave','save','wave','brave','crave','grave','shave',
+    // -aze
+    'daze','faze','gaze','haze','maze','raze','blaze','craze','glaze',
+    // -ice
+    'dice','lice','mice','nice','rice','vice','price','slice','spice','twice',
+    // -ide
+    'hide','ride','side','tide','wide','bride','glide','guide','pride','slide','snide',
+    // -ike
+    'bike','hike','like','mike','spike','strike',
+    // -ile
+    'file','mile','pile','tile','vile','while',
+    // -ime
+    'dime','lime','mime','rhyme','time','crime','grime','slime',
+    // -ine
+    'dine','fine','line','mine','nine','pine','vine','wine','brine','shine','spine','swine','twine','whine',
+    // -ite
+    'bite','cite','kite','mite','site','quite','spite','write',
+    // -obe
+    'lobe','robe','globe','probe',
+    // -ode
+    'code','mode','node','rode','strode',
+    // -oke
+    'coke','joke','poke','woke','yoke','broke','choke','smoke','spoke','stroke',
+    // -ole
+    'hole','mole','pole','role','sole','stole','whole',
+    // -ome
+    'dome','home','nome','rome','gnome',
+    // -one
+    'bone','cone','hone','lone','tone','zone','phone','prone','stone',
+    // -ope
+    'cope','dope','hope','mope','rope','slope',
+    // -ore
+    'bore','core','fore','gore','more','pore','sore','tore','wore','chore','score','shore','snore','store',
+    // -ose
+    'dose','nose','pose','rose','those','chose','close','prose',
+    // -ube
+    'cube','lube','tube',
+    // -ude
+    'dude','rude','crude','prude',
+    // -uke
+    'duke','fluke','nuke',
+    // -ule
+    'mule','rule','yule',
+    // -une
+    'dune','june','tune','prune',
+    // -ute
+    'cute','lute','mute','flute',
+]);
 
 export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderProps) {
     // Group words by word family (rime)
@@ -55,7 +174,7 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
         return Array.from(set);
     }, [words]);
 
-    // Available onsets for this family
+    // Available onsets for this family (lesson-taught words)
     const correctOnsets = useMemo(() => {
         return familyWords.map(w => ({
             onset: w.onset!,
@@ -104,35 +223,40 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
 
         setLastTapped(onset);
 
-        // Check if it's a correct onset
+        // Check if it's one of the lesson's target onsets
         const correctTarget = correctOnsets.find(c => c.onset === onset);
 
-        if (!correctTarget) {
-            // Wrong tap — play SFX reliably with try/catch
+        // Check if it's a REAL English word (bonus answer) even if not in this lesson
+        const attemptedWord = onset + rime;
+        const isRealWord = COMMON_ENGLISH_WORDS.has(attemptedWord);
+
+        if (!correctTarget && !isRealWord) {
+            // Truly wrong tap — not a lesson word AND not a real English word
             setWrongTapped(onset);
             try { playSFX('wrong'); } catch { /* ignore audio errors */ }
             setTimeout(() => setWrongTapped(null), 600);
             return;
         }
 
-        const word = correctTarget.word;
+        const word = correctTarget?.word ?? attemptedWord;
+        const isBonus = !correctTarget && isRealWord;
         setTapping(true);
 
-        // Play the full word audio first, then add to built words after audio finishes
+        // Play the full word audio first
         setTimeout(() => {
             playWordAudio(word);
         }, 200);
 
         // Wait enough time for word audio to play fully (~1.2s) before state transition
         setTimeout(() => {
-            const newBuilt = [...builtWords, { word, onset, rime }];
+            const newBuilt = [...builtWords, { word, onset, rime, isBonus }];
             setBuiltWords(newBuilt);
             playSFX('correct');
             setTapping(false);
 
-            // Check if all onsets for this family are now built
-            const builtCount = newBuilt.filter(bw => bw.rime === rime).length;
-            if (builtCount === correctOnsets.length) {
+            // Only check lesson completion against correctOnsets (not bonus words)
+            const lessonBuiltCount = newBuilt.filter(bw => bw.rime === rime && !bw.isBonus).length;
+            if (lessonBuiltCount === correctOnsets.length) {
                 setTimeout(() => {
                     setShowCelebration(true);
                     playSFX('complete');
@@ -141,7 +265,9 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
         }, 1400);
     };
 
-    const allBuilt = builtWords.filter(bw => bw.rime === rime).length === correctOnsets.length;
+    // allBuilt = all LESSON words built (bonus words don't count against you)
+    const allBuilt = builtWords.filter(bw => bw.rime === rime && !bw.isBonus).length === correctOnsets.length;
+
 
     const handleNext = () => {
         setShowCelebration(false);
@@ -233,7 +359,7 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
                 {/* Built words card stack */}
                 <div className="w-full mt-2">
                     <p className="text-xs font-bold text-slate-400 mb-2 text-center">
-                        Built: {builtWords.filter(bw => bw.rime === rime).length} / {correctOnsets.length}
+                        Built: {builtWords.filter(bw => bw.rime === rime && !bw.isBonus).length} / {correctOnsets.length}
                     </p>
                     <div className="flex flex-wrap gap-2 justify-center">
                         <AnimatePresence>
@@ -246,16 +372,22 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         transition={{ delay: i * 0.05 }}
                                         onClick={() => playWordAudio(bw.word)}
-                                        className="px-4 py-2 bg-gradient-to-br from-green-100 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/20 border-2 border-green-300 dark:border-green-700 rounded-xl flex items-center gap-2 active:scale-95 transition-transform"
+                                        className={`px-4 py-2 rounded-xl flex items-center gap-2 active:scale-95 transition-transform border-2 ${
+                                            bw.isBonus
+                                                ? "bg-gradient-to-br from-purple-100 to-violet-50 border-purple-300"
+                                                : "bg-gradient-to-br from-green-100 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/20 border-green-300 dark:border-green-700"
+                                        }`}
                                     >
-                                        <Volume2 className="w-3 h-3 text-green-500" />
-                                        <span className="font-black text-green-700 dark:text-green-300">{bw.word}</span>
+                                        <Volume2 className={`w-3 h-3 ${bw.isBonus ? "text-purple-500" : "text-green-500"}`} />
+                                        <span className={`font-black ${bw.isBonus ? "text-purple-700" : "text-green-700 dark:text-green-300"}`}>{bw.word}</span>
+                                        {bw.isBonus && <span className="text-xs font-bold text-purple-500">🌟</span>}
                                     </motion.button>
                                 ))}
                         </AnimatePresence>
                     </div>
                 </div>
             </div>
+
 
             {/* Family progress */}
             <p className="text-white/70 font-bold text-sm">

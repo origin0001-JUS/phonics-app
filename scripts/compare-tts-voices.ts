@@ -1,210 +1,141 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * TTS 음성 비교 스크립트 — Neural2 vs Journey vs Studio
+ * TTS 음성 비교 샘플 생성 스크립트
  * ───────────────────────────────────────────────────────────────────
- *
- * 동일한 단어/문장을 3가지 Google Cloud TTS 음성으로 생성하여
- * 품질을 직접 비교할 수 있게 합니다.
- *
- * REST API + API Key 방식 사용 (서비스 계정 JSON 불필요)
- *
+ * 
+ * 5개 ElevenLabs 후보 음성 × 5개 단어 = 25개 MP3 샘플을 생성합니다.
+ * 사용자가 직접 재생하여 음질/속도/전달력을 비교한 뒤 1개를 선택합니다.
+ * 
  * ─── 실행 방법 ───
- *    cd phonics-app
- *    npx tsx scripts/compare-tts-voices.ts
- *
- * ─── 결과물 ───
- *    public/assets/audio/_samples/ 폴더에 생성됨
- *    예: cat_neural2.mp3, cat_journey.mp3, cat_studio.mp3
+ *    ELEVENLABS_API_KEY=xxx npx tsx scripts/compare-tts-voices.ts
+ *    (또는 .env.local에 ELEVENLABS_API_KEY 설정 후 실행)
  * ═══════════════════════════════════════════════════════════════════
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import * as dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '..');
-const SAMPLES_DIR = path.join(PROJECT_ROOT, 'public', 'assets', 'audio', '_samples');
+const SAMPLES_DIR = path.join(PROJECT_ROOT, 'public', 'assets', 'audio', 'samples');
 
-// ─── API Key ───
-const API_KEY = 'AIzaSyBtI-BDW5P3u8PzE928QLpERxEObf2XHa4';
-const TTS_ENDPOINT = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${API_KEY}`;
+// ─── .env.local 로드 ───
+dotenv.config({ path: path.join(PROJECT_ROOT, '.env.local') });
+dotenv.config({ path: path.join(PROJECT_ROOT, 'env.local') });
+dotenv.config({ path: path.join(PROJECT_ROOT, '..', '.env.local') });
 
-// ─── 비교할 3가지 Journey 음성 ───
+const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+if (!ELEVENLABS_API_KEY) {
+    console.error('❌ ELEVENLABS_API_KEY 환경변수가 필요합니다.');
+    console.error('   .env.local에 ELEVENLABS_API_KEY=xxx 추가 후 다시 실행하세요.');
+    process.exit(1);
+}
+
+// ─── 후보 음성 5개 ───
 const VOICES = [
-    {
-        label: 'journey_f',
-        displayName: '🟢 Journey-F (여성, 밝음)',
-        config: {
-            languageCode: 'en-US',
-            name: 'en-US-Journey-F',
-            ssmlGender: 'FEMALE',
-        },
-    },
-    {
-        label: 'journey_o',
-        displayName: '🟢 Journey-O (여성, 차분함)',
-        config: {
-            languageCode: 'en-US',
-            name: 'en-US-Journey-O',
-            ssmlGender: 'FEMALE',
-        },
-    },
-    {
-        label: 'journey_d',
-        displayName: '🟢 Journey-D (남성, 부드러움)',
-        config: {
-            languageCode: 'en-US',
-            name: 'en-US-Journey-D',
-            ssmlGender: 'MALE',
-        },
-    },
+    { id: '21m00Tcm4TlvDq8ikWAM', name: 'rachel',    label: 'Rachel — 현재 사용 중, 밝고 명확' },
+    { id: 'XB0fDUnXU5powFXDhCwa', name: 'charlotte', label: 'Charlotte — 또박또박 교육용' },
+    { id: 'pFZP5JQG7iQjIQuC4Bku', name: 'lily',      label: 'Lily — 따뜻하고 밝은 영국식' },
+    { id: 'Xb7hH8MSUJpSbSDYk0k2', name: 'alice',     label: 'Alice — 자연스럽고 부드러운' },
+    { id: '9BWtsMINqrJLrRacOk9x', name: 'aria',      label: 'Aria — 프로페셔널, 전달력 강한' },
 ];
 
-// ─── 비교할 샘플 텍스트 (빠른 테스트를 위해 2개만) ───
-const SAMPLES = [
-    { text: 'cat', type: 'word' as const, description: '단모음 단어' },
-    { text: 'A fat cat sat on a mat.', type: 'sentence' as const, description: '디코더블 문장' },
-];
+// ─── 테스트 단어 5개 (다양한 발음 패턴) ───
+const TEST_WORDS = ['cat', 'bike', 'train', 'moon', 'church'];
 
+// ─── TTS 설정 ───
+const MODEL_ID = 'eleven_multilingual_v2';
+const SPEED = 0.7;
 
+async function generateSample(voiceId: string, voiceName: string, word: string): Promise<void> {
+    const filename = `${voiceName}_${word}.mp3`;
+    const outputPath = path.join(SAMPLES_DIR, filename);
 
-// ─── REST API를 통한 TTS 합성 ───
-async function synthesize(
-    text: string,
-    type: 'word' | 'sentence',
-    voice: typeof VOICES[0],
-    outputPath: string
-): Promise<void> {
-    // Each voice family has different feature support:
-    //   Neural2: SSML prosody (rate, pitch), speakingRate, pitch, effectsProfileId ✅
-    //   Studio:  SSML prosody (rate only), speakingRate ✅, pitch ❌, effectsProfileId ❌
-    //   Journey: plain text only, minimal audioConfig (audioEncoding only)
-
-    let input: Record<string, string>;
-    const audioConfig: Record<string, unknown> = { audioEncoding: 'MP3' };
-
-    if (voice.label === 'neural2') {
-        // Neural2: full SSML + all audioConfig options
-        const ssml = type === 'word'
-            ? `<speak><prosody rate="slow" pitch="+1st">${text}</prosody></speak>`
-            : `<speak><prosody rate="medium">${text}</prosody></speak>`;
-        input = { ssml };
-        audioConfig.speakingRate = 0.85;
-        audioConfig.pitch = 2.0;
-        audioConfig.effectsProfileId = ['headphone-class-device'];
-    } else if (voice.label === 'studio') {
-        // Studio: SSML with rate only, no pitch, no effectsProfileId
-        const ssml = type === 'word'
-            ? `<speak><prosody rate="slow">${text}</prosody></speak>`
-            : `<speak><prosody rate="medium">${text}</prosody></speak>`;
-        input = { ssml };
-        audioConfig.speakingRate = 0.85;
-    } else {
-        // Journey: plain text only, no SSML, minimal audioConfig
-        input = { text };
+    // Skip if already exists
+    if (fs.existsSync(outputPath)) {
+        console.log(`  ⏩ 이미 존재: ${filename}`);
+        return;
     }
 
-    const requestBody = {
-        input,
-        voice: voice.config,
-        audioConfig,
-    };
+    const safeText = word.charAt(0).toUpperCase() + word.slice(1) + '.';
 
-    const response = await fetch(TTS_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
-    });
+    const response = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'xi-api-key': ELEVENLABS_API_KEY!,
+            },
+            body: JSON.stringify({
+                text: safeText,
+                model_id: MODEL_ID,
+                voice_settings: {
+                    stability: 0.7,
+                    similarity_boost: 0.8,
+                    speed: SPEED,
+                },
+            }),
+        }
+    );
 
     if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API Error (${response.status}): ${errorText}`);
+        const errText = await response.text();
+        throw new Error(`ElevenLabs API error ${response.status}: ${errText.slice(0, 200)}`);
     }
 
-    const data = await response.json() as { audioContent?: string };
-
-    if (data.audioContent) {
-        const buffer = Buffer.from(data.audioContent, 'base64');
-        fs.writeFileSync(outputPath, buffer);
-    } else {
-        throw new Error('No audioContent in response');
-    }
+    const arrayBuffer = await response.arrayBuffer();
+    fs.writeFileSync(outputPath, Buffer.from(arrayBuffer));
+    console.log(`  ✅ 생성 완료: ${filename} (${(arrayBuffer.byteLength / 1024).toFixed(1)} KB)`);
 }
 
 async function main() {
-    console.log('');
     console.log('═══════════════════════════════════════════════════');
-    console.log('  🎧 TTS Voice Comparison — Neural2 vs Journey vs Studio');
+    console.log('  🎙️  TTS 음성 비교 샘플 생성기');
     console.log('═══════════════════════════════════════════════════');
-    console.log('');
+    console.log(`  모델: ${MODEL_ID}`);
+    console.log(`  속도: ${SPEED}`);
+    console.log(`  단어: ${TEST_WORDS.join(', ')}`);
+    console.log(`  음성: ${VOICES.length}개`);
+    console.log(`  총 샘플: ${VOICES.length * TEST_WORDS.length}개`);
+    console.log('───────────────────────────────────────────────────');
 
-    // 1) 출력 디렉토리 생성
-    if (!fs.existsSync(SAMPLES_DIR)) {
-        fs.mkdirSync(SAMPLES_DIR, { recursive: true });
-    }
-    console.log(`📁 Output: ${SAMPLES_DIR}`);
-    console.log('');
+    // Ensure output directory exists
+    fs.mkdirSync(SAMPLES_DIR, { recursive: true });
 
-    // 2) 각 샘플 × 각 음성 생성
-    let total = 0;
-    const failed: string[] = [];
+    let generated = 0;
+    let skipped = 0;
+    let failed = 0;
 
-    for (const sample of SAMPLES) {
-        console.log(`📝 "${sample.text}" (${sample.description})`);
-
-        for (const voice of VOICES) {
-            const safeName = sample.text
-                .toLowerCase()
-                .replace(/[^a-z0-9]/g, '_')
-                .replace(/_+/g, '_')
-                .replace(/^_|_$/g, '')
-                .substring(0, 30);
-
-            const filename = `${safeName}_${voice.label}.mp3`;
-            const outputPath = path.join(SAMPLES_DIR, filename);
-
+    for (const voice of VOICES) {
+        console.log(`\n🎤 ${voice.label}`);
+        for (const word of TEST_WORDS) {
             try {
-                await synthesize(sample.text, sample.type, voice, outputPath);
-                console.log(`   ✅ ${voice.displayName} → ${filename}`);
-                total++;
-            } catch (err: unknown) {
-                const msg = err instanceof Error ? err.message : String(err);
-                console.log(`   ❌ ${voice.displayName} → FAILED: ${msg}`);
-                failed.push(`${filename}: ${msg}`);
+                const existed = fs.existsSync(path.join(SAMPLES_DIR, `${voice.name}_${word}.mp3`));
+                await generateSample(voice.id, voice.name, word);
+                if (existed) skipped++;
+                else generated++;
+            } catch (err) {
+                console.error(`  ❌ 실패: ${voice.name}_${word} — ${(err as Error).message}`);
+                failed++;
             }
-
-            // Rate limit 방어 (200ms)
+            // Rate limit: ~200ms between requests
             await new Promise(r => setTimeout(r, 200));
         }
-        console.log('');
     }
 
-    // 3) 요약
-    console.log('═══════════════════════════════════════════════════');
-    console.log(`  ✅ Generated: ${total} / ${SAMPLES.length * VOICES.length} files`);
-    if (failed.length > 0) {
-        console.log(`  ❌ Failed: ${failed.length}`);
-        for (const f of failed) {
-            console.log(`     - ${f}`);
-        }
+    console.log('\n═══════════════════════════════════════════════════');
+    console.log(`  📊 결과: 생성 ${generated} / 건너뜀 ${skipped} / 실패 ${failed}`);
+    console.log(`  📁 샘플 위치: public/assets/audio/samples/`);
+    console.log('───────────────────────────────────────────────────');
+    console.log('  🎧 브라우저에서 다음 URL로 직접 재생하세요:');
+    for (const voice of VOICES) {
+        console.log(`     ${voice.name}: http://localhost:4000/assets/audio/samples/${voice.name}_cat.mp3`);
     }
-    console.log(`  📁 Location: ${SAMPLES_DIR}`);
-    console.log('');
-    console.log('  🎧 비교 방법:');
-    console.log('     1) 탐색기에서 폴더 열기:');
-    console.log(`        ${SAMPLES_DIR}`);
-    console.log('     2) 또는 브라우저에서 (dev 서버 실행 중이면):');
-    console.log('        http://localhost:3000/assets/audio/_samples/cat_neural2.mp3');
-    console.log('        http://localhost:3000/assets/audio/_samples/cat_journey.mp3');
-    console.log('        http://localhost:3000/assets/audio/_samples/cat_studio.mp3');
-    console.log('     3) 같은 단어의 _neural2 / _journey / _studio 파일을 비교하세요!');
-    console.log('');
     console.log('═══════════════════════════════════════════════════');
 }
 
-main().catch(err => {
-    console.error('Fatal error:', err);
-    process.exit(1);
-});
+main().catch(console.error);

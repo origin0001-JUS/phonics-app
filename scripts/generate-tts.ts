@@ -15,8 +15,8 @@
  *    --dry-run : 실제 과금/생성 없이 생성될 파일 목록과 배정된 음성만 출력
  * 
  * ─── Voice Assignment (다중 음성 전략) ───
- *    - 단어 (Words)       : 밝고 통통 튀는 여성 (Rachel)
- *    - 문장 (Sentences)    : 부드러운 남성 (Drew)과 친근한 여성 (Laura) 번갈아 배정
+ *    - 단어 (Words)       : 또박또박 교육용 여성 (Charlotte) — speed 0.7
+ *    - 문장 (Sentences)    : 동일한 Charlotte 음성으로 통일
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -51,16 +51,15 @@ if (!apiKey && !process.argv.includes('--dry-run')) {
 const elevenlabs = new ElevenLabsClient({ apiKey });
 
 // ─── 음성 매핑 (Voice IDs) ───
-// 참조: ElevenLabs Voice Library (ID는 API에서 요구하는 고유 값)
+// Charlotte: 또박또박 교육용 여성 — 사용자가 5개 후보 중 선택
 const VOICES = {
-    RACHEL: '21m00Tcm4TlvDq8ikWAM', // 밝고 명확한 여성 (단어용)
-    DREW: '29vD33N1CtxCmqQRPOHJ',   // 부드럽고 친절한 남성 (문장용 1)
-    LAURA: 'FGY2WhTYpPnrIDTdsKH5'   // 차분하고 상냥한 여성 (문장용 2)
+    CHARLOTTE: 'XB0fDUnXU5powFXDhCwa', // 또박또박 교육용 여성 (전체 통일)
 };
 
 // ─── TTS 설정 ───
-// 가장 저렴하고 빠른 모델
-const MODEL_ID = 'eleven_turbo_v2_5';
+// 고품질 모델 + 느린 속도로 또박또박 발음
+const MODEL_ID = 'eleven_multilingual_v2';
+const TTS_SPEED = 0.7;
 
 interface TtsJob {
     text: string;           // 합성할 텍스트
@@ -77,17 +76,15 @@ async function extractJobsFromCurriculum(): Promise<TtsJob[]> {
     for (let u = 0; u < curriculum.length; u++) {
         const unit = curriculum[u];
 
-        // 1. 단어 처리 (단어는 모두 Rachel로 통일하여 일관성 유지)
+        // 1. 단어 처리 (Charlotte 음성으로 통일)
         for (const word of unit.words) {
             if (!processedWords.has(word.word)) {
                 processedWords.add(word.word);
-                // 단어를 읽을 때는 너무 빠르지 않도록 속도 제한을 위해 약간의 쉼표나 마침표를 추가할 수 있지만,
-                // 기본적으로 텍스트 그대로 보냄. 발음 안정을 위해 첫 글자 대문자, 끝에 마침표.
                 let safeText = word.word.charAt(0).toUpperCase() + word.word.slice(1) + '.';
 
                 // Fix weird pronunciations
                 if (word.word.toLowerCase() === 'big') {
-                    safeText = 'Big'; // Removing period to avoid weird '비그' trailing sound
+                    safeText = 'Big';
                 } else if (word.word.toLowerCase() === 'ig') {
                     safeText = 'igg';
                 }
@@ -96,16 +93,15 @@ async function extractJobsFromCurriculum(): Promise<TtsJob[]> {
                     text: safeText,
                     filename: `${word.id}.mp3`,
                     type: 'word',
-                    voiceId: VOICES.RACHEL,
-                    voiceName: 'Rachel (Word)'
+                    voiceId: VOICES.CHARLOTTE,
+                    voiceName: 'Charlotte (Word)'
                 });
             }
         }
 
-        // 2. MicroReading 문장 처리 (유닛별로 Drew와 Laura를 번갈아 배정)
-        // 짝수 유닛은 Laura, 홀수 유닛은 Drew
-        const sentenceVoice = (u % 2 === 0) ? VOICES.LAURA : VOICES.DREW;
-        const sentenceVoiceName = (u % 2 === 0) ? 'Laura (Sentence)' : 'Drew (Sentence)';
+        // 2. MicroReading 문장 처리 (Charlotte 음성으로 통일)
+        const sentenceVoice = VOICES.CHARLOTTE;
+        const sentenceVoiceName = 'Charlotte (Sentence)';
 
         // 문장 파일명 명명 규칙: "문장텍스트를_안전한_파일명으로.mp3"
         // (audit-audio.ts와 완전히 동일한 로직이어야 파일명을 일치시킬 수 있음)
@@ -142,8 +138,9 @@ async function synthesizeToMp3(job: TtsJob, outputPath: string): Promise<void> {
             model_id: MODEL_ID,
             text: job.text,
             voice_settings: {
-                stability: 0.5,
-                similarity_boost: 0.75,
+                stability: 0.7,
+                similarity_boost: 0.8,
+                speed: TTS_SPEED,
             }
         }
     );

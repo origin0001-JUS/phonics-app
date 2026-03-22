@@ -93,12 +93,15 @@ export function getLipSyncVideoPath(word: string): string | null {
     return null;
 }
 
-/** Sound Focus 전용 영상 경로 (유닛 ID → sound_XX.mp4) */
+/** Sound Focus 전용 영상 경로 (유닛 ID → sound_XX.mp4)
+ *  ⚠️ Sound Focus 영상은 아직 미생성 상태 — 생성 완료 후 아래 주석 해제
+ */
 export function getSoundFocusVideoPath(unitId: string): string | null {
-    const entry = soundFocusEntries.find(e => e.unitIds.includes(unitId));
-    if (entry) {
-        return `/assets/video/${entry.id}.mp4`;
-    }
+    // TODO: Sound Focus 영상 파일이 실제로 생성된 후 아래 코드 활성화
+    // const entry = soundFocusEntries.find(e => e.unitIds.includes(unitId));
+    // if (entry) {
+    //     return `/assets/video/${entry.id}.mp4`;
+    // }
     return null;
 }
 
