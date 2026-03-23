@@ -8,13 +8,13 @@ import {
     Mic, BookOpen, Star, Trophy, CheckCircle, XCircle
 } from "lucide-react";
 
-import { getUnitById, curriculum, microReadingKoMap, type WordData } from "@/data/curriculum";
+import { getUnitById, curriculum, microReadingKoMap, type WordData, type UnitData } from "@/data/curriculum";
 import { saveLessonResults, vocabCardToSRSCard, srsCardToVocabCard, type WordResult } from "@/lib/lessonService";
 import { db } from "@/lib/db";
 import { createNewCard, calculateNextReview } from "@/lib/srs";
 import { REWARDS } from "@/data/rewards";
 import { playWordAudio, playSentenceAudio, playSFX, fallbackTTS, listenAndCompare, isSTTSupported, preloadAudioFiles, type STTResult } from "@/lib/audio";
-import { getSoundFocusVideoPath, getLipSyncVideoPath } from "@/data/representativeWords";
+import { getSoundFocusVideoPath, getLipSyncVideoPath, representativeWords } from "@/data/representativeWords";
 
 import MouthVisualizer, { usePhonemeSequence } from "./MouthVisualizer";
 import MagicEStep from "./MagicEStep";
@@ -124,6 +124,7 @@ function getPhonemeColorClass(category: PhonemeCategory): string {
 // ─── Step Types ───
 type LessonStep =
     | "sound_focus"
+    | "vocab_preview"
     | "blend_tap"
     | "magic_e"
     | "decode_words"
@@ -141,7 +142,7 @@ const MAGIC_E_UNITS = new Set(["unit_07", "unit_08", "unit_09", "unit_10", "unit
 const STORY_READER_UNITS = new Set(["unit_01", "unit_02", "unit_03", "unit_04", "unit_05", "unit_07", "unit_08", "unit_09"]);
 
 function buildStepOrder(unitId: string, hasWordFamilies: boolean): LessonStep[] {
-    const steps: LessonStep[] = ["sound_focus", "blend_tap"];
+    const steps: LessonStep[] = ["sound_focus", "vocab_preview", "blend_tap"];
     if (MAGIC_E_UNITS.has(unitId)) steps.push("magic_e");
     steps.push("decode_words");
     if (hasWordFamilies) steps.push("word_family");
@@ -153,6 +154,7 @@ function buildStepOrder(unitId: string, hasWordFamilies: boolean): LessonStep[] 
 
 const STEP_LABELS: Record<LessonStep, string> = {
     sound_focus: "Sound Focus",
+    vocab_preview: "Word Gallery",
     blend_tap: "Blend & Tap",
     magic_e: "Magic e",
     decode_words: "Decode Words",
@@ -293,13 +295,13 @@ export default function LessonPage() {
         }
     }, [recordWordAttempt, unitId]);
 
-    // Pick 6 words for lesson activities (safe even if unit is undefined)
     const lessonWords = useMemo(() => {
-        if (unit && unit.words.length > 0) {
-            return unit.words.slice(0, 6);
-        }
+        if (!unit) return [];
+        // Normal unit — pick up to 8 words (priority: representative words first)
+        const unitWords = unit.words;
+
         // Review unit — gather words from prerequisite units
-        if (unit) {
+        if (unit.id.startsWith('review_')) {
             const prereqMap: Record<number, number[]> = {
                 6: [1, 2, 3, 4, 5],
                 12: [7, 8, 9, 10, 11],
@@ -307,15 +309,23 @@ export default function LessonPage() {
                 24: [19, 20, 21, 22, 23],
             };
             const prereqs = prereqMap[unit.unitNumber] ?? [];
-            const allWords = prereqs.flatMap(num => {
+            const allPrereqWords = prereqs.flatMap(num => {
                 const u = curriculum.find(c => c.unitNumber === num);
                 return u?.words ?? [];
             });
-            const shuffled = [...allWords].sort(() => Math.random() - 0.5);
-            return shuffled.slice(0, 6);
+            const shuffled = [...allPrereqWords].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, 8);
         }
-        return [];
-    }, [unit]);
+
+        if (unitWords.length <= 8) return unitWords;
+
+        // Prioritize representative words (those with videos)
+        const reps = unitWords.filter(w => (representativeWords[unitId] || []).includes(w.id));
+        const others = unitWords.filter(w => !reps.includes(w));
+        const shuffledOthers = [...others].sort(() => Math.random() - 0.5);
+        
+        return [...reps, ...shuffledOthers].slice(0, 8);
+    }, [unit, unitId]);
 
     // ─── Task 13-B: Preload audio for lesson words + minimal pairs ───
     useEffect(() => {
@@ -407,6 +417,9 @@ export default function LessonPage() {
             <div className="flex-1 px-5 pb-6 flex flex-col">
                 {currentStep === "sound_focus" && (
                     <SoundFocusStep unit={unit} words={lessonWords} onNext={goNext} />
+                )}
+                {currentStep === "vocab_preview" && (
+                    <VocabPreviewStep unit={unit} words={unit.words} onNext={goNext} />
                 )}
                 {currentStep === "blend_tap" && unit && (
                     <BlendTapStep unit={unit} words={lessonWords} onNext={goNext} />
@@ -724,6 +737,104 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
 }
 
 // ═══════════════════════════════════════
+// STEP 1.5: Vocabulary Preview (2 min)
+// ═══════════════════════════════════════
+function VocabPreviewStep({ unit, words, onNext }: { unit: UnitData; words: WordData[]; onNext: () => void }) {
+    const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const selectedWord = useMemo(() => words.find(w => w.id === selectedId), [selectedId, words]);
+
+    const handleWordClick = (word: WordData) => {
+        setSelectedId(word.id);
+        setIsSpeaking(true);
+        playTTS(word.word);
+        setTimeout(() => setIsSpeaking(false), 2000);
+    };
+
+    return (
+        <div className="flex-1 flex flex-col gap-6">
+            <header className="text-center">
+                <h2 className="text-2xl font-black text-white drop-shadow-md">Word Gallery</h2>
+                <p className="text-white/80 font-bold text-sm">Tap the cards to hear the sounds!</p>
+            </header>
+
+            <div className="flex-1 overflow-y-auto pb-4 custom-scrollbar">
+                <div className="grid grid-cols-2 gap-4">
+                    {words.map((w) => (
+                        <motion.button
+                            key={w.id}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleWordClick(w)}
+                            className={`bg-white dark:bg-slate-800 rounded-3xl p-4 shadow-[0_6px_0_#e2e8f0] dark:shadow-[0_6px_0_#1e293b] border-4 transition-all ${
+                                selectedId === w.id ? 'border-sky-400' : 'border-white dark:border-slate-700'
+                            }`}
+                        >
+                            <WordImage wordId={w.id} alt={w.word} size="sm" animate={false} />
+                            <div className="mt-3 flex flex-col items-center">
+                                <span className="text-xl font-black text-slate-800 dark:text-slate-100">{w.word}</span>
+                                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{w.meaning}</span>
+                            </div>
+                        </motion.button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Floating Visualizer Overlay when word is selected */}
+            <AnimatePresence>
+                {selectedWord && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 50 }}
+                        className="fixed bottom-24 left-5 right-5 z-40 bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.2)] border-4 border-sky-200 dark:border-sky-900 flex flex-col items-center gap-4"
+                    >
+                        <button 
+                            onClick={() => setSelectedId(null)}
+                            className="absolute top-4 right-6 text-slate-400 font-bold hover:text-slate-600"
+                        >
+                            ✕
+                        </button>
+                        
+                        <div className="flex items-center gap-6">
+                            <MouthVisualizer 
+                                currentWord={selectedWord.word}
+                                currentPhoneme={unit.targetSound}
+                                isSpeaking={isSpeaking}
+                                compact={true}
+                            />
+                            <div className="flex flex-col">
+                                <span className="text-3xl font-black text-slate-800 dark:text-slate-100">{selectedWord.word}</span>
+                                <div className="flex gap-1 mt-1">
+                                    {selectedWord.phonemes.map((p, i) => (
+                                        <span key={i} className={`text-lg font-bold ${getPhonemeColorClass(getPhonemeCategory(p))}`}>
+                                            {p}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button 
+                            onClick={() => handleWordClick(selectedWord)}
+                            className="w-full bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-300 py-3 rounded-2xl font-black flex items-center justify-center gap-2"
+                        >
+                            <Volume2 className="w-5 h-5" /> Listen Again
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <div className="mt-auto">
+                <BigButton onClick={onNext}>
+                    Next: Let&apos;s Blend! <ArrowRight className="w-5 h-5" />
+                </BigButton>
+            </div>
+        </div>
+    );
+}
+
+// ═══════════════════════════════════════
 // STEP 2: Blend & Tap (2 min)
 // ═══════════════════════════════════════
 function BlendTapStep({ unit, words, onNext }: { unit: { targetSound: string }, words: WordData[]; onNext: () => void }) {
@@ -985,12 +1096,31 @@ function DecodeWordsStep({ words, onNext, addScore, initialSubStep = 0, onSubSte
             <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-6 w-full shadow-[0_8px_0_#e2e8f0] dark:shadow-[0_8px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
                 <p className="text-slate-400 font-bold text-sm mb-2">What does this word mean?</p>
 
-                {/* Big word display with image (V2-9) */}
-                <WordImage wordId={word.id} alt={word.word} size="sm" animate={false} />
-                <button onClick={() => playTTS(word.word)} className="flex items-center gap-2 mb-4 mt-2">
-                    <span className="text-4xl font-black text-slate-800">{word.word}</span>
-                    <Volume2 className="w-6 h-6 text-sky-400" />
-                </button>
+                {/* Big word display with image (V2-9) - Hidden until answered */}
+                <div className="flex flex-col items-center">
+                    {showResult ? (
+                        <>
+                            <WordImage wordId={word.id} alt={word.word} size="sm" animate={true} />
+                            <button onClick={() => playTTS(word.word)} className="flex items-center gap-2 mb-4 mt-2">
+                                <span className="text-4xl font-black text-slate-800 dark:text-slate-100">{word.word}</span>
+                                <Volume2 className="w-6 h-6 text-sky-400" />
+                            </button>
+                        </>
+                    ) : (
+                        <div className="flex flex-col items-center gap-4 py-8">
+                            <div className="w-32 h-32 rounded-3xl bg-slate-100 dark:bg-slate-700/50 border-4 border-dashed border-slate-200 dark:border-slate-600 flex items-center justify-center">
+                                <span className="text-5xl font-black text-slate-300 dark:text-slate-500">?</span>
+                            </div>
+                            <button 
+                                onClick={() => playTTS(word.word)}
+                                className="flex items-center gap-3 bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-300 px-8 py-3 rounded-2xl border-2 border-sky-200 dark:border-sky-700 active:scale-95 transition-all shadow-[0_4px_0_#bae6fd] dark:shadow-[0_4px_0_#0c4a6e]"
+                            >
+                                <Volume2 className="w-6 h-6" />
+                                <span className="font-bold">Listen to sound</span>
+                            </button>
+                        </div>
+                    )}
+                </div>
 
                 {/* Options Grid */}
                 <div className="grid grid-cols-2 gap-3 w-full">
@@ -1098,6 +1228,10 @@ function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { 
     };
 
     const handleNext = () => {
+        if (!result?.matched) {
+            playSFX('wrong');
+            return;
+        }
         setResult(null);
         setIsSpeaking(false);
         if (idx < Math.min(words.length, 4) - 1) {

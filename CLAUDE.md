@@ -71,13 +71,33 @@ src/
 - Home screen with onboarding redirect + due count badge
 - Onboarding: 3-screen flow (Welcome → Grade Select → Level Recommendation)
 - Unit selection grid (24 units, lock/unlock based on DB progress)
-13. You are part of an AI agent team working in parallel (Claude Web, Antigravity, Claude Code). Project state is maintained in `HANDOFF.md`. You must consult `HANDOFF.md` and ALWAYS run `git pull` before starting new work.
-14. **Task Completion Protocol**: When you finish answering a prompt file (e.g., `CLAUDE_PROMPT_...`), you MUST:
-    - Run the required test or build commands to ensure your changes work.
-    - Open `HANDOFF.md` and update the "Latest Updates" section with what you accomplished.
-    - Modify the "Who is doing what" section to mark yourself as "[대기 상태] (Idle)".
-    - Run `git add .`, `git commit -m "chore: claude code updates"`, and `git push` to sync your work with GitHub.
-    - In your final console message to the user, strictly state: "✅ 작업이 완료 및 GitHub에 Push 되었습니다. HANDOFF.md를 업데이트했으니, 안티그래비티 대화창으로 돌아가서 로직 리뷰 및 QA를 요청하세요.")
+## 하이브리드 협업 규칙 (Hybrid Collaboration Rules)
+
+> **HANDOFF.md가 유일한 상태 소스(Single Source of Truth)입니다.**
+> .bkit 상태 파일은 참고용이며, 충돌 시 HANDOFF.md가 우선합니다.
+
+### 13. 작업 시작 프로토콜 (Session Start)
+- **필수**: `git pull` 실행하여 최신 상태 동기화
+- HANDOFF.md의 "최근 핸드오프" 섹션을 읽고 현재 상태 파악
+- "누가 뭘 하고 있나" 테이블에서 내 상태를 [작업 중]으로 변경
+
+### 14. 작업 완료 프로토콜 (Session End)
+모든 작업 완료 시 아래를 **반드시** 순서대로 실행:
+1. **빌드 검증**: `npm run build` 실행 → 로그를 `docs/build-logs/YYYY-MM-DD.txt`에 저장
+2. **HANDOFF.md 업데이트**:
+   - "최근 핸드오프" 섹션에 완료한 작업/블로커/다음 할 일 기재
+   - "누가 뭘 하고 있나"에서 내 상태를 [작업 완료]로 변경
+3. **커밋 & 푸시**: `git add . && git commit -m "feat/fix/chore: 설명" && git push`
+4. **완료 메시지**: "✅ 작업 완료 및 GitHub에 Push 되었습니다. HANDOFF.md를 확인하세요."
+
+### 15. CLAUDE_PROMPT 작성 규칙 (Antigravity용)
+- `docs/CLAUDE_PROMPT_TEMPLATE.md` 템플릿을 따를 것
+- **성공 기준 필수 포함**: 빌드 통과 + 기능별 확인 항목
+- 작업 요청 시 HANDOFF.md "누가 뭘 하고 있나"에서 Claude Code → [작업 대기: PROMPT명]
+
+### 16. 빌드 로그 규칙
+- 매 세션 종료 시 `npm run build` 결과를 `docs/build-logs/YYYY-MM-DD.txt`에 저장
+- 빌드 실패 시 HANDOFF.md에 블로커로 기록하고 커밋
 - Full lesson flow (6 steps + results screen)
 - SRS engine (SM-2) connected to Dexie.js via lessonService.ts
 - Unit unlock logic (sequential + review unit prerequisites)

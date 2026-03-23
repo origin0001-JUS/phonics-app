@@ -1,67 +1,105 @@
 # 작업 인수인계 (Cross-Environment Handoff)
 
-> 환경 간 전환 시 이 파일을 먼저 읽고 현재 상태를 파악하세요.
+> **⚠️ 모든 에이전트 필독 — 이 파일이 유일한 상태 소스(SSOT)입니다.**
+>
+> **작업 시작 전**: `git pull` → 이 파일 읽기 → "누가 뭘 하고 있나" 테이블에서 내 상태 [작업 중]으로 변경
+> **작업 종료 시**: `npm run build` → 로그 저장(`docs/build-logs/`) → 이 파일 업데이트 → `git push`
+> **CLAUDE_PROMPT 생성 시**: `docs/CLAUDE_PROMPT_TEMPLATE.md` 템플릿 사용 (성공 기준 필수 포함)
+>
+> 📋 **상세 프로토콜**: CLAUDE.md의 "하이브리드 협업 규칙" 섹션 (Rule #13~16) 참조
 
 ---
 
-## 마지막 작업 환경
-- **환경**: Antigravity (VSCode/GUI)
-- **시간**: 2026-03-22 23:15 (KST)
-- **브랜치**: `claude/multi-environment-setup-Nlrfn`
+## 최근 핸드오프 (Latest Handoff)
+
+- **From**: Claude Code (워크플로우 개선 + 학생 가이드 PDF 생성)
+- **When**: 2026-03-24 09:00 (KST)
+- **Branch**: `claude/multi-environment-setup-Nlrfn`
+
+### 이번 세션에서 완료한 것
+- [x] 학생용 이용 가이드 PDF 생성 (docs/student-guide/)
+- [x] Playwright로 앱 스크린샷 18장 자동 캡처
+- [x] 하이브리드 워크플로우 검토 및 개선안 수립
+- [x] 빌드 로그 체계 구축 (docs/build-logs/)
+- [x] HANDOFF.md 구조 개선 (명확한 핸드오프 포맷)
+- [x] CLAUDE_PROMPT 템플릿 생성 (docs/CLAUDE_PROMPT_TEMPLATE.md)
+- [x] 협업 룰 강화 (CLAUDE.md 업데이트)
+
+### 블로커 / 주의사항
+- Supabase SQL (`docs/supabase/setup_v2_licensing.sql`) 아직 미실행 — 대시보드에서 수동 실행 필요
+- 안드로이드 APK 빌드 미완료 — `npx cap sync` → Android Studio 필요
+
+### 다음 에이전트의 할 일
+1. `git pull` 실행
+2. 빌드 확인: `npm run build` (로그: `docs/build-logs/` 확인)
+3. Supabase SQL 실행 및 실제 교사 가입/학생 기기 락 테스트
+4. 안드로이드 APK 빌드 (`npx cap sync`)
+5. 완료 시 이 파일의 "최근 핸드오프" 섹션 업데이트 후 커밋/푸시
 
 ---
 
-## 현재 진행 상태 (GitHub 기반 하이브리드 워크플로우 & B2G 전략 수립 완료)
+## 프로젝트 현재 상태
 
-### 이번 세션 완료한 작업
+### Stage 4: B2G 라이선스 시스템 ✅ 완료
 
-#### 1. 하이브리드 병렬 개발 시스템 구축 (Orchestration) ✅
-- **GitHub 중심 동기화**: Claude Web(회사) ↔ Antigravity/Claude Code(로컬) 간의 코드 및 컨텍스트 동기화 체계 확립.
-- **글로벌 슬래시 명령어(/) 구현**: 
-  - `/save`: 작업 요약, `HANDOFF.md` 갱신, `git push` 자동화.
-  - `/load`: `git pull` 실행 및 현재 컨텍스트 자동 브리핑.
-  - `/plan`: 기획 의도를 분석하여 UI(Antigravity)와 로직(Claude Code) 업무를 자동 배분하고 `CLAUDE_TASKS.md` 및 터미널 명령어 생성.
-- **워크플로우 가이드**: `docs/HYBRID_DEV_GUIDE.md` 작성 완료.
-- **시스템 프롬프트 업데이트**: `CLAUDE.md`에 Git 동기화 프로토콜(시작 전 pull, 종료 전 push) 강제화.
+| 모듈 | 상태 | 설명 |
+|------|------|------|
+| `/admin` | ✅ 구현 완료 | PIN 보호, 학교 등록, 라이선스 키 생성, 교사 관리 |
+| `/teacher` | ✅ 구현 완료 | 라이선스 키 가입, 학급 코드 생성, 시트 관리/회수 |
+| 앱 활성화 | ✅ 구현 완료 | 학급 코드 + 닉네임 입력, 기기 락, 오프라인 토큰 |
+| Supabase DB | ✅ 스키마 완료 | RLS 정책 패치 적용, SQL 미실행 |
+| 학생 가이드 PDF | ✅ 생성 완료 | docs/student-guide/Phonics300_학생용_가이드.pdf |
 
-#### 2. B2G(공교육/기관) 진출 전략 및 평가 ✅
-- **V2 자가 진단**: 최초 기획 의도 10대 기준 평가 수행 (종합 점수 96/100점).
-- **B2G 제안서 2종 작성**:
-  - `docs/b2g_proposal.md`: 기술/기능 중심의 강력한 에듀테크 솔루션 어필.
-  - `docs/b2g_proposal_v2.md`: 정책/교육 효과/비용 효율성 중심의 의사결정권자용 제안서.
-- **특장점 재정립**: AI 립싱크 아바타 중심의 발음 교정, 100% 온디바이스(Private) 및 오프라인 구동 강점 극대화. 학술적 근거(References) 보강.
+### 커리큘럼: 37개 유닛
 
-#### 3. 프로덕션 배포 완료 ✅
-- **URL**: [https://phonics-app-one.vercel.app](https://phonics-app-one.vercel.app)
-- 최신 립싱크 영상, 발음 교정 로직, UI 개선 사항이 모두 포함된 버전으로 서버 배포 성공.
-
----
-
-## 🔥 다음 할 일 (후속 작업)
-
-### 1. 가족 및 코어 타겟 대상 베타 테스트 진행
-- 배포된 URL을 통해 실제 사용자 피드백 수집 및 오동작 사례 기록.
-
-### 2. B2G 제안서 최종 검토 및 문서화
-- 작성된 1안, 2안 중 선택하여 최종 영업용 PDF/워드 문서로 변환.
-
-### 3. /plan 명령어를 활용한 차기 기능 개발
-- 수집된 피드백을 `/plan` 명령어를 통해 Antigravity와 Claude Code에게 효율적으로 배분하여 개발 속도 가속화.
+| 레벨 | 유닛 | 주제 |
+|------|------|------|
+| CoreA (1~12) | 1~5 짧은 모음, 7~11 긴 모음/Magic e, 6,12 복습 |
+| CoreB (13~24) | 13~17 자음 조합, 19~23 고급 패턴, 18,24 복습 |
+| L3 (25~30) | 자음군 (l-blends, r-blends, s-blends, digraphs) |
+| L4 (31~37) | 모음팀/이중모음 (ea/ee, oa/ow, ai/ay, diphthongs, r-controlled, oo) |
 
 ---
 
 ## 누가 뭘 하고 있나 (Who is doing what)
 
-| 에이전트 | 상태 | 설명 |
-|----------|------|------|
-| **Antigravity** | [대기] | 세션 종료 및 컨텍스트 저장 완료 |
-| **Claude Code** | [대기] | `CLAUDE_TASKS.md`의 백로그 수행 준비 완료 |
-| **Claude Web** | [대기] | GitHub Push된 코드를 바탕으로 회사에서 아키텍처 설계 가능 |
+| 에이전트 | 상태 | 현재 작업 | 블로커 |
+|----------|------|----------|--------|
+| **Antigravity** | [대기] | — | — |
+| **Claude Code** | [작업 완료] | 워크플로우 개선 + 가이드 생성 완료 | — |
+| **Claude Web** | [대기] | — | — |
 
 ---
 
-## 작업 전환 체크리스트
+## 필수 환경변수 (Production)
 
-- [x] 모든 변경사항 commit & push (진행 예정)
-- [x] HANDOFF.md 업데이트 (완료)
-- [ ] 다음 작업 시작 시: `git pull` 또는 `/load` 명령어 실행
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+NEXT_PUBLIC_ADMIN_PIN=1234 (기본값, 프로덕션에서 반드시 변경)
+```
+
+---
+
+## 핸드오프 체크리스트 (매 세션 종료 시)
+
+- [ ] `npm run build` 성공 확인 (로그: docs/build-logs/YYYY-MM-DD.txt)
+- [ ] 이 파일의 "최근 핸드오프" 섹션 업데이트
+- [ ] "누가 뭘 하고 있나" 테이블에서 내 상태를 [작업 완료]로 변경
+- [ ] `git add . && git commit && git push`
+- [ ] 다음 작업 시작 시: `git pull` 실행
+
+---
+
+## Antigravity 전용 리마인더
+
+> **Antigravity가 Claude Code에 작업을 요청할 때 (CLAUDE_PROMPT 생성 시):**
+> 1. `docs/CLAUDE_PROMPT_TEMPLATE.md` 기반으로 작성할 것
+> 2. **성공 기준** 섹션을 반드시 포함 (빌드 통과 + 기능 확인 항목)
+> 3. 이 파일의 "누가 뭘 하고 있나"에서 Claude Code → `[작업 대기: PROMPT명]`으로 변경
+> 4. `git push`로 Claude Code가 받을 수 있게 할 것
+>
+> **Antigravity 세션 종료 시:**
+> 1. `npm run build` 실행 → `docs/build-logs/YYYY-MM-DD.txt` 저장
+> 2. 이 파일의 "최근 핸드오프" 섹션 업데이트 (완료/블로커/다음 할 일)
+> 3. `git add . && git commit && git push`

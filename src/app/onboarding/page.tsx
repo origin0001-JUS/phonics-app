@@ -5,11 +5,15 @@ import { useRouter } from "next/navigation";
 import { db } from "@/lib/db";
 import { useAppStore } from "@/lib/store";
 import { AnimatePresence, motion } from "framer-motion";
-import { Loader2, Lock, Check } from "lucide-react";
+import { Loader2, Lock, Check, School } from "lucide-react";
+import { joinClassWithCode, isCloudEnabled } from "@/lib/supabaseClient";
+
+// 활성화 토큰 localStorage 키
+const ACTIVATION_KEY = "phonics_device_activated";
 
 /* ─── Types ─── */
-type Screen = "welcome" | "grade" | "recommendation";
-const SCREENS: Screen[] = ["welcome", "grade", "recommendation"];
+type Screen = "activation" | "welcome" | "grade" | "recommendation";
+const SCREENS: Screen[] = ["activation", "welcome", "grade", "recommendation"];
 
 interface GradeOption {
   grade: number;
@@ -71,6 +75,77 @@ const variants = {
   exit: (dir: number) => ({ x: dir > 0 ? -300 : 300, opacity: 0 }),
 };
 const transition = { type: "spring" as const, stiffness: 300, damping: 30 };
+
+/* ─── Screen 0: Activation (연결코드 활성화) ─── */
+function ActivationScreen({ onActivated }: { onActivated: () => void }) {
+  const [code, setCode] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleActivate = async () => {
+    if (!code.trim() || !nickname.trim()) {
+      setError("연결코드와 이름을 모두 입력해 주세요.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    const result = await joinClassWithCode(code.trim(), nickname.trim());
+    if (result.success && result.studentId) {
+      localStorage.setItem(ACTIVATION_KEY, result.studentId);
+      onActivated();
+    } else {
+      setError(result.error || "활성화에 실패했습니다. 선생님께 코드를 확인해 주세요.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center px-6 py-10 gap-6">
+      <div className="w-20 h-20 bg-white/30 rounded-full flex items-center justify-center">
+        <School className="w-10 h-10 text-white drop-shadow-md" />
+      </div>
+      <div className="text-center">
+        <h2 className="text-2xl font-black text-white drop-shadow-md mb-1">앱 활성화</h2>
+        <p className="text-white/80 font-semibold text-sm">선생님께 받은 연결코드를 입력해 주세요.</p>
+      </div>
+      <div className="w-full max-w-xs space-y-3">
+        <div>
+          <label className="block text-white/80 font-bold text-xs mb-1">내 이름 (닉네임)</label>
+          <input
+            type="text"
+            placeholder="예: 박지우"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            className="w-full px-4 py-3 rounded-2xl border-4 border-white/50 bg-white/90 font-bold text-slate-700 focus:outline-none focus:border-amber-400"
+          />
+        </div>
+        <div>
+          <label className="block text-white/80 font-bold text-xs mb-1">선생님 연결코드</label>
+          <input
+            type="text"
+            placeholder="예: A8F3-K9"
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            maxLength={7}
+            className="w-full px-4 py-3 rounded-2xl border-4 border-white/50 bg-white/90 font-black text-xl tracking-widest text-center text-slate-700 focus:outline-none focus:border-amber-400"
+          />
+        </div>
+        {error && (
+          <p className="text-xs font-bold text-red-200 bg-red-500/30 px-4 py-2 rounded-xl text-center">{error}</p>
+        )}
+        <button
+          onClick={handleActivate}
+          disabled={loading}
+          className="w-full py-4 rounded-2xl font-black text-xl bg-amber-400 text-amber-900 shadow-[0_6px_0_#d97706] active:shadow-none active:translate-y-[6px] transition-all border-4 border-white disabled:opacity-50"
+        >
+          {loading ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : "시작하기! 🚀"}
+        </button>
+      </div>
+      <p className="text-xs text-white/50 text-center">연결코드는 선생님 대시보드에서 확인하실 수 있습니다.</p>
+    </div>
+  );
+}
 
 /* ─── BigButton ─── */
 function BigButton({
@@ -300,14 +375,23 @@ export default function OnboardingPage() {
 
   const screen = SCREENS[screenIndex];
 
-  // Redirect if already onboarded
+  // Redirect if already onboarded, or skip activation if not needed
   useEffect(() => {
     db.progress.get("user_progress").then((p) => {
       if (p?.onboardingCompleted) {
         router.replace("/");
-      } else {
-        setChecking(false);
+        return;
       }
+      // 개발 모드(클라우드 뫸연결)이면 활성화 화면 스킵
+      if (!isCloudEnabled()) {
+        setScreenIndex(1); // welcome부터 시작
+        setChecking(false);
+        return;
+      }
+      // 이미 활성화된 기기면 welcome부터 시작
+      const activated = localStorage.getItem(ACTIVATION_KEY);
+      if (activated) setScreenIndex(1);
+      setChecking(false);
     });
   }, [router]);
 
@@ -362,6 +446,9 @@ export default function OnboardingPage() {
           transition={transition}
           className="flex-1 flex flex-col"
         >
+          {screen === "activation" && (
+            <ActivationScreen onActivated={() => { setDirection(1); setScreenIndex(1); }} />
+          )}
           {screen === "welcome" && <WelcomeScreen onNext={goNext} />}
           {screen === "grade" && (
             <GradeSelectScreen
@@ -378,6 +465,7 @@ export default function OnboardingPage() {
             />
           )}
         </motion.div>
+
       </AnimatePresence>
     </main>
   );

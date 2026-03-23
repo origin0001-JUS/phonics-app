@@ -55,9 +55,9 @@ const COMMON_ENGLISH_WORDS = new Set([
     // -ob
     'mob','rob','sob','job','lob',
     // -og
-    'bog','cog','fog','hog','jog','log','smog',
+    'bog','cog','fog','hog','jog','log','smog','frog',
     // -op
-    'cop','hop','mop','pop','top','crop','drop','flop','shop','stop',
+    'cop','hop','mop','pop','top','crop','drop','flop','shop','stop','chop',
     // -ot
     'cot','dot','got','hot','lot','not','pot','rot','blot','knot','plot','shot','slot','trot',
     // -ub

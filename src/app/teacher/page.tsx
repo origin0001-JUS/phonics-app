@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-    Users, LogOut, Copy, Check, RefreshCw,
-    BookOpen, Trophy, Clock, ChevronLeft,
-    BarChart3, UserPlus, School,
+import { 
+    School, Users, BookOpen, Star, Layout, 
+    ArrowRight, LogOut, ChevronRight, CheckCircle, 
+    Calendar, Shield, Loader2, Plus, Trash2, Copy, Check,
+    UserPlus, BarChart3, Trophy, Clock, ChevronLeft, RefreshCw
 } from "lucide-react";
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -39,12 +40,24 @@ function getScoreColor(score: number): string {
 
 // ─── Login / Signup Form ───
 
+// ─── 유틸: 에러 메시지 한글화 ───
+function translateError(err: string): string {
+    if (err.includes("email rate limit exceeded")) return "잠시 후 다시 시도해 주세요 (스팸 방지 보안)";
+    if (err.includes("Invalid login credentials")) return "이메일 또는 비밀번호가 맞지 않습니다.";
+    if (err.includes("User already registered")) return "이미 가입되어 있는 이메일입니다.";
+    if (err.includes("Database error: null")) return "입력하신 정보가 올바른지 확인해 주세요.";
+    if (err.includes("유효하지 않은 학교 라이선스")) return "학교 라이선스 코드가 정확하지 않습니다.";
+    if (err.includes("회원 탈퇴 처리 중 오류")) return "탈퇴 처리 중 오류가 발생했습니다. 다시 시도해 주세요.";
+    return err; // 그 외는 원래 에러 표시
+}
+
 function AuthForm({ onSuccess }: { onSuccess: () => void }) {
     const [mode, setMode] = useState<"login" | "signup">("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [schoolName, setSchoolName] = useState("");
+    const [licenseKey, setLicenseKey] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -55,7 +68,7 @@ function AuthForm({ onSuccess }: { onSuccess: () => void }) {
 
         const result = mode === "login"
             ? await signInTeacher(email, password)
-            : await signUpTeacher(email, password, displayName, schoolName);
+            : await signUpTeacher(email, password, displayName, licenseKey, schoolName);
 
         setLoading(false);
 
@@ -73,68 +86,96 @@ function AuthForm({ onSuccess }: { onSuccess: () => void }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
             >
-                <div className="text-center mb-6">
-                    <div className="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <School className="w-8 h-8 text-sky-600" />
                     </div>
                     <h1 className="text-2xl font-black text-slate-800">
-                        {mode === "login" ? "교사 로그인" : "교사 계정 만들기"}
+                        {mode === "login" ? "선생님 로그인" : "교사 계정 만들기"}
                     </h1>
-                    <p className="text-sm text-slate-500 mt-1">
-                        Phonics 300 학습 관리 대시보드
+                    <p className="text-sm text-slate-400 font-bold mt-1">
+                        {mode === "login" ? "활동 내역을 관리해 보세요" : "Phonics 300 학습 관리 대시보드"}
                     </p>
+                    {mode === "signup" && (
+                        <p className="text-[11px] text-indigo-500 font-black mt-2 bg-indigo-50 py-1 rounded-full px-3 inline-block">
+                            ※ 학교 라이선스 코드가 있어야 가입 가능합니다
+                        </p>
+                    )}
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {mode === "signup" && (
-                        <>
-                            <input
-                                type="text"
-                                placeholder="이름"
-                                value={displayName}
-                                onChange={(e) => setDisplayName(e.target.value)}
-                                required
-                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-400 focus:outline-none font-bold text-slate-700"
-                            />
-                            <input
-                                type="text"
-                                placeholder="학교명 (선택)"
-                                value={schoolName}
-                                onChange={(e) => setSchoolName(e.target.value)}
-                                className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-400 focus:outline-none font-bold text-slate-700"
-                            />
-                        </>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-[11px] font-black text-slate-400 mb-1 ml-1">이름</label>
+                                <input
+                                    type="text"
+                                    placeholder="선생님 성함 입력"
+                                    value={displayName}
+                                    onChange={(e) => setDisplayName(e.target.value)}
+                                    required
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-400 focus:outline-none font-bold text-slate-700"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[11px] font-black text-indigo-500 mb-1 ml-1">📋 학교 라이선스 코드 (필수)</label>
+                                <input
+                                    type="text"
+                                    placeholder="예: PHONICS-2026-XXXX-XXXX"
+                                    value={licenseKey}
+                                    onChange={(e) => setLicenseKey(e.target.value.trim().toUpperCase())}
+                                    required
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-indigo-200 bg-indigo-50/20 focus:border-indigo-500 focus:outline-none font-bold text-slate-700"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[11px] font-black text-slate-400 mb-1 ml-1">학교 이름 (선택)</label>
+                                <input
+                                    type="text"
+                                    placeholder="소속 학교"
+                                    value={schoolName}
+                                    onChange={(e) => setSchoolName(e.target.value)}
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-400 focus:outline-none font-bold text-slate-700"
+                                />
+                            </div>
+                        </div>
                     )}
-                    <input
-                        type="email"
-                        placeholder="이메일"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-400 focus:outline-none font-bold text-slate-700"
-                    />
-                    <input
-                        type="password"
-                        placeholder="비밀번호"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        minLength={6}
-                        className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-400 focus:outline-none font-bold text-slate-700"
-                    />
+                    <div>
+                        {mode === "login" && <label className="block text-[11px] font-black text-slate-400 mb-1 ml-1">이메일 계정</label>}
+                        <input
+                            type="email"
+                            placeholder="email@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-400 focus:outline-none font-bold text-slate-700"
+                        />
+                    </div>
+                    <div>
+                        {mode === "login" && <label className="block text-[11px] font-black text-slate-400 mb-1 ml-1">비밀번호</label>}
+                        <input
+                            type="password"
+                            placeholder="••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            minLength={6}
+                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-400 focus:outline-none font-bold text-slate-700"
+                        />
+                    </div>
 
                     {error && (
-                        <p className="text-sm text-red-500 font-bold bg-red-50 px-3 py-2 rounded-lg">
-                            {error}
-                        </p>
+                        <div className="p-3 bg-red-100 rounded-xl text-red-500 text-xs font-bold text-center border border-red-200 animate-shake">
+                            {translateError(error)}
+                        </div>
                     )}
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-3 bg-sky-500 text-white font-black text-lg rounded-xl shadow-[0_4px_0_#0369a1] active:translate-y-[2px] active:shadow-[0_2px_0_#0369a1] disabled:opacity-50"
+                        className="w-full py-4 bg-sky-500 hover:bg-sky-600 disabled:bg-slate-300 text-white rounded-xl font-black text-lg shadow-[0_4px_0_#0ea5e9] active:shadow-none active:translate-y-[4px] transition-all flex items-center justify-center"
                     >
-                        {loading ? "처리 중..." : mode === "login" ? "로그인" : "계정 만들기"}
+                        {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : mode === "login" ? "로그인" : "계정 만들기"}
                     </button>
                 </form>
 
@@ -151,7 +192,7 @@ function AuthForm({ onSuccess }: { onSuccess: () => void }) {
 
 // ─── Class Code Card ───
 
-function ClassCodeCard({ code }: { code: string }) {
+function ClassCodeCard({ code, license }: { code: string; license?: any }) {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = async () => {
@@ -161,22 +202,52 @@ function ClassCodeCard({ code }: { code: string }) {
     };
 
     return (
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-5 text-white shadow-lg">
-            <p className="text-sm font-bold opacity-80 mb-1">학생 연결코드</p>
-            <div className="flex items-center gap-3">
-                <span className="text-3xl font-black tracking-[0.2em] font-mono">
-                    {code}
-                </span>
-                <button
-                    onClick={handleCopy}
-                    className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
-                >
-                    {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                </button>
+        <div className="grid md:grid-cols-2 gap-4">
+            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-5 text-white shadow-lg">
+                <p className="text-sm font-bold opacity-80 mb-1">학생 연결코드</p>
+                <div className="flex items-center gap-3">
+                    <span className="text-3xl font-black tracking-[0.2em] font-mono">
+                        {code}
+                    </span>
+                    <button
+                        onClick={handleCopy}
+                        className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+                    >
+                        {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                    </button>
+                </div>
+                <p className="text-xs opacity-70 mt-2">
+                    학생들에게 이 코드를 알려주세요. 앱에서 입력하면 자동 연결됩니다.
+                </p>
             </div>
-            <p className="text-xs opacity-70 mt-2">
-                학생들에게 이 코드를 알려주세요. 앱에서 입력하면 자동 연결됩니다.
-            </p>
+
+            <div className="bg-white border-2 border-indigo-100 rounded-2xl p-5 shadow-sm flex flex-col justify-center">
+                <div className="flex justify-between items-start mb-2">
+                    <p className="text-sm font-black text-slate-500">학교 라이선스 현황</p>
+                    <span className="text-[10px] bg-indigo-100 text-indigo-600 px-2 py-1 rounded-md font-bold uppercase tracking-wider">B2G Active</span>
+                </div>
+                {license ? (
+                    <div className="space-y-1">
+                        <div className="flex justify-between items-baseline">
+                            <span className="text-xl font-black text-slate-800">{license.school_name}</span>
+                            <span className="text-xs font-bold text-slate-400">
+                                {new Date(license.expires_at).toLocaleDateString()} 만료
+                            </span>
+                        </div>
+                        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-1">
+                            <div 
+                                className="bg-indigo-500 h-full" 
+                                style={{ width: `${Math.min(100, (license.used_seats / license.max_seats) * 100)}%` }}
+                            />
+                        </div>
+                        <p className="text-xs font-bold text-slate-500 mt-1">
+                            시트 현황: <span className="text-indigo-600">{license.used_seats}</span> / {license.max_seats} 점유 중
+                        </p>
+                    </div>
+                ) : (
+                    <p className="text-xs text-slate-400">라이선스 정보를 불러오는 중...</p>
+                )}
+            </div>
         </div>
     );
 }
@@ -205,7 +276,8 @@ function StudentTable({ students }: { students: ClassProgress[] }) {
                         <th className="px-4 py-3 text-center">완료 유닛</th>
                         <th className="px-4 py-3 text-center">총 레슨</th>
                         <th className="px-4 py-3 text-center">평균 점수</th>
-                        <th className="px-4 py-3 text-right">마지막 활동</th>
+                        <th className="px-4 py-3 text-center">활동일</th>
+                        <th className="px-4 py-3 text-right">관리</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -233,8 +305,20 @@ function StudentTable({ students }: { students: ClassProgress[] }) {
                                     {s.avg_score}%
                                 </span>
                             </td>
-                            <td className="px-4 py-3 text-right text-sm text-slate-400 font-bold">
+                            <td className="px-4 py-3 text-center text-sm text-slate-400 font-bold">
                                 {new Date(s.last_active).toLocaleDateString("ko-KR")}
+                            </td>
+                            <td className="px-4 py-3 text-right">
+                                <button
+                                    onClick={() => {
+                                        if (confirm(`"${s.nickname}" 학생의 시트를 회수하시겠습니까?\n회수 시 새로운 학생이 이 자리를 사용할 수 있습니다.`)) {
+                                            import("@/lib/supabaseClient").then(m => m.deactivateStudent(s.student_id)).then(() => window.location.reload());
+                                        }
+                                    }}
+                                    className="text-[10px] font-black bg-slate-100 text-slate-500 px-2 py-1 rounded-md hover:bg-red-100 hover:text-red-600 transition-colors"
+                                >
+                                    시트 회수
+                                </button>
                             </td>
                         </tr>
                     ))}
@@ -376,19 +460,52 @@ function Dashboard({
 }) {
     const [students, setStudents] = useState<ClassProgress[]>([]);
     const [unitStats, setUnitStats] = useState<{ unitId: string; completedCount: number; totalStudents: number }[]>([]);
+    const [license, setLicense] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState<"overview" | "students">("overview");
 
+    const handleWithdraw = async () => {
+        if (!confirm("정말 탈퇴하시겠습니까?\n탈퇴 시 관리하시던 모든 학생 학습 기록이 삭제되며,\n다른 기기에서 더 이상 이 학급 코드를 사용할 수 없습니다.")) return;
+        
+        setLoading(true);
+        const { getSupabase } = await import("@/lib/supabaseClient");
+        const client = getSupabase();
+        if (client) {
+            try {
+                // 1. 프로필 삭제 (RLS 정책에 의해 본인 것만 삭제 가능)
+                const { error: delError } = await client
+                    .from("teacher_profiles")
+                    .delete()
+                    .eq("id", profile.id);
+                
+                if (delError) throw delError;
+
+                // 2. 로그아웃 후 홈으로
+                await client.auth.signOut();
+                window.location.href = "/";
+            } catch (err: any) {
+                alert("탈퇴 중 오류가 발생했습니다: " + err.message);
+                setLoading(false);
+            }
+        }
+    };
+
     const loadData = useCallback(async () => {
         setLoading(true);
-        const [studentsData, statsData] = await Promise.all([
+        const { getSupabase } = await import("@/lib/supabaseClient");
+        const supabase = getSupabase();
+        
+        const [studentsData, statsData, licenseResp] = await Promise.all([
             getClassStudents(profile.class_code),
             getUnitCompletionStats(profile.class_code),
+            supabase ? supabase.from("licenses").select("*").eq("id", profile.license_id).single() : Promise.resolve({ data: null })
         ]);
+        
         setStudents(studentsData);
         setUnitStats(statsData);
+        if (licenseResp.data) setLicense(licenseResp.data);
         setLoading(false);
-    }, [profile.class_code]);
+    }, [profile.class_code, profile.license_id]);
 
     useEffect(() => {
         loadData();
@@ -433,8 +550,8 @@ function Dashboard({
 
             {/* Content */}
             <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
-                {/* Class Code */}
-                <ClassCodeCard code={profile.class_code} />
+                {/* Class Code & License */}
+                <ClassCodeCard code={profile.class_code} license={license} />
 
                 {/* Tabs */}
                 <div className="flex gap-2">

@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-03-21T06:21:23.925Z",
+  "lastUpdated": "2026-03-23T21:54:27.982Z",
   "activeFeatures": [
     "phonics-app",
     "settings",
@@ -227,9 +227,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-03-06T15:53:11.780Z",
-        "lastUpdated": "2026-03-21T06:21:23.925Z"
+        "lastUpdated": "2026-03-23T21:54:27.982Z"
       },
-      "lastFile": "C:/Users/origi/Antigravity-workspaces/Main_English/phonics-app/scripts/screenshot-test.ts"
+      "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\scripts\\generate-guide-pdf.ts"
     },
     "v2-5": {
       "phase": "completed",
@@ -375,7 +375,7 @@
   "session": {
     "startedAt": "2026-03-04T14:22:09.430Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-03-21T06:21:23.925Z"
+    "lastActivity": "2026-03-23T21:54:27.982Z"
   },
   "history": [
     {
@@ -1922,6 +1922,60 @@
     },
     {
       "timestamp": "2026-03-21T06:21:23.925Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-23T14:43:20.674Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-23T14:50:18.966Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-23T14:57:03.538Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-23T15:05:41.624Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-23T15:05:58.163Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-23T15:09:11.060Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-23T15:09:38.826Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-23T15:11:28.326Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-23T21:54:27.982Z",
       "feature": "scripts",
       "phase": "do",
       "action": "updated"

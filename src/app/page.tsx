@@ -4,8 +4,11 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/lib/store";
 import { db } from "@/lib/db";
+import { isCloudEnabled } from "@/lib/supabaseClient";
 import { Mic, Settings, Star, BookOpen, Loader2, Trophy } from "lucide-react";
 import Link from "next/link";
+
+const ACTIVATION_KEY = "phonics_device_activated";
 
 // ─── V2-8: Bilingual Video Sequencer Types ───
 
@@ -112,9 +115,18 @@ export default function Home() {
     db.progress.get("user_progress").then((p) => {
       if (!p?.onboardingCompleted) {
         router.replace("/onboarding");
-      } else {
-        setCheckingOnboarding(false);
+        return;
       }
+      // 활성화 코드 체크 (클라우드 연결된 경우만)
+      if (isCloudEnabled()) {
+        const activated = localStorage.getItem(ACTIVATION_KEY);
+        if (!activated) {
+          // 활성화 토큰이 없으면 온보딩으로 돌려보낼
+          router.replace("/onboarding");
+          return;
+        }
+      }
+      setCheckingOnboarding(false);
     });
   }, [router]);
 

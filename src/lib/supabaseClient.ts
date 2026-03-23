@@ -11,10 +11,18 @@
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-// ─── Types (DB 스키마 미러) ───
+export interface License {
+    id: string;
+    license_key: string;
+    school_name: string;
+    max_seats: number;
+    expires_at: string;
+    created_at: string;
+}
 
 export interface TeacherProfile {
     id: string;          // Supabase auth.users.id
+    license_id: string;  // 소속 라이선스 ID
     email: string;
     display_name: string;
     school_name?: string;
@@ -27,7 +35,9 @@ export interface StudentProfile {
     class_code: string;  // 교사의 연결코드
     device_id: string;   // 로컬 디바이스 식별자
     nickname: string;    // 익명 닉네임 (예: "학생 3")
+    is_active: boolean;  // 시트 점유 여부 (Recycling 핵심)
     created_at: string;
+    last_active: string;
 }
 
 export interface CloudLessonLog {
@@ -127,10 +137,27 @@ export async function signUpTeacher(
     email: string,
     password: string,
     displayName: string,
+    licenseKey: string,
     schoolName?: string
 ): Promise<{ success: boolean; error?: string }> {
     const client = getSupabase();
     if (!client) return { success: false, error: '클라우드 미연결' };
+
+    // 1. 라이선스 키 유효성 확인
+    const { data: license, error: licenseError } = await client
+        .from('licenses')
+        .select('*')
+        .eq('license_key', licenseKey.trim())
+        .single();
+
+    if (licenseError || !license) {
+        return { success: false, error: '유효하지 않은 학교 라이선스 코드입니다.' };
+    }
+
+    // 2. 만료일 확인
+    if (new Date(license.expires_at) < new Date()) {
+        return { success: false, error: '만료된 라이선스입니다. 학교 관리자에게 문의하세요.' };
+    }
 
     const { data, error } = await client.auth.signUp({
         email,
@@ -141,15 +168,16 @@ export async function signUpTeacher(
     if (error) return { success: false, error: error.message };
     if (!data.user) return { success: false, error: '계정 생성 실패' };
 
-    // teacher_profiles 테이블에 프로필 삽입
+    // 3. teacher_profiles 테이블에 프로필 삽입 (라이선스 연결)
     const classCode = generateClassCode();
     const { error: profileError } = await client
         .from('teacher_profiles')
         .insert({
             id: data.user.id,
+            license_id: license.id,
             email,
             display_name: displayName,
-            school_name: schoolName || null,
+            school_name: schoolName || license.school_name,
             class_code: classCode,
         });
 
@@ -215,10 +243,10 @@ export async function joinClassWithCode(
     const client = getSupabase();
     if (!client) return { success: false, error: '클라우드 미연결' };
 
-    // 연결코드 유효성 확인
+    // 1. 연결코드 유효성 및 라이선스 정보 확인
     const { data: teacher, error: teacherError } = await client
         .from('teacher_profiles')
-        .select('id')
+        .select('id, license_id, licenses!inner(expires_at, max_seats)')
         .eq('class_code', classCode.toUpperCase().replace(/\s/g, ''))
         .single();
 
@@ -226,27 +254,54 @@ export async function joinClassWithCode(
         return { success: false, error: '잘못된 연결코드예요. 선생님께 다시 확인해 보세요!' };
     }
 
+    const license = teacher.licenses as any;
+
+    // 2. 라이선스 만료 체크
+    if (new Date(license.expires_at) < new Date()) {
+        return { success: false, error: '선생님 학교의 이용 기간이 끝났어요. (만료)' };
+    }
+
     const deviceId = getDeviceId();
 
-    // 이미 등록된 디바이스인지 확인
+    // 3. 이미 등록된 기기인지 확인 (활성 상태인 것 위주)
     const { data: existing } = await client
         .from('student_profiles')
-        .select('id')
+        .select('id, is_active')
         .eq('class_code', classCode.toUpperCase())
         .eq('device_id', deviceId)
         .single();
 
-    if (existing) {
+    if (existing && existing.is_active) {
         return { success: true, studentId: existing.id };
     }
 
-    // 새 학생 프로필 생성
+    // 4. 시트 수량 체크 (Active 학생 수)
+    const { data: activeCountData, error: countError } = await client
+        .rpc('get_active_seat_count', { license_uuid: teacher.license_id });
+
+    if (!countError && activeCountData >= license.max_seats) {
+        return { success: false, error: '선생님 반의 등록 인원이 꽉 찼어요! (정원 초과)' };
+    }
+
+    // 5. 새 학생 프로필 생성 (또는 기존 비활성 학생 재활성화)
+    if (existing && !existing.is_active) {
+        // 기존 기기가 비활성 상태면 다시 활성화 (시트 소진)
+        const { error: updateError } = await client
+            .from('student_profiles')
+            .update({ is_active: true, nickname })
+            .eq('id', existing.id);
+        
+        if (updateError) return { success: false, error: '재등록 실패' };
+        return { success: true, studentId: existing.id };
+    }
+
     const { data: student, error: studentError } = await client
         .from('student_profiles')
         .insert({
             class_code: classCode.toUpperCase(),
             device_id: deviceId,
             nickname,
+            is_active: true,
         })
         .select('id')
         .single();
@@ -302,16 +357,37 @@ export async function syncLessonToCloud(log: CloudLessonLog): Promise<boolean> {
 // ─── 교사 대시보드 데이터 조회 ───
 
 /**
- * 교사의 반 학생 목록 + 진도 요약 조회
+ * 학생 비활성화 (시트 회수 - 진급/졸업 등)
  */
-export async function getClassStudents(classCode: string): Promise<ClassProgress[]> {
+export async function deactivateStudent(studentId: string): Promise<boolean> {
+    const client = getSupabase();
+    if (!client) return false;
+
+    const { error } = await client
+        .from('student_profiles')
+        .update({ is_active: false })
+        .eq('id', studentId);
+
+    return !error;
+}
+
+/**
+ * 교사의 반 학생 목록 + 진도 요약 조회 (활성 학생 위주)
+ */
+export async function getClassStudents(classCode: string, includeInactive = false): Promise<ClassProgress[]> {
     const client = getSupabase();
     if (!client) return [];
 
-    const { data: students, error } = await client
+    let query = client
         .from('student_profiles')
-        .select('id, nickname, created_at')
+        .select('id, nickname, created_at, is_active')
         .eq('class_code', classCode);
+    
+    if (!includeInactive) {
+        query = query.eq('is_active', true);
+    }
+
+    const { data: students, error } = await query;
 
     if (error || !students) return [];
 
