@@ -1,0 +1,1682 @@
+{
+  "assets/audio/cat.mp3": {
+    "transcript": "cat",
+    "timestamp": "2026-03-23T12:02:49.687Z"
+  },
+  "assets/audio/bat.mp3": {
+    "transcript": "bat",
+    "timestamp": "2026-03-23T12:03:10.638Z"
+  },
+  "assets/audio/hat.mp3": {
+    "transcript": "hot",
+    "timestamp": "2026-03-23T12:03:31.604Z"
+  },
+  "assets/audio/mat.mp3": {
+    "transcript": "matt",
+    "timestamp": "2026-03-23T12:03:52.426Z"
+  },
+  "assets/audio/rat.mp3": {
+    "transcript": "rat",
+    "timestamp": "2026-03-23T12:04:13.369Z"
+  },
+  "assets/audio/sat.mp3": {
+    "transcript": "sat",
+    "timestamp": "2026-03-23T12:04:34.279Z"
+  },
+  "assets/audio/fan.mp3": {
+    "transcript": "fun",
+    "timestamp": "2026-03-23T12:04:55.270Z"
+  },
+  "assets/audio/van.mp3": {
+    "transcript": "fan",
+    "timestamp": "2026-03-23T12:05:16.174Z"
+  },
+  "assets/audio/can.mp3": {
+    "transcript": "can",
+    "timestamp": "2026-03-23T12:05:37.152Z"
+  },
+  "assets/audio/man.mp3": {
+    "transcript": "man",
+    "timestamp": "2026-03-23T12:05:58.045Z"
+  },
+  "assets/audio/map.mp3": {
+    "transcript": "map",
+    "timestamp": "2026-03-23T12:06:18.929Z"
+  },
+  "assets/audio/cap.mp3": {
+    "transcript": "cap",
+    "timestamp": "2026-03-23T12:06:39.762Z"
+  },
+  "assets/audio/tap.mp3": {
+    "transcript": "tap",
+    "timestamp": "2026-03-23T12:07:00.632Z"
+  },
+  "assets/audio/nap.mp3": {
+    "transcript": "nap",
+    "timestamp": "2026-03-23T12:07:21.603Z"
+  },
+  "assets/audio/bag.mp3": {
+    "transcript": "bag",
+    "timestamp": "2026-03-23T12:07:42.560Z"
+  },
+  "assets/audio/dad.mp3": {
+    "transcript": "dad",
+    "timestamp": "2026-03-23T12:08:03.482Z"
+  },
+  "assets/audio/sad.mp3": {
+    "transcript": "sait",
+    "timestamp": "2026-03-23T12:08:24.372Z"
+  },
+  "assets/audio/ham.mp3": {
+    "transcript": "ham",
+    "timestamp": "2026-03-23T12:08:45.219Z"
+  },
+  "assets/audio/jam.mp3": {
+    "transcript": "jam",
+    "timestamp": "2026-03-23T12:09:06.075Z"
+  },
+  "assets/audio/ram.mp3": {
+    "transcript": "ram",
+    "timestamp": "2026-03-23T12:09:27.043Z"
+  },
+  "assets/audio/bed.mp3": {
+    "transcript": "bed",
+    "timestamp": "2026-03-23T12:09:47.951Z"
+  },
+  "assets/audio/red.mp3": {
+    "transcript": "red",
+    "timestamp": "2026-03-23T12:10:08.806Z"
+  },
+  "assets/audio/pen.mp3": {
+    "transcript": "pen",
+    "timestamp": "2026-03-23T12:10:29.616Z"
+  },
+  "assets/audio/hen.mp3": {
+    "transcript": "hen",
+    "timestamp": "2026-03-23T12:10:50.604Z"
+  },
+  "assets/audio/men.mp3": {
+    "transcript": "men",
+    "timestamp": "2026-03-23T12:11:32.386Z"
+  },
+  "assets/audio/net.mp3": {
+    "transcript": "net",
+    "timestamp": "2026-03-23T12:11:53.380Z"
+  },
+  "assets/audio/set.mp3": {
+    "transcript": "set",
+    "timestamp": "2026-03-23T12:12:14.267Z"
+  },
+  "assets/audio/wet.mp3": {
+    "transcript": "wet",
+    "timestamp": "2026-03-23T12:12:35.132Z"
+  },
+  "assets/audio/jet.mp3": {
+    "transcript": "jet",
+    "timestamp": "2026-03-23T12:12:56.352Z"
+  },
+  "assets/audio/leg.mp3": {
+    "transcript": "leg",
+    "timestamp": "2026-03-23T12:13:17.347Z"
+  },
+  "assets/audio/peg.mp3": {
+    "transcript": "peg",
+    "timestamp": "2026-03-23T12:13:38.186Z"
+  },
+  "assets/audio/beg.mp3": {
+    "transcript": "beg",
+    "timestamp": "2026-03-23T12:13:59.031Z"
+  },
+  "assets/audio/fed.mp3": {
+    "transcript": "fed",
+    "timestamp": "2026-03-23T12:14:19.915Z"
+  },
+  "assets/audio/den.mp3": {
+    "transcript": "denn",
+    "timestamp": "2026-03-23T12:14:40.806Z"
+  },
+  "assets/audio/pet.mp3": {
+    "transcript": "pet",
+    "timestamp": "2026-03-23T12:15:01.698Z"
+  },
+  "assets/audio/vet.mp3": {
+    "transcript": "vet",
+    "timestamp": "2026-03-23T12:15:22.583Z"
+  },
+  "assets/audio/big.mp3": {
+    "transcript": "big",
+    "timestamp": "2026-03-23T12:15:43.475Z"
+  },
+  "assets/audio/pig.mp3": {
+    "transcript": "pig",
+    "timestamp": "2026-03-23T12:16:04.365Z"
+  },
+  "assets/audio/dig.mp3": {
+    "transcript": "dig",
+    "timestamp": "2026-03-23T12:16:25.255Z"
+  },
+  "assets/audio/sit.mp3": {
+    "transcript": "sit",
+    "timestamp": "2026-03-23T12:16:46.148Z"
+  },
+  "assets/audio/hit.mp3": {
+    "transcript": "hit",
+    "timestamp": "2026-03-23T12:17:07.034Z"
+  },
+  "assets/audio/bit.mp3": {
+    "transcript": "bit",
+    "timestamp": "2026-03-23T12:17:27.920Z"
+  },
+  "assets/audio/fin.mp3": {
+    "transcript": "finn",
+    "timestamp": "2026-03-23T12:17:48.815Z"
+  },
+  "assets/audio/pin.mp3": {
+    "transcript": "pin",
+    "timestamp": "2026-03-23T12:18:09.657Z"
+  },
+  "assets/audio/bin.mp3": {
+    "transcript": "bin",
+    "timestamp": "2026-03-23T12:18:30.470Z"
+  },
+  "assets/audio/lip.mp3": {
+    "transcript": "lip",
+    "timestamp": "2026-03-23T12:18:51.280Z"
+  },
+  "assets/audio/zip.mp3": {
+    "transcript": "zip",
+    "timestamp": "2026-03-23T12:19:12.172Z"
+  },
+  "assets/audio/tip.mp3": {
+    "transcript": "tip",
+    "timestamp": "2026-03-23T12:19:32.991Z"
+  },
+  "assets/audio/wig.mp3": {
+    "transcript": "wig",
+    "timestamp": "2026-03-23T12:19:53.854Z"
+  },
+  "assets/audio/kid.mp3": {
+    "transcript": "kid",
+    "timestamp": "2026-03-23T12:20:35.629Z"
+  },
+  "assets/audio/rib.mp3": {
+    "transcript": "rib",
+    "timestamp": "2026-03-23T12:20:56.520Z"
+  },
+  "assets/audio/lid.mp3": {
+    "transcript": "lit",
+    "timestamp": "2026-03-23T12:21:17.512Z"
+  },
+  "assets/audio/mix.mp3": {
+    "transcript": "mix",
+    "timestamp": "2026-03-23T12:21:38.401Z"
+  },
+  "assets/audio/hip.mp3": {
+    "transcript": "hip",
+    "timestamp": "2026-03-23T12:21:59.219Z"
+  },
+  "assets/audio/rip.mp3": {
+    "transcript": "rip",
+    "timestamp": "2026-03-23T12:22:20.087Z"
+  },
+  "assets/audio/dog.mp3": {
+    "transcript": "dog",
+    "timestamp": "2026-03-23T12:22:40.969Z"
+  },
+  "assets/audio/hot.mp3": {
+    "transcript": "hot",
+    "timestamp": "2026-03-23T12:23:01.862Z"
+  },
+  "assets/audio/box.mp3": {
+    "transcript": "box",
+    "timestamp": "2026-03-23T12:23:22.753Z"
+  },
+  "assets/audio/fox.mp3": {
+    "transcript": "fox",
+    "timestamp": "2026-03-23T12:23:43.641Z"
+  },
+  "assets/audio/pot.mp3": {
+    "transcript": "pot",
+    "timestamp": "2026-03-23T12:24:04.532Z"
+  },
+  "assets/audio/top.mp3": {
+    "transcript": "top",
+    "timestamp": "2026-03-23T12:24:25.419Z"
+  },
+  "assets/audio/hop.mp3": {
+    "transcript": "hop",
+    "timestamp": "2026-03-23T12:24:46.279Z"
+  },
+  "assets/audio/mop.mp3": {
+    "transcript": "mop",
+    "timestamp": "2026-03-23T12:25:07.157Z"
+  },
+  "assets/audio/log.mp3": {
+    "transcript": "log",
+    "timestamp": "2026-03-23T12:25:27.993Z"
+  },
+  "assets/audio/cot.mp3": {
+    "transcript": "caught",
+    "timestamp": "2026-03-23T12:25:48.830Z"
+  },
+  "assets/audio/dot.mp3": {
+    "transcript": "dot",
+    "timestamp": "2026-03-23T12:26:09.769Z"
+  },
+  "assets/audio/got.mp3": {
+    "transcript": "got",
+    "timestamp": "2026-03-23T12:26:30.658Z"
+  },
+  "assets/audio/rod.mp3": {
+    "transcript": "rod",
+    "timestamp": "2026-03-23T12:26:51.548Z"
+  },
+  "assets/audio/sob.mp3": {
+    "transcript": "soap",
+    "timestamp": "2026-03-23T12:27:12.378Z"
+  },
+  "assets/audio/nod.mp3": {
+    "transcript": "nod",
+    "timestamp": "2026-03-23T12:27:33.386Z"
+  },
+  "assets/audio/mom.mp3": {
+    "transcript": "mom",
+    "timestamp": "2026-03-23T12:27:54.320Z"
+  },
+  "assets/audio/cop.mp3": {
+    "transcript": "cop",
+    "timestamp": "2026-03-23T12:28:15.213Z"
+  },
+  "assets/audio/bug.mp3": {
+    "transcript": "bug",
+    "timestamp": "2026-03-23T12:28:36.100Z"
+  },
+  "assets/audio/cup.mp3": {
+    "transcript": "cup",
+    "timestamp": "2026-03-23T12:28:56.990Z"
+  },
+  "assets/audio/sun.mp3": {
+    "transcript": "sun",
+    "timestamp": "2026-03-23T12:29:17.825Z"
+  },
+  "assets/audio/run.mp3": {
+    "transcript": "run",
+    "timestamp": "2026-03-23T12:29:38.668Z"
+  },
+  "assets/audio/fun.mp3": {
+    "transcript": "fun",
+    "timestamp": "2026-03-23T12:29:59.558Z"
+  },
+  "assets/audio/bun.mp3": {
+    "transcript": "un",
+    "timestamp": "2026-03-23T12:30:20.396Z"
+  },
+  "assets/audio/nut.mp3": {
+    "transcript": "not",
+    "timestamp": "2026-03-23T12:30:41.337Z"
+  },
+  "assets/audio/cut.mp3": {
+    "transcript": "cut",
+    "timestamp": "2026-03-23T12:31:02.156Z"
+  },
+  "assets/audio/hut.mp3": {
+    "transcript": "hut",
+    "timestamp": "2026-03-23T12:31:23.131Z"
+  },
+  "assets/audio/mud.mp3": {
+    "transcript": "mud",
+    "timestamp": "2026-03-23T12:31:43.973Z"
+  },
+  "assets/audio/tub.mp3": {
+    "transcript": "tub",
+    "timestamp": "2026-03-23T12:32:05.208Z"
+  },
+  "assets/audio/rug.mp3": {
+    "transcript": "rug",
+    "timestamp": "2026-03-23T12:32:26.101Z"
+  },
+  "assets/audio/bus.mp3": {
+    "transcript": "bus",
+    "timestamp": "2026-03-23T12:32:46.987Z"
+  },
+  "assets/audio/gum.mp3": {
+    "transcript": "gum",
+    "timestamp": "2026-03-23T12:33:07.885Z"
+  },
+  "assets/audio/jug.mp3": {
+    "transcript": "chug",
+    "timestamp": "2026-03-23T12:33:28.770Z"
+  },
+  "assets/audio/pup.mp3": {
+    "transcript": "pup",
+    "timestamp": "2026-03-23T12:33:49.762Z"
+  },
+  "assets/audio/hug.mp3": {
+    "transcript": "hug",
+    "timestamp": "2026-03-23T12:34:10.647Z"
+  },
+  "assets/audio/mug.mp3": {
+    "transcript": "mug",
+    "timestamp": "2026-03-23T12:34:31.554Z"
+  },
+  "assets/audio/bud.mp3": {
+    "transcript": "bud",
+    "timestamp": "2026-03-23T12:34:52.544Z"
+  },
+  "assets/audio/rub.mp3": {
+    "transcript": "rub",
+    "timestamp": "2026-03-23T12:35:13.397Z"
+  },
+  "assets/audio/cake.mp3": {
+    "transcript": "cake",
+    "timestamp": "2026-03-23T12:35:34.317Z"
+  },
+  "assets/audio/bake.mp3": {
+    "transcript": "bake",
+    "timestamp": "2026-03-23T12:35:55.203Z"
+  },
+  "assets/audio/lake.mp3": {
+    "transcript": "lake",
+    "timestamp": "2026-03-23T12:36:16.071Z"
+  },
+  "assets/audio/make.mp3": {
+    "transcript": "make",
+    "timestamp": "2026-03-23T12:36:36.928Z"
+  },
+  "assets/audio/take.mp3": {
+    "transcript": "take",
+    "timestamp": "2026-03-23T12:36:57.874Z"
+  },
+  "assets/audio/name.mp3": {
+    "transcript": "name",
+    "timestamp": "2026-03-23T12:37:18.785Z"
+  },
+  "assets/audio/game.mp3": {
+    "transcript": "game",
+    "timestamp": "2026-03-23T12:37:39.759Z"
+  },
+  "assets/audio/came.mp3": {
+    "transcript": "came",
+    "timestamp": "2026-03-23T12:38:00.644Z"
+  },
+  "assets/audio/gate.mp3": {
+    "transcript": "gate",
+    "timestamp": "2026-03-23T12:38:21.538Z"
+  },
+  "assets/audio/late.mp3": {
+    "transcript": "late",
+    "timestamp": "2026-03-23T12:38:42.336Z"
+  },
+  "assets/audio/tape.mp3": {
+    "transcript": "tape",
+    "timestamp": "2026-03-23T12:39:03.303Z"
+  },
+  "assets/audio/cape.mp3": {
+    "transcript": "cape",
+    "timestamp": "2026-03-23T12:39:24.181Z"
+  },
+  "assets/audio/face.mp3": {
+    "transcript": "face",
+    "timestamp": "2026-03-23T12:39:45.100Z"
+  },
+  "assets/audio/race.mp3": {
+    "transcript": "race",
+    "timestamp": "2026-03-23T12:40:05.911Z"
+  },
+  "assets/audio/wave.mp3": {
+    "transcript": "wave",
+    "timestamp": "2026-03-23T12:40:26.806Z"
+  },
+  "assets/audio/rake.mp3": {
+    "transcript": "rake",
+    "timestamp": "2026-03-23T12:40:47.767Z"
+  },
+  "assets/audio/cave.mp3": {
+    "transcript": "cave",
+    "timestamp": "2026-03-23T12:41:08.657Z"
+  },
+  "assets/audio/vase.mp3": {
+    "transcript": "vazi",
+    "timestamp": "2026-03-23T12:41:29.502Z"
+  },
+  "assets/audio/date.mp3": {
+    "transcript": "date",
+    "timestamp": "2026-03-23T12:41:50.436Z"
+  },
+  "assets/audio/bike.mp3": {
+    "transcript": "bike",
+    "timestamp": "2026-03-23T12:42:11.326Z"
+  },
+  "assets/audio/like.mp3": {
+    "transcript": "like",
+    "timestamp": "2026-03-23T12:42:32.218Z"
+  },
+  "assets/audio/hike.mp3": {
+    "transcript": "hike",
+    "timestamp": "2026-03-23T12:42:53.168Z"
+  },
+  "assets/audio/time.mp3": {
+    "transcript": "time",
+    "timestamp": "2026-03-23T12:43:14.099Z"
+  },
+  "assets/audio/lime.mp3": {
+    "transcript": "lime",
+    "timestamp": "2026-03-23T12:43:34.997Z"
+  },
+  "assets/audio/dime.mp3": {
+    "transcript": "dime",
+    "timestamp": "2026-03-23T12:43:55.984Z"
+  },
+  "assets/audio/kite.mp3": {
+    "transcript": "kite",
+    "timestamp": "2026-03-23T12:44:16.870Z"
+  },
+  "assets/audio/bite.mp3": {
+    "transcript": "bite",
+    "timestamp": "2026-03-23T12:44:37.768Z"
+  },
+  "assets/audio/ride.mp3": {
+    "transcript": "ride",
+    "timestamp": "2026-03-23T12:44:58.596Z"
+  },
+  "assets/audio/hide.mp3": {
+    "transcript": "hide",
+    "timestamp": "2026-03-23T12:45:19.447Z"
+  },
+  "assets/audio/five.mp3": {
+    "transcript": "five",
+    "timestamp": "2026-03-23T12:45:40.314Z"
+  },
+  "assets/audio/pine.mp3": {
+    "transcript": "pine",
+    "timestamp": "2026-03-23T12:46:22.223Z"
+  },
+  "assets/audio/vine.mp3": {
+    "transcript": "vine",
+    "timestamp": "2026-03-23T12:46:43.223Z"
+  },
+  "assets/audio/line.mp3": {
+    "transcript": "line",
+    "timestamp": "2026-03-23T12:47:04.098Z"
+  },
+  "assets/audio/bone.mp3": {
+    "transcript": "bone",
+    "timestamp": "2026-03-23T12:47:25.088Z"
+  },
+  "assets/audio/cone.mp3": {
+    "transcript": "cone",
+    "timestamp": "2026-03-23T12:47:45.947Z"
+  },
+  "assets/audio/home.mp3": {
+    "transcript": "home",
+    "timestamp": "2026-03-23T12:48:06.870Z"
+  },
+  "assets/audio/hope.mp3": {
+    "transcript": "hope",
+    "timestamp": "2026-03-23T12:48:27.761Z"
+  },
+  "assets/audio/nose.mp3": {
+    "transcript": "nose",
+    "timestamp": "2026-03-23T12:48:48.654Z"
+  },
+  "assets/audio/rose.mp3": {
+    "transcript": "rose",
+    "timestamp": "2026-03-23T12:49:09.646Z"
+  },
+  "assets/audio/hole.mp3": {
+    "transcript": "hole",
+    "timestamp": "2026-03-23T12:49:30.563Z"
+  },
+  "assets/audio/pole.mp3": {
+    "transcript": "poll",
+    "timestamp": "2026-03-23T12:49:51.528Z"
+  },
+  "assets/audio/rope.mp3": {
+    "transcript": "rope",
+    "timestamp": "2026-03-23T12:50:12.518Z"
+  },
+  "assets/audio/note.mp3": {
+    "transcript": "note",
+    "timestamp": "2026-03-23T12:50:33.510Z"
+  },
+  "assets/audio/vote.mp3": {
+    "transcript": "vote",
+    "timestamp": "2026-03-23T12:50:54.456Z"
+  },
+  "assets/audio/joke.mp3": {
+    "transcript": "joke",
+    "timestamp": "2026-03-23T12:51:15.394Z"
+  },
+  "assets/audio/woke.mp3": {
+    "transcript": "woke",
+    "timestamp": "2026-03-23T12:51:36.282Z"
+  },
+  "assets/audio/stone.mp3": {
+    "transcript": "stone",
+    "timestamp": "2026-03-23T12:51:57.120Z"
+  },
+  "assets/audio/phone.mp3": {
+    "transcript": "phone",
+    "timestamp": "2026-03-23T12:52:18.063Z"
+  },
+  "assets/audio/cute.mp3": {
+    "transcript": "cute",
+    "timestamp": "2026-03-23T12:52:38.953Z"
+  },
+  "assets/audio/mute.mp3": {
+    "transcript": "mute",
+    "timestamp": "2026-03-23T12:52:59.828Z"
+  },
+  "assets/audio/cube.mp3": {
+    "transcript": "cube",
+    "timestamp": "2026-03-23T12:53:20.732Z"
+  },
+  "assets/audio/tube.mp3": {
+    "transcript": "tube",
+    "timestamp": "2026-03-23T12:53:41.598Z"
+  },
+  "assets/audio/tune.mp3": {
+    "transcript": "tune",
+    "timestamp": "2026-03-23T12:54:02.651Z"
+  },
+  "assets/audio/dune.mp3": {
+    "transcript": "dune",
+    "timestamp": "2026-03-23T12:54:23.608Z"
+  },
+  "assets/audio/june.mp3": {
+    "transcript": "june",
+    "timestamp": "2026-03-23T12:54:44.501Z"
+  },
+  "assets/audio/huge.mp3": {
+    "transcript": "huge",
+    "timestamp": "2026-03-23T12:55:05.391Z"
+  },
+  "assets/audio/rude.mp3": {
+    "transcript": "rude",
+    "timestamp": "2026-03-23T12:55:26.234Z"
+  },
+  "assets/audio/rule.mp3": {
+    "transcript": "rule",
+    "timestamp": "2026-03-23T12:55:47.168Z"
+  },
+  "assets/audio/mule.mp3": {
+    "transcript": "mule",
+    "timestamp": "2026-03-23T12:56:08.064Z"
+  },
+  "assets/audio/fuse.mp3": {
+    "transcript": "fuse",
+    "timestamp": "2026-03-23T12:56:28.949Z"
+  },
+  "assets/audio/use.mp3": {
+    "transcript": "use",
+    "timestamp": "2026-03-23T12:56:49.840Z"
+  },
+  "assets/audio/flute.mp3": {
+    "transcript": "flute",
+    "timestamp": "2026-03-23T12:57:10.674Z"
+  },
+  "assets/audio/prune.mp3": {
+    "transcript": "prune",
+    "timestamp": "2026-03-23T12:57:31.582Z"
+  },
+  "assets/audio/bee.mp3": {
+    "transcript": "b",
+    "timestamp": "2026-03-23T12:57:52.511Z"
+  },
+  "assets/audio/see.mp3": {
+    "transcript": "see",
+    "timestamp": "2026-03-23T12:58:13.344Z"
+  },
+  "assets/audio/tree.mp3": {
+    "transcript": "tree",
+    "timestamp": "2026-03-23T12:58:34.304Z"
+  },
+  "assets/audio/free.mp3": {
+    "transcript": "free",
+    "timestamp": "2026-03-23T12:58:55.181Z"
+  },
+  "assets/audio/seed.mp3": {
+    "transcript": "seed",
+    "timestamp": "2026-03-23T12:59:16.014Z"
+  },
+  "assets/audio/feed.mp3": {
+    "transcript": "feed",
+    "timestamp": "2026-03-23T12:59:37.062Z"
+  },
+  "assets/audio/feet.mp3": {
+    "transcript": "feet",
+    "timestamp": "2026-03-23T12:59:57.959Z"
+  },
+  "assets/audio/meet.mp3": {
+    "transcript": "meat",
+    "timestamp": "2026-03-23T13:00:18.847Z"
+  },
+  "assets/audio/bead.mp3": {
+    "transcript": "bede",
+    "timestamp": "2026-03-23T13:00:39.749Z"
+  },
+  "assets/audio/read.mp3": {
+    "transcript": "read",
+    "timestamp": "2026-03-23T13:01:00.624Z"
+  },
+  "assets/audio/sea.mp3": {
+    "transcript": "c",
+    "timestamp": "2026-03-23T13:01:21.479Z"
+  },
+  "assets/audio/tea.mp3": {
+    "transcript": "t",
+    "timestamp": "2026-03-23T13:01:42.402Z"
+  },
+  "assets/audio/leaf.mp3": {
+    "transcript": "leaf",
+    "timestamp": "2026-03-23T13:02:03.236Z"
+  },
+  "assets/audio/team.mp3": {
+    "transcript": "team",
+    "timestamp": "2026-03-23T13:02:24.183Z"
+  },
+  "assets/audio/dream.mp3": {
+    "transcript": "dream",
+    "timestamp": "2026-03-23T13:02:45.033Z"
+  },
+  "assets/audio/black.mp3": {
+    "transcript": "black",
+    "timestamp": "2026-03-23T13:03:05.969Z"
+  },
+  "assets/audio/block.mp3": {
+    "transcript": "block",
+    "timestamp": "2026-03-23T13:03:26.807Z"
+  },
+  "assets/audio/blue.mp3": {
+    "transcript": "blue",
+    "timestamp": "2026-03-23T13:03:47.635Z"
+  },
+  "assets/audio/clap.mp3": {
+    "transcript": "clap",
+    "timestamp": "2026-03-23T13:04:08.532Z"
+  },
+  "assets/audio/clam.mp3": {
+    "transcript": "clam",
+    "timestamp": "2026-03-23T13:04:29.392Z"
+  },
+  "assets/audio/clip.mp3": {
+    "transcript": "clip",
+    "timestamp": "2026-03-23T13:04:50.239Z"
+  },
+  "assets/audio/clock.mp3": {
+    "transcript": "clock",
+    "timestamp": "2026-03-23T13:05:11.075Z"
+  },
+  "assets/audio/class.mp3": {
+    "transcript": "class",
+    "timestamp": "2026-03-23T13:05:31.991Z"
+  },
+  "assets/audio/flag.mp3": {
+    "transcript": "flag",
+    "timestamp": "2026-03-23T13:05:52.879Z"
+  },
+  "assets/audio/flat.mp3": {
+    "transcript": "flat",
+    "timestamp": "2026-03-23T13:06:13.769Z"
+  },
+  "assets/audio/flip.mp3": {
+    "transcript": "flip",
+    "timestamp": "2026-03-23T13:06:34.642Z"
+  },
+  "assets/audio/flop.mp3": {
+    "transcript": "flop",
+    "timestamp": "2026-03-23T13:06:55.540Z"
+  },
+  "assets/audio/flow.mp3": {
+    "transcript": "flow",
+    "timestamp": "2026-03-23T13:07:16.454Z"
+  },
+  "assets/audio/blend.mp3": {
+    "transcript": "blend",
+    "timestamp": "2026-03-23T13:07:37.297Z"
+  },
+  "assets/audio/club.mp3": {
+    "transcript": "club",
+    "timestamp": "2026-03-23T13:07:58.220Z"
+  },
+  "assets/audio/brick.mp3": {
+    "transcript": "brick",
+    "timestamp": "2026-03-23T13:08:19.115Z"
+  },
+  "assets/audio/brush.mp3": {
+    "transcript": "brush",
+    "timestamp": "2026-03-23T13:08:39.992Z"
+  },
+  "assets/audio/bring.mp3": {
+    "transcript": "bring",
+    "timestamp": "2026-03-23T13:09:00.890Z"
+  },
+  "assets/audio/broom.mp3": {
+    "transcript": "broom",
+    "timestamp": "2026-03-23T13:09:21.760Z"
+  },
+  "assets/audio/crab.mp3": {
+    "transcript": "crab",
+    "timestamp": "2026-03-23T13:09:42.654Z"
+  },
+  "assets/audio/crop.mp3": {
+    "transcript": "crop",
+    "timestamp": "2026-03-23T13:10:03.565Z"
+  },
+  "assets/audio/crib.mp3": {
+    "transcript": "crib",
+    "timestamp": "2026-03-23T13:10:24.450Z"
+  },
+  "assets/audio/cross.mp3": {
+    "transcript": "cross",
+    "timestamp": "2026-03-23T13:10:45.603Z"
+  },
+  "assets/audio/drip.mp3": {
+    "transcript": "drip",
+    "timestamp": "2026-03-23T13:11:06.541Z"
+  },
+  "assets/audio/drop.mp3": {
+    "transcript": "drop",
+    "timestamp": "2026-03-23T13:11:27.533Z"
+  },
+  "assets/audio/drum.mp3": {
+    "transcript": "drum",
+    "timestamp": "2026-03-23T13:11:48.399Z"
+  },
+  "assets/audio/dress.mp3": {
+    "transcript": "dress",
+    "timestamp": "2026-03-23T13:12:09.241Z"
+  },
+  "assets/audio/drill.mp3": {
+    "transcript": "drill",
+    "timestamp": "2026-03-23T13:12:30.099Z"
+  },
+  "assets/audio/crack.mp3": {
+    "transcript": "crack",
+    "timestamp": "2026-03-23T13:12:50.995Z"
+  },
+  "assets/audio/grab.mp3": {
+    "transcript": "grab",
+    "timestamp": "2026-03-23T13:13:11.880Z"
+  },
+  "assets/audio/green.mp3": {
+    "transcript": "green",
+    "timestamp": "2026-03-23T13:13:32.767Z"
+  },
+  "assets/audio/grow.mp3": {
+    "transcript": "grow",
+    "timestamp": "2026-03-23T13:13:53.660Z"
+  },
+  "assets/audio/grip.mp3": {
+    "transcript": "grip",
+    "timestamp": "2026-03-23T13:14:14.494Z"
+  },
+  "assets/audio/grin.mp3": {
+    "transcript": "grin",
+    "timestamp": "2026-03-23T13:14:35.450Z"
+  },
+  "assets/audio/press.mp3": {
+    "transcript": "press",
+    "timestamp": "2026-03-23T13:14:56.300Z"
+  },
+  "assets/audio/print.mp3": {
+    "transcript": "print",
+    "timestamp": "2026-03-23T13:15:17.165Z"
+  },
+  "assets/audio/prize.mp3": {
+    "transcript": "prize",
+    "timestamp": "2026-03-23T13:15:38.054Z"
+  },
+  "assets/audio/price.mp3": {
+    "transcript": "price",
+    "timestamp": "2026-03-23T13:15:58.968Z"
+  },
+  "assets/audio/trip.mp3": {
+    "transcript": "trip",
+    "timestamp": "2026-03-23T13:16:19.814Z"
+  },
+  "assets/audio/trick.mp3": {
+    "transcript": "trick",
+    "timestamp": "2026-03-23T13:16:40.766Z"
+  },
+  "assets/audio/truck.mp3": {
+    "transcript": "truck",
+    "timestamp": "2026-03-23T13:17:01.631Z"
+  },
+  "assets/audio/train.mp3": {
+    "transcript": "train",
+    "timestamp": "2026-03-23T13:17:22.564Z"
+  },
+  "assets/audio/grass.mp3": {
+    "transcript": "grass",
+    "timestamp": "2026-03-23T13:17:43.553Z"
+  },
+  "assets/audio/proud.mp3": {
+    "transcript": "proud",
+    "timestamp": "2026-03-23T13:18:04.419Z"
+  },
+  "assets/audio/track.mp3": {
+    "transcript": "track",
+    "timestamp": "2026-03-23T13:18:25.333Z"
+  },
+  "assets/audio/skip.mp3": {
+    "transcript": "skip",
+    "timestamp": "2026-03-23T13:18:46.224Z"
+  },
+  "assets/audio/skin.mp3": {
+    "transcript": "skin",
+    "timestamp": "2026-03-23T13:19:07.113Z"
+  },
+  "assets/audio/sky.mp3": {
+    "transcript": "sky",
+    "timestamp": "2026-03-23T13:19:28.004Z"
+  },
+  "assets/audio/snap.mp3": {
+    "transcript": "snap",
+    "timestamp": "2026-03-23T13:19:48.895Z"
+  },
+  "assets/audio/snag.mp3": {
+    "transcript": "snag",
+    "timestamp": "2026-03-23T13:20:09.762Z"
+  },
+  "assets/audio/snow.mp3": {
+    "transcript": "snow",
+    "timestamp": "2026-03-23T13:20:30.600Z"
+  },
+  "assets/audio/spin.mp3": {
+    "transcript": "spin",
+    "timestamp": "2026-03-23T13:20:51.461Z"
+  },
+  "assets/audio/spot.mp3": {
+    "transcript": "spot",
+    "timestamp": "2026-03-23T13:21:12.454Z"
+  },
+  "assets/audio/spoon.mp3": {
+    "transcript": "spoon",
+    "timestamp": "2026-03-23T13:21:33.345Z"
+  },
+  "assets/audio/step.mp3": {
+    "transcript": "step",
+    "timestamp": "2026-03-23T13:21:54.234Z"
+  },
+  "assets/audio/stop.mp3": {
+    "transcript": "stop",
+    "timestamp": "2026-03-23T13:22:15.050Z"
+  },
+  "assets/audio/star.mp3": {
+    "transcript": "star",
+    "timestamp": "2026-03-23T13:22:35.890Z"
+  },
+  "assets/audio/stick.mp3": {
+    "transcript": "stick",
+    "timestamp": "2026-03-23T13:22:56.785Z"
+  },
+  "assets/audio/stem.mp3": {
+    "transcript": "stem",
+    "timestamp": "2026-03-23T13:23:17.795Z"
+  },
+  "assets/audio/swim.mp3": {
+    "transcript": "swim",
+    "timestamp": "2026-03-23T13:23:38.644Z"
+  },
+  "assets/audio/ship.mp3": {
+    "transcript": "ship",
+    "timestamp": "2026-03-23T13:23:59.576Z"
+  },
+  "assets/audio/shop.mp3": {
+    "transcript": "shop",
+    "timestamp": "2026-03-23T13:24:20.464Z"
+  },
+  "assets/audio/shoe.mp3": {
+    "transcript": "shoe",
+    "timestamp": "2026-03-23T13:24:41.301Z"
+  },
+  "assets/audio/shut.mp3": {
+    "transcript": "shut",
+    "timestamp": "2026-03-23T13:25:02.250Z"
+  },
+  "assets/audio/she.mp3": {
+    "transcript": "she",
+    "timestamp": "2026-03-23T13:25:23.135Z"
+  },
+  "assets/audio/sheep.mp3": {
+    "transcript": "sheep",
+    "timestamp": "2026-03-23T13:25:43.958Z"
+  },
+  "assets/audio/shin.mp3": {
+    "transcript": "shin",
+    "timestamp": "2026-03-23T13:26:04.781Z"
+  },
+  "assets/audio/shell.mp3": {
+    "transcript": "shell",
+    "timestamp": "2026-03-23T13:26:25.780Z"
+  },
+  "assets/audio/chat.mp3": {
+    "transcript": "chat",
+    "timestamp": "2026-03-23T13:26:46.697Z"
+  },
+  "assets/audio/chin.mp3": {
+    "transcript": "chin",
+    "timestamp": "2026-03-23T13:27:07.602Z"
+  },
+  "assets/audio/chip.mp3": {
+    "transcript": "chip",
+    "timestamp": "2026-03-23T13:27:28.579Z"
+  },
+  "assets/audio/chop.mp3": {
+    "transcript": "chop",
+    "timestamp": "2026-03-23T13:27:49.471Z"
+  },
+  "assets/audio/check.mp3": {
+    "transcript": "check",
+    "timestamp": "2026-03-23T13:28:10.487Z"
+  },
+  "assets/audio/chain.mp3": {
+    "transcript": "chain",
+    "timestamp": "2026-03-23T13:28:31.344Z"
+  },
+  "assets/audio/chunk.mp3": {
+    "transcript": "chunk",
+    "timestamp": "2026-03-23T13:28:52.345Z"
+  },
+  "assets/audio/fish.mp3": {
+    "transcript": "fish",
+    "timestamp": "2026-03-23T13:29:13.192Z"
+  },
+  "assets/audio/wash.mp3": {
+    "transcript": "wash",
+    "timestamp": "2026-03-23T13:29:34.067Z"
+  },
+  "assets/audio/bench.mp3": {
+    "transcript": "bench",
+    "timestamp": "2026-03-23T13:29:54.929Z"
+  },
+  "assets/audio/catch.mp3": {
+    "transcript": "catch",
+    "timestamp": "2026-03-23T13:30:15.894Z"
+  },
+  "assets/audio/lunch.mp3": {
+    "transcript": "lunch",
+    "timestamp": "2026-03-23T13:30:36.794Z"
+  },
+  "assets/audio/this.mp3": {
+    "transcript": "this",
+    "timestamp": "2026-03-23T13:30:57.790Z"
+  },
+  "assets/audio/that.mp3": {
+    "transcript": "that",
+    "timestamp": "2026-03-23T13:31:18.701Z"
+  },
+  "assets/audio/them.mp3": {
+    "transcript": "them",
+    "timestamp": "2026-03-23T13:31:39.674Z"
+  },
+  "assets/audio/then.mp3": {
+    "transcript": "then",
+    "timestamp": "2026-03-23T13:32:00.559Z"
+  },
+  "assets/audio/thin.mp3": {
+    "transcript": "thin",
+    "timestamp": "2026-03-23T13:32:21.447Z"
+  },
+  "assets/audio/thick.mp3": {
+    "transcript": "thick",
+    "timestamp": "2026-03-23T13:32:42.340Z"
+  },
+  "assets/audio/think.mp3": {
+    "transcript": "think",
+    "timestamp": "2026-03-23T13:33:03.229Z"
+  },
+  "assets/audio/three.mp3": {
+    "transcript": "three",
+    "timestamp": "2026-03-23T13:33:24.224Z"
+  },
+  "assets/audio/whale.mp3": {
+    "transcript": "whale",
+    "timestamp": "2026-03-23T13:33:45.112Z"
+  },
+  "assets/audio/what.mp3": {
+    "transcript": "what",
+    "timestamp": "2026-03-23T13:34:06.105Z"
+  },
+  "assets/audio/when.mp3": {
+    "transcript": "when",
+    "timestamp": "2026-03-23T13:34:26.996Z"
+  },
+  "assets/audio/where.mp3": {
+    "transcript": "where",
+    "timestamp": "2026-03-23T13:34:47.886Z"
+  },
+  "assets/audio/white.mp3": {
+    "transcript": "white",
+    "timestamp": "2026-03-23T13:35:08.734Z"
+  },
+  "assets/audio/wheel.mp3": {
+    "transcript": "wheel",
+    "timestamp": "2026-03-23T13:35:29.676Z"
+  },
+  "assets/audio/whip.mp3": {
+    "transcript": "whip",
+    "timestamp": "2026-03-23T13:35:50.501Z"
+  },
+  "assets/audio/car.mp3": {
+    "transcript": "car",
+    "timestamp": "2026-03-23T13:36:11.342Z"
+  },
+  "assets/audio/bar.mp3": {
+    "transcript": "bar",
+    "timestamp": "2026-03-23T13:36:32.150Z"
+  },
+  "assets/audio/jar.mp3": {
+    "transcript": "yall",
+    "timestamp": "2026-03-23T13:36:53.123Z"
+  },
+  "assets/audio/arm.mp3": {
+    "transcript": "om",
+    "timestamp": "2026-03-23T13:37:34.875Z"
+  },
+  "assets/audio/park.mp3": {
+    "transcript": "poc",
+    "timestamp": "2026-03-23T13:37:55.756Z"
+  },
+  "assets/audio/dark.mp3": {
+    "transcript": "doc",
+    "timestamp": "2026-03-23T13:38:16.738Z"
+  },
+  "assets/audio/farm.mp3": {
+    "transcript": "farm",
+    "timestamp": "2026-03-23T13:38:37.677Z"
+  },
+  "assets/audio/for.mp3": {
+    "transcript": "four",
+    "timestamp": "2026-03-23T13:38:58.565Z"
+  },
+  "assets/audio/corn.mp3": {
+    "transcript": "corn",
+    "timestamp": "2026-03-23T13:39:19.455Z"
+  },
+  "assets/audio/fork.mp3": {
+    "transcript": "fork",
+    "timestamp": "2026-03-23T13:39:40.346Z"
+  },
+  "assets/audio/horn.mp3": {
+    "transcript": "horn",
+    "timestamp": "2026-03-23T13:40:01.233Z"
+  },
+  "assets/audio/born.mp3": {
+    "transcript": "born",
+    "timestamp": "2026-03-23T13:40:22.241Z"
+  },
+  "assets/audio/storm.mp3": {
+    "transcript": "storm",
+    "timestamp": "2026-03-23T13:40:43.136Z"
+  },
+  "assets/audio/sort.mp3": {
+    "transcript": "sort",
+    "timestamp": "2026-03-23T13:41:04.111Z"
+  },
+  "assets/audio/horse.mp3": {
+    "transcript": "horse",
+    "timestamp": "2026-03-23T13:41:24.923Z"
+  },
+  "assets/audio/door.mp3": {
+    "transcript": "door",
+    "timestamp": "2026-03-23T13:41:45.792Z"
+  },
+  "assets/audio/card.mp3": {
+    "transcript": "card",
+    "timestamp": "2026-03-23T13:42:06.658Z"
+  },
+  "assets/audio/her.mp3": {
+    "transcript": "huh",
+    "timestamp": "2026-03-23T13:42:27.500Z"
+  },
+  "assets/audio/fern.mp3": {
+    "transcript": "fan",
+    "timestamp": "2026-03-23T13:42:48.401Z"
+  },
+  "assets/audio/verb.mp3": {
+    "transcript": "verb",
+    "timestamp": "2026-03-23T13:43:09.349Z"
+  },
+  "assets/audio/herd.mp3": {
+    "transcript": "heard",
+    "timestamp": "2026-03-23T13:43:30.178Z"
+  },
+  "assets/audio/bird.mp3": {
+    "transcript": "bird",
+    "timestamp": "2026-03-23T13:43:51.347Z"
+  },
+  "assets/audio/girl.mp3": {
+    "transcript": "go",
+    "timestamp": "2026-03-23T13:44:12.189Z"
+  },
+  "assets/audio/sir.mp3": {
+    "transcript": "sir",
+    "timestamp": "2026-03-23T13:44:33.049Z"
+  },
+  "assets/audio/first.mp3": {
+    "transcript": "first",
+    "timestamp": "2026-03-23T13:44:53.887Z"
+  },
+  "assets/audio/fur.mp3": {
+    "transcript": "fur",
+    "timestamp": "2026-03-23T13:45:14.738Z"
+  },
+  "assets/audio/burn.mp3": {
+    "transcript": "burn",
+    "timestamp": "2026-03-23T13:45:35.589Z"
+  },
+  "assets/audio/turn.mp3": {
+    "transcript": "turn",
+    "timestamp": "2026-03-23T13:45:56.434Z"
+  },
+  "assets/audio/hurt.mp3": {
+    "transcript": "hurt",
+    "timestamp": "2026-03-23T13:46:17.285Z"
+  },
+  "assets/audio/curl.mp3": {
+    "transcript": "curl",
+    "timestamp": "2026-03-23T13:46:38.143Z"
+  },
+  "assets/audio/nurse.mp3": {
+    "transcript": "nurse",
+    "timestamp": "2026-03-23T13:46:58.974Z"
+  },
+  "assets/audio/stir.mp3": {
+    "transcript": "stir",
+    "timestamp": "2026-03-23T13:47:19.787Z"
+  },
+  "assets/audio/shirt.mp3": {
+    "transcript": "shirt",
+    "timestamp": "2026-03-23T13:47:40.638Z"
+  },
+  "assets/audio/skirt.mp3": {
+    "transcript": "skirt",
+    "timestamp": "2026-03-23T13:48:01.465Z"
+  },
+  "assets/audio/purse.mp3": {
+    "transcript": "puss",
+    "timestamp": "2026-03-23T13:48:22.281Z"
+  },
+  "assets/audio/turtle.mp3": {
+    "transcript": "turtle",
+    "timestamp": "2026-03-23T13:48:43.107Z"
+  },
+  "assets/audio/boy.mp3": {
+    "transcript": "boy",
+    "timestamp": "2026-03-23T13:49:03.970Z"
+  },
+  "assets/audio/joy.mp3": {
+    "transcript": "joy",
+    "timestamp": "2026-03-23T13:49:24.787Z"
+  },
+  "assets/audio/toy.mp3": {
+    "transcript": "toy",
+    "timestamp": "2026-03-23T13:49:45.616Z"
+  },
+  "assets/audio/coin.mp3": {
+    "transcript": "coin",
+    "timestamp": "2026-03-23T13:50:06.447Z"
+  },
+  "assets/audio/oil.mp3": {
+    "transcript": "oil",
+    "timestamp": "2026-03-23T13:50:27.282Z"
+  },
+  "assets/audio/boil.mp3": {
+    "transcript": "boil",
+    "timestamp": "2026-03-23T13:50:48.151Z"
+  },
+  "assets/audio/soil.mp3": {
+    "transcript": "soil",
+    "timestamp": "2026-03-23T13:51:09.026Z"
+  },
+  "assets/audio/cow.mp3": {
+    "transcript": "cow",
+    "timestamp": "2026-03-23T13:51:29.898Z"
+  },
+  "assets/audio/now.mp3": {
+    "transcript": "now",
+    "timestamp": "2026-03-23T13:51:50.742Z"
+  },
+  "assets/audio/how.mp3": {
+    "transcript": "how",
+    "timestamp": "2026-03-23T13:52:11.594Z"
+  },
+  "assets/audio/town.mp3": {
+    "transcript": "town",
+    "timestamp": "2026-03-23T13:52:32.441Z"
+  },
+  "assets/audio/brown.mp3": {
+    "transcript": "brown",
+    "timestamp": "2026-03-23T13:52:53.242Z"
+  },
+  "assets/audio/out.mp3": {
+    "transcript": "out",
+    "timestamp": "2026-03-23T13:53:14.157Z"
+  },
+  "assets/audio/loud.mp3": {
+    "transcript": "loud",
+    "timestamp": "2026-03-23T13:53:34.991Z"
+  },
+  "assets/audio/cloud.mp3": {
+    "transcript": "cloud",
+    "timestamp": "2026-03-23T13:53:55.813Z"
+  },
+  "assets/audio/plate.mp3": {
+    "transcript": "plate",
+    "timestamp": "2026-03-23T13:54:16.674Z"
+  },
+  "assets/audio/brave.mp3": {
+    "transcript": "brave",
+    "timestamp": "2026-03-23T13:54:37.492Z"
+  },
+  "assets/audio/slide.mp3": {
+    "transcript": "slide",
+    "timestamp": "2026-03-23T13:54:58.314Z"
+  },
+  "assets/audio/spoke.mp3": {
+    "transcript": "spoke",
+    "timestamp": "2026-03-23T13:55:19.150Z"
+  },
+  "assets/audio/chase.mp3": {
+    "transcript": "chase",
+    "timestamp": "2026-03-23T13:55:39.984Z"
+  },
+  "assets/audio/smile.mp3": {
+    "transcript": "smile",
+    "timestamp": "2026-03-23T13:56:00.823Z"
+  },
+  "assets/audio/froze.mp3": {
+    "transcript": "froze",
+    "timestamp": "2026-03-23T13:56:21.660Z"
+  },
+  "assets/audio/blade.mp3": {
+    "transcript": "blade",
+    "timestamp": "2026-03-23T13:56:42.512Z"
+  },
+  "assets/audio/crane.mp3": {
+    "transcript": "crane",
+    "timestamp": "2026-03-23T13:57:03.371Z"
+  },
+  "assets/audio/pride.mp3": {
+    "transcript": "pride",
+    "timestamp": "2026-03-23T13:57:24.226Z"
+  },
+  "assets/audio/quote.mp3": {
+    "transcript": "quote",
+    "timestamp": "2026-03-23T13:57:45.105Z"
+  },
+  "assets/audio/stripe.mp3": {
+    "transcript": "stripe",
+    "timestamp": "2026-03-23T13:58:05.945Z"
+  },
+  "assets/audio/throne.mp3": {
+    "transcript": "throne",
+    "timestamp": "2026-03-23T13:58:26.772Z"
+  },
+  "assets/audio/globe.mp3": {
+    "transcript": "globe",
+    "timestamp": "2026-03-23T13:58:47.609Z"
+  },
+  "assets/audio/grape.mp3": {
+    "transcript": "grape",
+    "timestamp": "2026-03-23T13:59:08.440Z"
+  },
+  "assets/audio/l3_bless.mp3": {
+    "transcript": "bless",
+    "timestamp": "2026-03-23T13:59:29.361Z"
+  },
+  "assets/audio/l3_glad.mp3": {
+    "transcript": "glad",
+    "timestamp": "2026-03-23T13:59:50.218Z"
+  },
+  "assets/audio/l3_glow.mp3": {
+    "transcript": "glow",
+    "timestamp": "2026-03-23T14:00:11.072Z"
+  },
+  "assets/audio/l3_plan.mp3": {
+    "transcript": "plan",
+    "timestamp": "2026-03-23T14:00:31.898Z"
+  },
+  "assets/audio/l3_play.mp3": {
+    "transcript": "play",
+    "timestamp": "2026-03-23T14:00:52.710Z"
+  },
+  "assets/audio/l3_slip.mp3": {
+    "transcript": "slip",
+    "timestamp": "2026-03-23T14:01:13.552Z"
+  },
+  "assets/audio/l3_slow.mp3": {
+    "transcript": "slow",
+    "timestamp": "2026-03-23T14:01:34.366Z"
+  },
+  "assets/audio/l3_sled.mp3": {
+    "transcript": "sled",
+    "timestamp": "2026-03-23T14:01:55.185Z"
+  },
+  "assets/audio/l3_frog.mp3": {
+    "transcript": "frog",
+    "timestamp": "2026-03-23T14:02:16.062Z"
+  },
+  "assets/audio/l3_pray.mp3": {
+    "transcript": "pray",
+    "timestamp": "2026-03-23T14:02:36.907Z"
+  },
+  "assets/audio/l3_smell.mp3": {
+    "transcript": "smell",
+    "timestamp": "2026-03-23T14:02:57.747Z"
+  },
+  "assets/audio/l3_smoke.mp3": {
+    "transcript": "smoke",
+    "timestamp": "2026-03-23T14:03:18.595Z"
+  },
+  "assets/audio/l3_snail.mp3": {
+    "transcript": "snail",
+    "timestamp": "2026-03-23T14:03:39.436Z"
+  },
+  "assets/audio/l3_swing.mp3": {
+    "transcript": "swing",
+    "timestamp": "2026-03-23T14:04:00.375Z"
+  },
+  "assets/audio/l3_sweet.mp3": {
+    "transcript": "sweet",
+    "timestamp": "2026-03-23T14:04:21.204Z"
+  },
+  "assets/audio/l3_chick.mp3": {
+    "transcript": "chick",
+    "timestamp": "2026-03-23T14:04:42.037Z"
+  },
+  "assets/audio/l3_chest.mp3": {
+    "transcript": "chest",
+    "timestamp": "2026-03-23T14:05:02.896Z"
+  },
+  "assets/audio/l3_chalk.mp3": {
+    "transcript": "chalk",
+    "timestamp": "2026-03-23T14:05:23.747Z"
+  },
+  "assets/audio/l3_cheek.mp3": {
+    "transcript": "cheek",
+    "timestamp": "2026-03-23T14:05:44.600Z"
+  },
+  "assets/audio/l3_shed.mp3": {
+    "transcript": "shed",
+    "timestamp": "2026-03-23T14:06:05.408Z"
+  },
+  "assets/audio/l3_shine.mp3": {
+    "transcript": "shine",
+    "timestamp": "2026-03-23T14:06:26.278Z"
+  },
+  "assets/audio/l3_shade.mp3": {
+    "transcript": "shade",
+    "timestamp": "2026-03-23T14:06:47.109Z"
+  },
+  "assets/audio/l3_shake.mp3": {
+    "transcript": "shake",
+    "timestamp": "2026-03-23T14:07:07.924Z"
+  },
+  "assets/audio/l3_wheat.mp3": {
+    "transcript": "wheat",
+    "timestamp": "2026-03-23T14:07:28.773Z"
+  },
+  "assets/audio/l3_whistle.mp3": {
+    "transcript": "whistle",
+    "timestamp": "2026-03-23T14:07:49.654Z"
+  },
+  "assets/audio/l3_ring.mp3": {
+    "transcript": "ring",
+    "timestamp": "2026-03-23T14:08:10.595Z"
+  },
+  "assets/audio/l3_sing.mp3": {
+    "transcript": "sing",
+    "timestamp": "2026-03-23T14:08:31.423Z"
+  },
+  "assets/audio/l3_king.mp3": {
+    "transcript": "king",
+    "timestamp": "2026-03-23T14:08:52.236Z"
+  },
+  "assets/audio/l3_song.mp3": {
+    "transcript": "song",
+    "timestamp": "2026-03-23T14:09:13.061Z"
+  },
+  "assets/audio/l3_long.mp3": {
+    "transcript": "long",
+    "timestamp": "2026-03-23T14:09:33.891Z"
+  },
+  "assets/audio/l3_strong.mp3": {
+    "transcript": "strong",
+    "timestamp": "2026-03-23T14:09:54.724Z"
+  },
+  "assets/audio/l3_hang.mp3": {
+    "transcript": "hang",
+    "timestamp": "2026-03-23T14:10:15.524Z"
+  },
+  "assets/audio/l3_bank.mp3": {
+    "transcript": "bank",
+    "timestamp": "2026-03-23T14:10:36.389Z"
+  },
+  "assets/audio/l3_sink.mp3": {
+    "transcript": "sync",
+    "timestamp": "2026-03-23T14:10:57.204Z"
+  },
+  "assets/audio/l3_drink.mp3": {
+    "transcript": "drink",
+    "timestamp": "2026-03-23T14:11:18.039Z"
+  },
+  "assets/audio/l3_trunk.mp3": {
+    "transcript": "trunk",
+    "timestamp": "2026-03-23T14:11:38.887Z"
+  },
+  "assets/audio/l3_skunk.mp3": {
+    "transcript": "skunk",
+    "timestamp": "2026-03-23T14:11:59.722Z"
+  },
+  "assets/audio/l3_wing.mp3": {
+    "transcript": "wing",
+    "timestamp": "2026-03-23T14:12:20.541Z"
+  },
+  "assets/audio/l4_beach.mp3": {
+    "transcript": "beach",
+    "timestamp": "2026-03-23T14:12:41.368Z"
+  },
+  "assets/audio/l4_bean.mp3": {
+    "transcript": "bean",
+    "timestamp": "2026-03-23T14:13:02.175Z"
+  },
+  "assets/audio/l4_clean.mp3": {
+    "transcript": "clean",
+    "timestamp": "2026-03-23T14:13:23.013Z"
+  },
+  "assets/audio/l4_cream.mp3": {
+    "transcript": "cream",
+    "timestamp": "2026-03-23T14:13:43.951Z"
+  },
+  "assets/audio/l4_meal.mp3": {
+    "transcript": "meal",
+    "timestamp": "2026-03-23T14:14:04.788Z"
+  },
+  "assets/audio/l4_beef.mp3": {
+    "transcript": "beef",
+    "timestamp": "2026-03-23T14:14:25.629Z"
+  },
+  "assets/audio/l4_creek.mp3": {
+    "transcript": "creek",
+    "timestamp": "2026-03-23T14:14:46.477Z"
+  },
+  "assets/audio/l4_deer.mp3": {
+    "transcript": "dear",
+    "timestamp": "2026-03-23T14:15:07.288Z"
+  },
+  "assets/audio/l4_fleet.mp3": {
+    "transcript": "fleet",
+    "timestamp": "2026-03-23T14:15:28.120Z"
+  },
+  "assets/audio/l4_greet.mp3": {
+    "transcript": "greet",
+    "timestamp": "2026-03-23T14:15:48.995Z"
+  },
+  "assets/audio/l4_boat.mp3": {
+    "transcript": "boat",
+    "timestamp": "2026-03-23T14:16:09.931Z"
+  },
+  "assets/audio/l4_coat.mp3": {
+    "transcript": "coat",
+    "timestamp": "2026-03-23T14:16:30.769Z"
+  },
+  "assets/audio/l4_goat.mp3": {
+    "transcript": "goat",
+    "timestamp": "2026-03-23T14:16:51.628Z"
+  },
+  "assets/audio/l4_road.mp3": {
+    "transcript": "road",
+    "timestamp": "2026-03-23T14:17:12.481Z"
+  },
+  "assets/audio/l4_load.mp3": {
+    "transcript": "load",
+    "timestamp": "2026-03-23T14:17:33.304Z"
+  },
+  "assets/audio/l4_soap.mp3": {
+    "transcript": "soap",
+    "timestamp": "2026-03-23T14:17:54.169Z"
+  },
+  "assets/audio/l4_toast.mp3": {
+    "transcript": "toast",
+    "timestamp": "2026-03-23T14:18:14.986Z"
+  },
+  "assets/audio/l4_blow.mp3": {
+    "transcript": "blow",
+    "timestamp": "2026-03-23T14:18:35.802Z"
+  },
+  "assets/audio/l4_crow.mp3": {
+    "transcript": "crow",
+    "timestamp": "2026-03-23T14:18:56.606Z"
+  },
+  "assets/audio/l4_show.mp3": {
+    "transcript": "show",
+    "timestamp": "2026-03-23T14:19:17.457Z"
+  },
+  "assets/audio/l4_throw.mp3": {
+    "transcript": "throw",
+    "timestamp": "2026-03-23T14:19:38.283Z"
+  },
+  "assets/audio/l4_rain.mp3": {
+    "transcript": "rain",
+    "timestamp": "2026-03-23T14:19:59.101Z"
+  },
+  "assets/audio/l4_brain.mp3": {
+    "transcript": "brain",
+    "timestamp": "2026-03-23T14:20:19.906Z"
+  },
+  "assets/audio/l4_tail.mp3": {
+    "transcript": "tale",
+    "timestamp": "2026-03-23T14:20:40.706Z"
+  },
+  "assets/audio/l4_paint.mp3": {
+    "transcript": "paint",
+    "timestamp": "2026-03-23T14:21:01.518Z"
+  },
+  "assets/audio/l4_wait.mp3": {
+    "transcript": "wait",
+    "timestamp": "2026-03-23T14:21:22.475Z"
+  },
+  "assets/audio/l4_day.mp3": {
+    "transcript": "day",
+    "timestamp": "2026-03-23T14:21:43.354Z"
+  },
+  "assets/audio/l4_spray.mp3": {
+    "transcript": "spray",
+    "timestamp": "2026-03-23T14:22:04.184Z"
+  },
+  "assets/audio/l4_stay.mp3": {
+    "transcript": "stay",
+    "timestamp": "2026-03-23T14:22:24.996Z"
+  },
+  "assets/audio/l4_clay.mp3": {
+    "transcript": "clay",
+    "timestamp": "2026-03-23T14:22:45.852Z"
+  },
+  "assets/audio/l4_mail.mp3": {
+    "transcript": "male",
+    "timestamp": "2026-03-23T14:23:06.690Z"
+  },
+  "assets/audio/l4_join.mp3": {
+    "transcript": "join",
+    "timestamp": "2026-03-23T14:23:27.537Z"
+  },
+  "assets/audio/l4_point.mp3": {
+    "transcript": "point",
+    "timestamp": "2026-03-23T14:23:48.377Z"
+  },
+  "assets/audio/l4_house.mp3": {
+    "transcript": "house",
+    "timestamp": "2026-03-23T14:24:09.210Z"
+  },
+  "assets/audio/l4_mouse.mp3": {
+    "transcript": "mouse",
+    "timestamp": "2026-03-23T14:24:30.033Z"
+  },
+  "assets/audio/l4_crown.mp3": {
+    "transcript": "crown",
+    "timestamp": "2026-03-23T14:24:50.844Z"
+  },
+  "assets/audio/l4_port.mp3": {
+    "transcript": "port",
+    "timestamp": "2026-03-23T14:25:11.669Z"
+  },
+  "assets/audio/l4_sport.mp3": {
+    "transcript": "sport",
+    "timestamp": "2026-03-23T14:25:32.481Z"
+  },
+  "assets/audio/l4_clerk.mp3": {
+    "transcript": "clerk",
+    "timestamp": "2026-03-23T14:25:53.330Z"
+  },
+  "assets/audio/l4_dirt.mp3": {
+    "transcript": "dirt",
+    "timestamp": "2026-03-23T14:26:14.154Z"
+  },
+  "assets/audio/l4_book.mp3": {
+    "transcript": "book",
+    "timestamp": "2026-03-23T14:26:34.968Z"
+  },
+  "assets/audio/l4_cook.mp3": {
+    "transcript": "cook",
+    "timestamp": "2026-03-23T14:26:55.801Z"
+  },
+  "assets/audio/l4_hook.mp3": {
+    "transcript": "hook",
+    "timestamp": "2026-03-23T14:27:16.640Z"
+  },
+  "assets/audio/l4_look.mp3": {
+    "transcript": "look",
+    "timestamp": "2026-03-23T14:27:37.464Z"
+  },
+  "assets/audio/l4_wood.mp3": {
+    "transcript": "would",
+    "timestamp": "2026-03-23T14:27:58.284Z"
+  },
+  "assets/audio/l4_good.mp3": {
+    "transcript": "good",
+    "timestamp": "2026-03-23T14:28:19.115Z"
+  },
+  "assets/audio/l4_foot.mp3": {
+    "transcript": "foot",
+    "timestamp": "2026-03-23T14:28:39.965Z"
+  },
+  "assets/audio/l4_moon.mp3": {
+    "transcript": "moon",
+    "timestamp": "2026-03-23T14:29:00.784Z"
+  },
+  "assets/audio/l4_room.mp3": {
+    "transcript": "room",
+    "timestamp": "2026-03-23T14:29:21.601Z"
+  },
+  "assets/audio/l4_pool.mp3": {
+    "transcript": "pool",
+    "timestamp": "2026-03-23T14:29:42.451Z"
+  },
+  "assets/audio/l4_cool.mp3": {
+    "transcript": "cool",
+    "timestamp": "2026-03-23T14:30:03.259Z"
+  }
+}

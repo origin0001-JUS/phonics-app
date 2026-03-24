@@ -12,28 +12,25 @@
 
 ## 최근 핸드오프 (Latest Handoff)
 
-- **From**: Claude Code (워크플로우 개선 + 학생 가이드 PDF 생성)
-- **When**: 2026-03-24 09:00 (KST)
-- **Branch**: `claude/multi-environment-setup-Nlrfn`
+- **From**: Antigravity (입모양 가이드 환원 + 단어 사각지대 해소 전략 수립)
+- **When**: 2026-03-24 10:15 (KST)
+- **Branch**: `main` (current active workflow)
 
 ### 이번 세션에서 완료한 것
-- [x] 학생용 이용 가이드 PDF 생성 (docs/student-guide/)
-- [x] Playwright로 앱 스크린샷 18장 자동 캡처
-- [x] 하이브리드 워크플로우 검토 및 개선안 수립
-- [x] 빌드 로그 체계 구축 (docs/build-logs/)
-- [x] HANDOFF.md 구조 개선 (명확한 핸드오프 포맷)
-- [x] CLAUDE_PROMPT 템플릿 생성 (docs/CLAUDE_PROMPT_TEMPLATE.md)
-- [x] 협업 룰 강화 (CLAUDE.md 업데이트)
+- [x] **MouthVisualizer 이미지 방식 환원**: 실시간 애니메이션에서 기존 정적 입모양 이미지(.jpeg) 방식으로 롤백 (직관성 향상)
+- [x] **학습 사각지대 해소**: `Word Gallery` 단계 도입 및 핵심 단계 학습 단어 수 확대 (4개 -> 8개)
+- [x] **복습 전략 수립**: SM-2 기반 1-3-7-15-30일 주기 복습 로직 검토 및 보고서 작성 (`VOCAB_IMPROVEMENT_STRATEGY.md`)
+- [x] **보너스 단어 로직 강화**: `WordFamilyBuilder`에서 'fog', 'jog' 등 유효 단어 인정 리스트 대폭 확장
 
 ### 블로커 / 주의사항
+- Whisper 기반 505개 단어 오디오 전수 조사 진행 중 (완료 시 오디오 패치 필요)
 - Supabase SQL (`docs/supabase/setup_v2_licensing.sql`) 아직 미실행 — 대시보드에서 수동 실행 필요
-- 안드로이드 APK 빌드 미완료 — `npx cap sync` → Android Studio 필요
 
 ### 다음 에이전트의 할 일
 1. `git pull` 실행
-2. 빌드 확인: `npm run build` (로그: `docs/build-logs/` 확인)
-3. Supabase SQL 실행 및 실제 교사 가입/학생 기기 락 테스트
-4. 안드로이드 APK 빌드 (`npx cap sync`)
+2. **빌드 및 렌더링 확인**: `npm run build` 후 `MouthVisualizer`에서 정적 이미지가 정상 노출되는지 확인
+3. **오디오 패치**: Whisper 조사 결과에 따라 품질 저하 단어(Wav) 교체 작업 실행
+4. Supabase SQL 실행 및 실제 교사 가입/학생 기기 락 테스트
 5. 완료 시 이 파일의 "최근 핸드오프" 섹션 업데이트 후 커밋/푸시
 
 ---

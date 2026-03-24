@@ -174,13 +174,14 @@ export default function MouthVisualizer({
                             onError={() => setVideoError(true)}
                         />
                     ) : (
-                        /* ★ 사람 캐릭터 애니메이션 (모든 입모양 이미지 대체) */
-                        <HumanMouthCharacter
-                            viseme={viseme}
-                            isSpeaking={isSpeaking}
-                            compact={compact}
-                            isVoiced={isVoicedPhoneme(currentPhoneme)}
-                            showAirflow={isAirflowPhoneme(currentPhoneme)}
+                        <img 
+                            src={`/assets/images/mouth/${viseme}.jpeg`}
+                            alt={viseme}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                                // Fallback to rest if specific viseme image is missing
+                                e.currentTarget.src = '/assets/images/mouth/rest.jpeg';
+                            }}
                         />
                     )}
                 </motion.div>
