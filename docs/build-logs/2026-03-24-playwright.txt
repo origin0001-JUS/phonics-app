@@ -1,0 +1,39 @@
+
+> phonics-app@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 10.0s
+  Running TypeScript ...
+  Collecting page data using 17 workers ...
+  Generating static pages using 17 workers (0/49) ...
+  Generating static pages using 17 workers (12/49) 
+  Generating static pages using 17 workers (24/49) 
+  Generating static pages using 17 workers (36/49) 
+✓ Generating static pages using 17 workers (49/49) in 1852.9ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /admin
+├ ● /lesson/[unitId]
+│ ├ /lesson/unit_01
+│ ├ /lesson/unit_02
+│ ├ /lesson/unit_03
+│ └ [+34 more paths]
+├ ○ /onboarding
+├ ○ /report
+├ ○ /review
+├ ○ /rewards
+├ ○ /settings
+├ ○ /teacher
+└ ○ /units
+
+
+○  (Static)  prerendered as static content
+●  (SSG)     prerendered as static HTML (uses generateStaticParams)
+
