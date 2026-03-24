@@ -10,7 +10,11 @@
     "generate-tts": "tsx scripts/generate-tts.ts",
     "generate-images": "tsx scripts/generate-images.ts",
     "generate-lipsync-videos": "tsx scripts/generate-lipsync-videos.ts",
-    "test-fabric-sample": "tsx scripts/test-veed-fabric-sample.ts"
+    "test-fabric-sample": "tsx scripts/test-veed-fabric-sample.ts",
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --ui",
+    "test:headed": "npx playwright test --headed",
+    "test:report": "npx playwright show-report"
   },
   "dependencies": {
     "@capacitor/android": "^8.1.0",
