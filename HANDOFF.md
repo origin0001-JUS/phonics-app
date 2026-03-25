@@ -12,28 +12,31 @@
 
 ## 최근 핸드오프 (Latest Handoff)
 
-- **From**: Claude Code (Playwright E2E 브라우저 테스트 전체 구축)
-- **When**: 2026-03-24 (KST)
+- **From**: Claude Code (교사용 가이드 PDF 생성)
+- **When**: 2026-03-25 (KST)
 - **Branch**: `claude/multi-environment-setup-Nlrfn`
 
 ### 이번 세션에서 완료한 것
-- [x] **Playwright E2E 테스트 인프라 구축**: playwright.config.ts, IndexedDB 시딩 유틸, Audio/STT mock 헬퍼
-- [x] **10개 페이지 × 43개 테스트 케이스 작성**: home, onboarding, units, lesson-flow(6단계), review, rewards, settings, report, admin, teacher
-- [x] **전체 테스트 통과 확인**: 43/43 passed (4.8분)
-- [x] **PDCA 풀 사이클 완료**: Plan → Design → Do → Check(95%) → Act(Assertion 강화) → Report
-- [x] **미커밋 변경 정리**: MouthVisualizer 롤백 + HANDOFF 업데이트 + 오디오 QA 캐시 커밋
+- [x] **교사용 가이드 PDF 생성**: Playwright 스크린샷 19장 캡처 + A4 13페이지 PDF
+  - 표지, 목차, 앱 소개, 온보딩, 홈/유닛, 레슨 플로우(6단계), 복습/보상, 리포트/설정, 교사 대시보드, 커리큘럼, FAQ, 수업 활용 팁
+  - 관리자(admin) 관련 내용 제외 (학교 배포용)
+  - 파일: `docs/teacher-guide/Phonics300_교사용_가이드.pdf` (5.8MB)
+- [x] **스크린샷 캡처 스크립트 구축**: `scripts/capture-teacher-guide.ts`
+  - IndexedDB 시딩 + Audio mock + 전 페이지 자동 캡처
+- [x] **PDF 생성 스크립트**: `scripts/generate-teacher-pdf.ts`
+  - HTML → Playwright PDF 변환 파이프라인
+- [x] **빌드 검증 통과**: `npm run build` 성공
 
 ### 블로커 / 주의사항
 - Whisper 기반 505개 단어 오디오 전수 조사 진행 중 (완료 시 오디오 패치 필요)
-- Supabase SQL (`docs/supabase/setup_v2_licensing.sql`) 아직 미실행 — 대시보드에서 수동 실행 필요
-- 테스트 실행에 dev 서버 필요 (`npm run dev` 자동 시작 또는 수동)
+- Supabase SQL (`docs/supabase/setup_v2_licensing.sql`) 아직 미실행
+- 사용자가 실기기 테스트 중 — 다수의 소규모 UI 버그 수집 예정
 
 ### 다음 에이전트의 할 일
 1. `git pull` 실행
-2. `npm test` 실행하여 43개 테스트 전부 green 확인
-3. **오디오 패치**: Whisper 조사 결과에 따라 품질 저하 단어(Wav) 교체 작업 실행
-4. Supabase SQL 실행 및 실제 교사 가입/학생 기기 락 테스트
-5. 완료 시 이 파일의 "최근 핸드오프" 섹션 업데이트 후 커밋/푸시
+2. 사용자로부터 버그 리포트(스크린샷) 수신 후 수정 작업 진행
+3. 오디오 패치: Whisper 조사 결과 반영
+4. 완료 시 이 파일 업데이트 후 커밋/푸시
 
 ---
 
@@ -48,6 +51,7 @@
 | 앱 활성화 | ✅ 구현 완료 | 학급 코드 + 닉네임 입력, 기기 락, 오프라인 토큰 |
 | Supabase DB | ✅ 스키마 완료 | RLS 정책 패치 적용, SQL 미실행 |
 | 학생 가이드 PDF | ✅ 생성 완료 | docs/student-guide/Phonics300_학생용_가이드.pdf |
+| 교사 가이드 PDF | ✅ 생성 완료 | docs/teacher-guide/Phonics300_교사용_가이드.pdf (13p, 관리자 제외) |
 
 ### 커리큘럼: 37개 유닛
 
@@ -64,8 +68,8 @@
 
 | 에이전트 | 상태 | 현재 작업 | 블로커 |
 |----------|------|----------|--------|
-| **Antigravity** | [대기] | — | — |
-| **Claude Code** | [작업 완료] | 워크플로우 개선 + 가이드 생성 완료 | — |
+| **Antigravity** | [테스트 중] | 실기기 QA 및 버그 수집 | — |
+| **Claude Code** | [작업 완료] | 교사용 가이드 PDF 생성 완료 | — |
 | **Claude Web** | [대기] | — | — |
 
 ---
