@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-03-24T13:34:34.648Z",
+  "lastUpdated": "2026-03-25T13:59:42.739Z",
   "activeFeatures": [
     "phonics-app",
     "settings",
@@ -231,9 +231,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-03-06T15:53:11.780Z",
-        "lastUpdated": "2026-03-24T13:34:34.648Z"
+        "lastUpdated": "2026-03-25T13:59:42.739Z"
       },
-      "lastFile": "C:/Users/origi/Antigravity-workspaces/Main_English/phonics-app/scripts/notebooklm-slides-ko.py"
+      "lastFile": "C:\\Users\\origi\\Antigravity-workspaces\\Main_English\\phonics-app\\scripts\\capture-onboarding3.ts"
     },
     "v2-5": {
       "phase": "completed",
@@ -432,7 +432,7 @@
   "session": {
     "startedAt": "2026-03-04T14:22:09.430Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-03-24T13:34:34.648Z"
+    "lastActivity": "2026-03-25T13:59:42.739Z"
   },
   "history": [
     {
@@ -2303,6 +2303,48 @@
     },
     {
       "timestamp": "2026-03-24T13:34:34.648Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-24T13:50:40.697Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-25T05:52:08.949Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-25T05:53:06.057Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-25T05:53:34.629Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-25T06:00:31.505Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-25T08:10:04.355Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-25T13:59:42.739Z",
       "feature": "scripts",
       "phase": "do",
       "action": "updated"

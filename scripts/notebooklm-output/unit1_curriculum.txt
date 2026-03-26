@@ -1,0 +1,103 @@
+
+# Phonics Unit 1: Short 'a' Sound (æ)
+## 교사용 가이드 / Teacher's Guide
+
+### 학습 목표 (Learning Objectives)
+- 학생들이 short 'a' (æ) 소리를 정확하게 인식하고 발음할 수 있다.
+- CVC(자음-모음-자음) 패턴의 단어를 읽고 뜻을 이해할 수 있다.
+- Word family (-at, -an, -ap, -ag, -ad, -am) 패턴을 구별할 수 있다.
+
+### 대상 학년: 초등 1~2학년 (한국 학생)
+### 수업 시간: 10분
+
+---
+
+## 단어 목록 (Word List)
+
+### Word Family: -at
+| Word | Phonemes | 뜻 (Korean) |
+|------|----------|-------------|
+| cat  | /k/ /æ/ /t/ | 고양이 |
+| bat  | /b/ /æ/ /t/ | 박쥐 |
+| hat  | /h/ /æ/ /t/ | 모자 |
+| mat  | /m/ /æ/ /t/ | 매트 |
+| rat  | /r/ /æ/ /t/ | 쥐 |
+| sat  | /s/ /æ/ /t/ | 앉았다 |
+
+### Word Family: -an
+| Word | Phonemes | 뜻 (Korean) |
+|------|----------|-------------|
+| fan  | /f/ /æ/ /n/ | 부채 |
+| van  | /v/ /æ/ /n/ | 밴 |
+| can  | /k/ /æ/ /n/ | 캔 |
+| man  | /m/ /æ/ /n/ | 남자 |
+
+### Word Family: -ap
+| Word | Phonemes | 뜻 (Korean) |
+|------|----------|-------------|
+| map  | /m/ /æ/ /p/ | 지도 |
+| cap  | /k/ /æ/ /p/ | 모자 |
+| tap  | /t/ /æ/ /p/ | 수도꼭지 |
+| nap  | /n/ /æ/ /p/ | 낮잠 |
+
+### Word Family: -ag, -ad, -am
+| Word | Phonemes | 뜻 (Korean) |
+|------|----------|-------------|
+| bag  | /b/ /æ/ /g/ | 가방 |
+| dad  | /d/ /æ/ /d/ | 아빠 |
+| sad  | /s/ /æ/ /d/ | 슬픈 |
+| ham  | /h/ /æ/ /m/ | 햄 |
+| jam  | /dʒ/ /æ/ /m/ | 잼 |
+| ram  | /r/ /æ/ /m/ | 숫양 |
+
+---
+
+## 수업 흐름 (Lesson Flow - 10 minutes)
+
+### Step 1: Sound Focus (2분)
+- 교사가 /æ/ 소리를 시범 발음
+- 입모양: 입을 크게 벌리고, 혀를 아래로
+- 한국어 "애"와 비슷하지만 입을 더 크게 벌림
+- 학생들이 따라 발음
+
+### Step 2: Blend & Tap (2분)
+- 음소를 하나씩 탭하며 블렌딩
+- 예: c-a-t → cat (손가락으로 책상 세 번 탭)
+- 3~4개 단어 연습
+
+### Step 3: Decode Words (2분)
+- 화면에 단어가 나타나면 학생이 읽기
+- onset(첫소리)과 rime(끝소리) 분리 연습
+- 예: c + at = cat, b + at = bat
+
+### Step 4: Say & Check (2분)
+- 학생이 단어를 말하면 음성 인식으로 확인
+- 발음이 정확하면 ✅, 재시도 필요하면 다시 연습
+
+### Step 5: Micro-Reader (1분)
+- 짧은 문장 읽기 연습:
+  - "A cat."
+  - "A fat cat sat on a mat."
+  - "The cat has a bag and a map."
+
+### Step 6: Exit Ticket (1분)
+- 4~5개 단어 퀴즈
+- 80% 이상 정답 시 다음 유닛으로 진행
+
+---
+
+## 교수법 팁 (Teaching Tips)
+1. **멀티센서리 접근**: 소리(듣기) + 시각(그림) + 운동감각(탭핑)을 결합
+2. **Word Family 강조**: -at 가족, -an 가족 등으로 묶어서 가르치면 패턴 인식 향상
+3. **한국어 연결**: /æ/ 소리가 한국어 "애"와 유사함을 활용
+4. **반복 학습**: SM-2 간격 반복 알고리즘으로 자동 복습 스케줄링
+5. **게임화**: 정답 시 별/트로피 보상으로 동기부여
+
+---
+
+## 평가 기준 (Assessment Criteria)
+- /æ/ 소리 정확히 발음: 5점
+- CVC 단어 디코딩: 10점 (단어당 0.5점)
+- Word Family 구별: 5점
+- Micro-Reading 유창성: 5점
+- 총점: 25점, 통과 기준: 20점 (80%)
