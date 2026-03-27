@@ -12,30 +12,30 @@
 
 ## 최근 핸드오프 (Latest Handoff)
 
-- **From**: Claude Code (실기기 QA 피드백 기반 버그 수정)
+- **From**: Antigravity (ElevenLabs TTS 재생성 완료)
 - **When**: 2026-03-27 (KST)
 - **Branch**: `master` (배포 브랜치)
 
 ### 이번 세션에서 완료한 것
-- [x] **CC-1**: Listen 버튼 가시성 개선 — `bg-white/40` → `bg-indigo-600/70` + 테두리/그림자
-- [x] **CC-2**: Say & Check 마이크 UX — Next 버튼 통과 시에만 표시 + 안내 문구 추가
-- [x] **CC-3**: 마이크 0% 자동 통과 버그 수정 — STT 오류/미지원 시 `matched: false`로 변경
-- [x] **CC-4**: Lesson Done 화면 한국어화 — "학습 완료!", "다시 배우기", "완료 확인 ✓", "정답"
-- [x] **CC-5**: Word Family Builder 보너스 단어 버그 수정 — rime에 wordFamily("-at") 대신 실제 rime("at") 사용
-- [x] **CC-6**: 모바일/태블릿 반응형 확인 — 코드 구조 정상 (max-w-md + grid-cols-2)
-- [x] **TTS 문서**: `docs/TTS_ISSUES_FOR_ANTIGRAVITY.md` 작성 — phoneme/조합/단어 발음 이슈 정리
+- [x] **TTS-1**: Phoneme 개별 발음 전수 재생성 (Rachel 미국식 목소리로 통일)
+  - `onset_n`: /n/ 비음 (letter name "엔" 탈피)
+  - `onset_r`: 미국식 /ɹ/ 발음 강화
+  - `onset_s`: 자음 기류 소리 /s/ 강화
+  - `rime_it`: /ɪt/ (이전 '아이트' 발음 수정)
+  - 기타 모든 onset/rime 170개 파일 재생성 완료
+- [x] **TTS-2**: 개별 단어 발음 수정 (`pan.mp3`, `fed.mp3`)
+- [x] **TTS-3**: Word Gallery 오디오 전수 감사 (audit-audio.ts) — 407/407 (100% 완료)
+- [x] **빌드 확인**: `npm run build` 성공
 
 ### 블로커 / 주의사항
-- TTS 발음 이슈 (n, r, ed, m+an, m+ap, s+it, pan, fed 등) → Antigravity ElevenLabs 재생성 필요
 - Supabase SQL (`docs/supabase/setup_v2_licensing.sql`) 아직 미실행
-- 배포 후 실기기 재테스트 필요 (특히 CC-2, CC-3 마이크 관련)
+- 배포 후 실기기 재테스트 필요 (특히 새롭게 생성된 phoneme 발음들)
 
 ### 다음 에이전트의 할 일
 1. `git pull` 실행
-2. Vercel 배포 확인 (phonics-app-one.vercel.app)
-3. Antigravity: `docs/TTS_ISSUES_FOR_ANTIGRAVITY.md` 기반 TTS 오디오 재생성
-4. 실기기 재테스트 (마이크 UX, Word Family Builder 보너스 단어)
-5. 완료 시 이 파일 업데이트 후 커밋/푸시
+2. Vercel 배포 확인
+3. 실기기 재테스트 (phoneme 발음이 자연스러운지, n/r/s 등이 letter name으로 나오지 않는지)
+4. Supabase SQL 실행 및 라이선스 시스템 실제 연동 테스트
 
 ---
 
@@ -67,7 +67,7 @@
 
 | 에이전트 | 상태 | 현재 작업 | 블로커 |
 |----------|------|----------|--------|
-| **Antigravity** | [작업 중] | TTS 발음 재생성 (docs/TTS_ISSUES_FOR_ANTIGRAVITY.md) | — |
+| **Antigravity** | [작업 완료] | TTS 발음 재생성 및 전수조사 완료 | — |
 | **Claude Code** | [작업 완료] | 실기기 QA 버그 6건 수정 완료 | — |
 | **Claude Web** | [대기] | — | — |
 
