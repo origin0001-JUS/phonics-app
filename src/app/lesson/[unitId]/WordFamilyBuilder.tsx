@@ -162,7 +162,9 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
     // Clamp familyIdx to valid range to prevent "Family 4/3" display bug
     const safeFamilyIdx = Math.min(familyIdx, Math.max(0, families.length - 1));
     const currentFamily = families[safeFamilyIdx];
-    const rime = currentFamily?.[0] || '';
+    const familyKey = currentFamily?.[0] || '';
+    // rime from word data (without dash), fallback to stripping dash from familyKey
+    const rime = currentFamily?.[1]?.[0]?.rime || familyKey.replace(/^-/, '');
     const familyWords = currentFamily?.[1] || [];
 
     // All possible onsets from the entire words list to use as distractors
@@ -315,7 +317,7 @@ export default function WordFamilyBuilder({ words, onNext }: WordFamilyBuilderPr
                     </div>
                     <span className="text-xl font-black text-slate-300">+</span>
                     <div className="px-6 h-14 bg-amber-100 dark:bg-amber-900/30 border-4 border-amber-300 dark:border-amber-600 rounded-xl flex items-center justify-center shadow-[0_4px_0_#fbbf24]">
-                        <span className="text-3xl font-black text-amber-600 dark:text-amber-400">{rime}</span>
+                        <span className="text-3xl font-black text-amber-600 dark:text-amber-400">{familyKey}</span>
                     </div>
                 </div>
 

@@ -12,31 +12,30 @@
 
 ## 최근 핸드오프 (Latest Handoff)
 
-- **From**: Claude Code (교사용 가이드 PDF 생성)
-- **When**: 2026-03-25 (KST)
-- **Branch**: `claude/multi-environment-setup-Nlrfn`
+- **From**: Claude Code (실기기 QA 피드백 기반 버그 수정)
+- **When**: 2026-03-27 (KST)
+- **Branch**: `master` (배포 브랜치)
 
 ### 이번 세션에서 완료한 것
-- [x] **교사용 가이드 PDF 생성**: Playwright 스크린샷 19장 캡처 + A4 13페이지 PDF
-  - 표지, 목차, 앱 소개, 온보딩, 홈/유닛, 레슨 플로우(6단계), 복습/보상, 리포트/설정, 교사 대시보드, 커리큘럼, FAQ, 수업 활용 팁
-  - 관리자(admin) 관련 내용 제외 (학교 배포용)
-  - 파일: `docs/teacher-guide/Phonics300_교사용_가이드.pdf` (5.8MB)
-- [x] **스크린샷 캡처 스크립트 구축**: `scripts/capture-teacher-guide.ts`
-  - IndexedDB 시딩 + Audio mock + 전 페이지 자동 캡처
-- [x] **PDF 생성 스크립트**: `scripts/generate-teacher-pdf.ts`
-  - HTML → Playwright PDF 변환 파이프라인
-- [x] **빌드 검증 통과**: `npm run build` 성공
+- [x] **CC-1**: Listen 버튼 가시성 개선 — `bg-white/40` → `bg-indigo-600/70` + 테두리/그림자
+- [x] **CC-2**: Say & Check 마이크 UX — Next 버튼 통과 시에만 표시 + 안내 문구 추가
+- [x] **CC-3**: 마이크 0% 자동 통과 버그 수정 — STT 오류/미지원 시 `matched: false`로 변경
+- [x] **CC-4**: Lesson Done 화면 한국어화 — "학습 완료!", "다시 배우기", "완료 확인 ✓", "정답"
+- [x] **CC-5**: Word Family Builder 보너스 단어 버그 수정 — rime에 wordFamily("-at") 대신 실제 rime("at") 사용
+- [x] **CC-6**: 모바일/태블릿 반응형 확인 — 코드 구조 정상 (max-w-md + grid-cols-2)
+- [x] **TTS 문서**: `docs/TTS_ISSUES_FOR_ANTIGRAVITY.md` 작성 — phoneme/조합/단어 발음 이슈 정리
 
 ### 블로커 / 주의사항
-- Whisper 기반 505개 단어 오디오 전수 조사 진행 중 (완료 시 오디오 패치 필요)
+- TTS 발음 이슈 (n, r, ed, m+an, m+ap, s+it, pan, fed 등) → Antigravity ElevenLabs 재생성 필요
 - Supabase SQL (`docs/supabase/setup_v2_licensing.sql`) 아직 미실행
-- 사용자가 실기기 테스트 중 — 다수의 소규모 UI 버그 수집 예정
+- 배포 후 실기기 재테스트 필요 (특히 CC-2, CC-3 마이크 관련)
 
 ### 다음 에이전트의 할 일
 1. `git pull` 실행
-2. 사용자로부터 버그 리포트(스크린샷) 수신 후 수정 작업 진행
-3. 오디오 패치: Whisper 조사 결과 반영
-4. 완료 시 이 파일 업데이트 후 커밋/푸시
+2. Vercel 배포 확인 (phonics-app-one.vercel.app)
+3. Antigravity: `docs/TTS_ISSUES_FOR_ANTIGRAVITY.md` 기반 TTS 오디오 재생성
+4. 실기기 재테스트 (마이크 UX, Word Family Builder 보너스 단어)
+5. 완료 시 이 파일 업데이트 후 커밋/푸시
 
 ---
 
@@ -68,8 +67,8 @@
 
 | 에이전트 | 상태 | 현재 작업 | 블로커 |
 |----------|------|----------|--------|
-| **Antigravity** | [테스트 중] | 실기기 QA 및 버그 수집 | — |
-| **Claude Code** | [작업 완료] | 교사용 가이드 PDF 생성 완료 | — |
+| **Antigravity** | [작업 대기] | TTS 발음 재생성 (docs/TTS_ISSUES_FOR_ANTIGRAVITY.md) | — |
+| **Claude Code** | [작업 완료] | 실기기 QA 버그 6건 수정 완료 | — |
 | **Claude Web** | [대기] | — | — |
 
 ---
@@ -84,11 +83,33 @@ NEXT_PUBLIC_ADMIN_PIN=1234 (기본값, 프로덕션에서 반드시 변경)
 
 ---
 
+## 배포 규칙 (Branch & Deployment Policy)
+
+> **⚠️ 이 규칙은 2026-03-26에 사용자와 합의하여 수립되었습니다.**
+
+### 배포 구조
+- **배포 브랜치**: `master` → Vercel 자동 배포 (`phonics-app-one.vercel.app`)
+- **작업 브랜치**: `claude/*` — 개발 및 실험용
+
+### 필수 합의 사항
+1. **머지 전 반드시 사용자에게 확인**: 작업 브랜치를 master에 머지하기 전에 반드시 사용자와 합의할 것
+2. **배포 영향 고지**: master에 푸시하면 Vercel이 자동 배포되므로, 푸시 전에 "이 푸시는 프로덕션에 배포됩니다"라고 명시할 것
+3. **브랜치 상태 기록**: 핸드오프 시 현재 작업 브랜치와 master의 커밋 차이를 명시할 것
+4. **새 브랜치 생성 시 고지**: 새 브랜치를 만들 때 그 목적과 master와의 관계를 사용자에게 설명할 것
+
+### 절대 금지
+- 사용자 확인 없이 master에 머지/푸시하지 말 것
+- 배포 브랜치(master)를 force push하지 말 것
+- 작업 브랜치에서만 작업하고 master 머지를 잊은 채 핸드오프하지 말 것
+
+---
+
 ## 핸드오프 체크리스트 (매 세션 종료 시)
 
 - [ ] `npm run build` 성공 확인 (로그: docs/build-logs/YYYY-MM-DD.txt)
 - [ ] 이 파일의 "최근 핸드오프" 섹션 업데이트
 - [ ] "누가 뭘 하고 있나" 테이블에서 내 상태를 [작업 완료]로 변경
+- [ ] **배포 확인**: master와 작업 브랜치의 커밋 차이 확인 → 머지 필요 시 사용자에게 알릴 것
 - [ ] `git add . && git commit && git push`
 - [ ] 다음 작업 시작 시: `git pull` 실행
 

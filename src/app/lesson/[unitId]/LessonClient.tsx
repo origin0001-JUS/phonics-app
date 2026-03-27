@@ -721,7 +721,7 @@ function SoundFocusStep({ unit, words, onNext }: { unit: { targetSound: string; 
                     <WordImage wordId={exampleWord.id} alt={exampleWord.word} size="md" />
                     <button
                         onClick={() => playTTS(exampleWord.word)}
-                        className="flex items-center gap-3 bg-white/40 px-6 py-3 rounded-full"
+                        className="flex items-center gap-3 bg-indigo-600/70 px-6 py-3 rounded-full border-2 border-indigo-300/50 shadow-lg"
                     >
                         <Volume2 className="w-6 h-6 text-white" />
                         <span className="text-white font-bold">Listen: &quot;{exampleWord.word}&quot;</span>
@@ -1328,9 +1328,19 @@ function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { 
 
             <p className="text-white/70 font-bold text-sm">{idx + 1} / {Math.min(words.length, 4)}</p>
 
-            <BigButton onClick={handleNext}>
-                Next <ArrowRight className="w-5 h-5" />
-            </BigButton>
+            {/* Show mic requirement hint when not yet passed */}
+            {!result?.matched && (
+                <p className="text-amber-200 font-bold text-sm text-center px-4">
+                    🎤 마이크를 눌러 발음을 통과해야 다음으로 갈 수 있어요!
+                </p>
+            )}
+
+            {/* Next button only visible after passing */}
+            {result?.matched && (
+                <BigButton onClick={handleNext}>
+                    Next <ArrowRight className="w-5 h-5" />
+                </BigButton>
+            )}
         </div>
     );
 }
@@ -1541,7 +1551,7 @@ function ResultsStep({ score, total, unitTitle, onFinish, onMount, newRewards }:
         <div className="flex-1 flex flex-col items-center justify-center gap-6">
             <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-8 w-full shadow-[0_10px_0_#e2e8f0] dark:shadow-[0_10px_0_#1e293b] border-4 border-white dark:border-slate-600 flex flex-col items-center">
                 <Trophy className="w-16 h-16 text-yellow-400 mb-4" />
-                <h2 className="text-3xl font-black text-slate-800 dark:text-slate-100 mb-1">Lesson Done!</h2>
+                <h2 className="text-3xl font-black text-slate-800 dark:text-slate-100 mb-1">학습 완료!</h2>
                 <p className="text-slate-500 font-medium mb-6">{unitTitle}</p>
 
                 {/* Stars */}
@@ -1557,16 +1567,16 @@ function ResultsStep({ score, total, unitTitle, onFinish, onMount, newRewards }:
                 {/* Score */}
                 <div className="bg-sky-50 border-2 border-sky-200 rounded-2xl px-8 py-4 flex flex-col items-center">
                     <span className="text-5xl font-black text-sky-600">{pct}%</span>
-                    <span className="text-sky-500 font-bold text-sm mt-1">{score} / {total} correct</span>
+                    <span className="text-sky-500 font-bold text-sm mt-1">{score} / {total} 정답</span>
                 </div>
             </div>
 
             <div className="w-full flex flex-col gap-3">
                 <BigButton onClick={() => window.location.reload()} color="bg-sky-400" shadow="shadow-[0_6px_0_#0284c7]">
-                    <span className="text-white">Learn Again</span>
+                    <span className="text-white">다시 배우기</span>
                 </BigButton>
                 <BigButton onClick={onFinish} color="bg-green-400" shadow="shadow-[0_6px_0_#16a34a]">
-                    <span className="text-white">Back to Units</span>
+                    <span className="text-white">완료 확인 ✓</span>
                 </BigButton>
             </div>
 

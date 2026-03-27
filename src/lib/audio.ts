@@ -216,10 +216,8 @@ export function listenAndCompare(
         const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
 
         if (!SpeechRecognitionCtor) {
-            // Browser doesn't support STT — simulate a pass
-            setTimeout(() => {
-                resolve({ transcript: targetWord, confidence: 0.5, matched: true });
-            }, 1500);
+            // Browser doesn't support STT — report as not available
+            resolve({ transcript: '', confidence: 0, matched: false });
             return;
         }
 
@@ -272,8 +270,8 @@ export function listenAndCompare(
             if (!settled) {
                 settled = true;
                 clearTimeout(timeout);
-                // On error, be lenient — treat as pass for kids
-                resolve({ transcript: '', confidence: 0, matched: true });
+                // On error, don't auto-pass — let the user retry
+                resolve({ transcript: '', confidence: 0, matched: false });
             }
         };
 
