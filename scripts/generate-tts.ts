@@ -92,7 +92,7 @@ async function extractJobsFromCurriculum(): Promise<TtsJob[]> {
             if (!processedWords.has(word.word)) {
                 processedWords.add(word.word);
 
-                // ─── 보호 목록에 있는 단어는 건너뜀 ───
+                // ─── 보호 목록에 있는 단어는 건너뜜 ───
                 if (SKIP_LIST.has(word.word.toLowerCase())) {
                     console.log(`🔒 Protected (skip): ${word.id}.mp3 ("${word.word}")`);
                     continue;

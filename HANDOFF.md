@@ -67,7 +67,7 @@
 
 | 에이전트 | 상태 | 현재 작업 | 블로커 |
 |----------|------|----------|--------|
-| **Antigravity** | [작업 대기] | TTS 발음 재생성 (docs/TTS_ISSUES_FOR_ANTIGRAVITY.md) | — |
+| **Antigravity** | [작업 중] | TTS 발음 재생성 (docs/TTS_ISSUES_FOR_ANTIGRAVITY.md) | — |
 | **Claude Code** | [작업 완료] | 실기기 QA 버그 6건 수정 완료 | — |
 | **Claude Web** | [대기] | — | — |
 
