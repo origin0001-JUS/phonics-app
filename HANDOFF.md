@@ -17,12 +17,11 @@
 - **Branch**: `master` (배포 브랜치)
 
 ### 이번 세션에서 완료한 것
-- [x] **TTS-1**: Phoneme 개별 발음 전수 재생성 (Rachel 미국식 목소리로 통일)
-  - `onset_n`: /n/ 비음 (letter name "엔" 탈피)
-  - `onset_r`: 미국식 /ɹ/ 발음 강화
-  - `onset_s`: 자음 기류 소리 /s/ 강화
-  - `rime_it`: /ɪt/ (이전 '아이트' 발음 수정)
-  - 기타 모든 onset/rime 170개 파일 재생성 완료
+- [x] **TTS-1**: Phoneme 개별 발음 전수 재생성 (v2 패치)
+  - **문제**: ElevenLabs가 단일 문자를 letter name(A, B, C...)으로 읽는 문제 해결
+  - **해결**: 프롬프트를 `kuh.`, `huh.`, `mmmmmm.`, `nnnnnn.` 등 순수 음가 유도형으로 전면 교체
+  - **모델 업그레이드**: `eleven_multilingual_v2` 사용으로 한국어/영어 혼용 환경에서도 안정적인 영어 음가 추출
+  - 모든 onset/rime 170개 파일 재생성 완료
 - [x] **TTS-2**: 개별 단어 발음 수정 (`pan.mp3`, `fed.mp3`)
 - [x] **TTS-3**: Word Gallery 오디오 전수 감사 (audit-audio.ts) — 407/407 (100% 완료)
 - [x] **빌드 확인**: `npm run build` 성공

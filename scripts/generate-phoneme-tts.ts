@@ -53,7 +53,7 @@ const elevenlabs = new ElevenLabsClient({ apiKey });
 const VOICES = {
     RACHEL: '21m00Tcm4TlvDq8ikWAM', // American Female
 };
-const MODEL_MONO = 'eleven_monolingual_v1';
+const MODEL_PHONEME = 'eleven_multilingual_v2';
 
 // ─── IPA 매핑: Onset (자음/자음군) ───
 // 각 onset에 대해 자음 소리만 나도록 IPA 표기를 사용합니다.
@@ -158,18 +158,18 @@ interface PhonemeJob {
 function buildOnsetPrompt(onset: string): string {
     // 발음 기호(/ipa/) 대신 ElevenLabs가 확실하게 음가 소리로 읽는 단어-보컬 트릭 사용
     const PHONETIC_MAP: Record<string, string> = {
-        'b': 'b, b, b.', 'c': 'k, k, k.', 'd': 'd, d, d.', 'f': 'f, f, f.', 'g': 'g, g, g.',
-        'h': 'h, h, h.', 'j': 'j, j, j.', 'k': 'k, k, k.', 'l': 'l, l, l.', 'm': 'm, m, m.',
-        'n': 'n, n, n.', 'p': 'p, p, p.', 'r': 'r, r, r.', 's': 's, s, s.', 't': 't, t, t.',
-        'v': 'v, v, v.', 'w': 'w, w, w.', 'z': 'z, z, z.',
-        'sh': 'sh, sh, sh.', 'ch': 'ch, ch, ch.', 'th': 'th, th, th.', 'wh': 'wh, wh, wh.',
+        'b': 'buh.', 'c': 'kuh.', 'd': 'duh.', 'f': 'ffffff.', 'g': 'guh.',
+        'h': 'huh.', 'j': 'juh.', 'k': 'kuh.', 'l': 'lllll.', 'm': 'mmmmmm.',
+        'n': 'nnnnnn.', 'p': 'puh.', 'r': 'rrrrrr.', 's': 'ssssss.', 't': 'tuh.',
+        'v': 'vvvvvv.', 'w': 'wuh.', 'z': 'zzzzzz.',
+        'sh': 'shhhhhh.', 'ch': 'chuh.', 'th': 'thhhhhh.', 'wh': 'whuh.',
         // Blends can be sounded out
-        'bl': 'bl.', 'br': 'br.', 'cl': 'cl.', 'cr': 'cr.',
-        'dr': 'dr.', 'fl': 'fl.', 'fr': 'fr.', 'gl': 'gl.',
-        'gr': 'gr.', 'pl': 'pl.', 'pr': 'pr.', 'sk': 'sk.',
-        'sl': 'sl.', 'sm': 'sm.', 'sn': 'sn.', 'sp': 'sp.',
-        'st': 'st.', 'sw': 'sw.', 'tr': 'tr.', 'str': 'str.',
-        'thr': 'thr.', 'spr': 'spr.'
+        'bl': 'bluh.', 'br': 'bruh.', 'cl': 'cluh.', 'cr': 'cruh.',
+        'dr': 'druh.', 'fl': 'fluh.', 'fr': 'fruh.', 'gl': 'gluh.',
+        'gr': 'gruh.', 'pl': 'pluh.', 'pr': 'pruh.', 'sk': 'skuh.',
+        'sl': 'sluh.', 'sm': 'smmm.', 'sn': 'snnn.', 'sp': 'spuh.',
+        'st': 'stuh.', 'sw': 'swuh.', 'tr': 'truh.', 'str': 'struh.',
+        'thr': 'thruh.', 'spr': 'spruh.'
     };
     
     return PHONETIC_MAP[onset] || onset;
@@ -177,11 +177,11 @@ function buildOnsetPrompt(onset: string): string {
 
 function buildRimePrompt(rime: string): string {
     const PHONETIC_MAP: Record<string, string> = {
-        'at': 'at.', 'an': 'an.', 'ag': 'ag.', 'ap': 'ap.', 'am': 'am.', 'ad': 'ad.', 'ab': 'ab.', 'ack': 'ack.', 'ash': 'ash.', 'ass': 'ass.', 'atch': 'atch.',
-        'ig': 'ig.', 'in': 'in.', 'it': 'it.', 'ip': 'ip.', 'im': 'im.', 'id': 'id.', 'ib': 'ib.', 'ick': 'ick.', 'ish': 'ish.', 'is': 'is.', 'ix': 'ix.',
-        'og': 'og.', 'op': 'op.', 'ot': 'ot.', 'ob': 'ob.', 'od': 'od.', 'om': 'om.', 'ong': 'ong.', 'ox': 'ox.',
-        'ug': 'ug.', 'un': 'un.', 'up': 'up.', 'ub': 'ub.', 'ud': 'ud.', 'um': 'um.', 'us': 'us.', 'ut': 'ut.', 'uck': 'uck.', 'unch': 'unch.', 'unk': 'unk.',
-        'en': 'en.', 'et': 'et.', 'eg': 'eg.', 'ed': 'ed.', 'ep': 'ep.', 'em': 'em.', 'ell': 'ell.', 'ess': 'ess.', 'est': 'est.', 'eck': 'eck.', 'ench': 'ench.',
+        'at': 'at.', 'an': 'ann.', 'ag': 'agg.', 'ap': 'app.', 'am': 'amm.', 'ad': 'add.', 'ab': 'abb.', 'ack': 'ack.', 'ash': 'ash.', 'ass': 'ass.', 'atch': 'atch.',
+        'ig': 'igg.', 'in': 'inn.', 'it': 'it.', 'ip': 'ipp.', 'im': 'imm.', 'id': 'idd.', 'ib': 'ibb.', 'ick': 'ick.', 'ish': 'ish.', 'is': 'is.', 'ix': 'icks.',
+        'og': 'ogg.', 'op': 'opp.', 'ot': 'ott.', 'ob': 'obb.', 'od': 'odd.', 'om': 'omm.', 'ong': 'ong.', 'ox': 'ox.',
+        'ug': 'ugg.', 'un': 'unn.', 'up': 'upp.', 'ub': 'ubb.', 'ud': 'udd.', 'um': 'umm.', 'us': 'us.', 'ut': 'ut.', 'uck': 'uck.', 'unch': 'unch.', 'unk': 'unk.',
+        'en': 'enn.', 'et': 'ett.', 'eg': 'egg.', 'ed': 'ed.', 'ep': 'epp.', 'em': 'emm.', 'ell': 'ell.', 'ess': 'ess.', 'est': 'est.', 'eck': 'eck.', 'ench': 'ench.',
         // Long vowels
         'ade': 'ayd.', 'ake': 'ayk.', 'ale': 'ayl.', 'ame': 'aym.', 'ane': 'ayn.', 'ape': 'ayp.', 'ate': 'ayt.', 'ave': 'ayv.', 'ase': 'ays.',
         'ee': 'eee.', 'eep': 'eep.', 'eet': 'eet.', 'eek': 'eek.', 'eel': 'eel.', 'eem': 'eem.', 'een': 'een.', 'eef': 'eef.',
@@ -233,7 +233,7 @@ async function synthesizePhoneme(job: PhonemeJob, outputPath: string): Promise<v
     const responseStream = await elevenlabs.textToSpeech.stream(
         VOICES.RACHEL,
         {
-            modelId: MODEL_MONO,
+            modelId: MODEL_PHONEME,
             text: job.promptText,
             voiceSettings: {
                 stability: 0.85,        // High stability for consistent short sounds
