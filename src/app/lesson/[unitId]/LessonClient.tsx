@@ -1215,7 +1215,7 @@ function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { 
 
             if (sttResult.matched) {
                 playSFX('correct');
-            } else {
+            } else if (!sttResult.sttUnavailable) {
                 playSFX('wrong');
             }
         } catch (err) {
@@ -1228,7 +1228,8 @@ function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { 
     };
 
     const handleNext = () => {
-        if (!result?.matched) {
+        // Allow proceeding if matched OR if STT is unavailable (skip)
+        if (!result?.matched && !result?.sttUnavailable) {
             playSFX('wrong');
             return;
         }
@@ -1286,31 +1287,38 @@ function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { 
                 )}
 
                 {result && !listening && (
-                    <div className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm ${result.matched
-                        ? "bg-green-50 text-green-700 border-2 border-green-200"
-                        : "bg-orange-50 text-orange-700 border-2 border-orange-200"
-                        }`}>
-                        <div className="flex items-center gap-2">
-                            {result.matched ? (
-                                <><CheckCircle className="w-5 h-5" /> Great pronunciation!</>
-                            ) : (
-                                <><XCircle className="w-5 h-5" /> Try again! Tap the speaker first</>
-                            )}
+                    result.sttUnavailable ? (
+                        <div className="flex flex-col items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm bg-slate-50 text-slate-600 border-2 border-slate-200">
+                            <p>🎤 음성 인식을 사용할 수 없어요</p>
+                            <p className="text-xs font-normal text-slate-400">아래 버튼으로 넘어갈 수 있어요</p>
                         </div>
-                        {/* Similarity score display (Part S fix) */}
-                        <div className="w-full mt-1">
-                            <div className="flex items-center justify-between text-xs mb-1">
-                                <span>Accuracy</span>
-                                <span>{Math.round((result.confidence || 0) * 100)}%</span>
+                    ) : (
+                        <div className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm ${result.matched
+                            ? "bg-green-50 text-green-700 border-2 border-green-200"
+                            : "bg-orange-50 text-orange-700 border-2 border-orange-200"
+                            }`}>
+                            <div className="flex items-center gap-2">
+                                {result.matched ? (
+                                    <><CheckCircle className="w-5 h-5" /> Great pronunciation!</>
+                                ) : (
+                                    <><XCircle className="w-5 h-5" /> Try again! Tap the speaker first</>
+                                )}
                             </div>
-                            <div className="w-full h-2 bg-white/60 rounded-full overflow-hidden">
-                                <div
-                                    className={`h-full rounded-full transition-all duration-500 ${result.matched ? "bg-green-500" : "bg-orange-400"}`}
-                                    style={{ width: `${Math.round((result.confidence || 0) * 100)}%` }}
-                                />
+                            {/* Similarity score display (Part S fix) */}
+                            <div className="w-full mt-1">
+                                <div className="flex items-center justify-between text-xs mb-1">
+                                    <span>Accuracy</span>
+                                    <span>{Math.round((result.confidence || 0) * 100)}%</span>
+                                </div>
+                                <div className="w-full h-2 bg-white/60 rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full rounded-full transition-all duration-500 ${result.matched ? "bg-green-500" : "bg-orange-400"}`}
+                                        style={{ width: `${Math.round((result.confidence || 0) * 100)}%` }}
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )
                 )}
 
                 {!sttAvailable && !listening && !result && (
@@ -1329,16 +1337,16 @@ function SayCheckStep({ words, onNext, initialSubStep = 0, onSubStepChange }: { 
             <p className="text-white/70 font-bold text-sm">{idx + 1} / {Math.min(words.length, 4)}</p>
 
             {/* Show mic requirement hint when not yet passed */}
-            {!result?.matched && (
+            {!result?.matched && !result?.sttUnavailable && (
                 <p className="text-amber-200 font-bold text-sm text-center px-4">
                     🎤 마이크를 눌러 발음을 통과해야 다음으로 갈 수 있어요!
                 </p>
             )}
 
-            {/* Next button only visible after passing */}
-            {result?.matched && (
+            {/* Next button visible after passing OR when STT unavailable (skip) */}
+            {(result?.matched || result?.sttUnavailable) && (
                 <BigButton onClick={handleNext}>
-                    Next <ArrowRight className="w-5 h-5" />
+                    {result?.sttUnavailable ? "건너뛰기" : "Next"} <ArrowRight className="w-5 h-5" />
                 </BigButton>
             )}
         </div>

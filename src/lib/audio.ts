@@ -196,6 +196,7 @@ export interface STTResult {
     transcript: string;
     confidence: number;
     matched: boolean;
+    sttUnavailable?: boolean;  // true when STT is not supported or errored out
 }
 
 /**
@@ -216,8 +217,8 @@ export function listenAndCompare(
         const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
 
         if (!SpeechRecognitionCtor) {
-            // Browser doesn't support STT — report as not available
-            resolve({ transcript: '', confidence: 0, matched: false });
+            // Browser doesn't support STT — allow skip
+            resolve({ transcript: '', confidence: 0, matched: false, sttUnavailable: true });
             return;
         }
 
@@ -266,12 +267,12 @@ export function listenAndCompare(
             });
         };
 
-        recognition.onerror = () => {
+        recognition.onerror = (e: any) => {
             if (!settled) {
                 settled = true;
                 clearTimeout(timeout);
-                // On error, don't auto-pass — let the user retry
-                resolve({ transcript: '', confidence: 0, matched: false });
+                // On error, mark as STT unavailable so UI can offer skip
+                resolve({ transcript: '', confidence: 0, matched: false, sttUnavailable: true });
             }
         };
 
@@ -290,8 +291,7 @@ export function listenAndCompare(
             if (!settled) {
                 settled = true;
                 clearTimeout(timeout);
-                // On error, be lenient — treat as pass for kids
-                resolve({ transcript: '', confidence: 0, matched: true });
+                resolve({ transcript: '', confidence: 0, matched: false, sttUnavailable: true });
             }
         }
     });
