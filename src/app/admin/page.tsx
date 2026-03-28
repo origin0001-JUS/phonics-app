@@ -8,15 +8,18 @@ import {
 } from "lucide-react";
 import { getSupabase, isCloudEnabled } from "@/lib/supabaseClient";
 
-// ─── 관리자 PIN (환경변수로 설정, 기본값 1234) ───
-// .env.local에 NEXT_PUBLIC_ADMIN_PIN=xxxx 로 변경하세요
-const ADMIN_PIN = process.env.NEXT_PUBLIC_ADMIN_PIN || "1234";
+// ─── 관리자 PIN (환경변수로 설정, 기본값 000000) ───
+// .env.local에 NEXT_PUBLIC_ADMIN_PIN=xxxxxx 로 변경하세요 (6자리)
+const ADMIN_PIN = process.env.NEXT_PUBLIC_ADMIN_PIN || "000000";
+const PIN_LENGTH = 6;
 const PIN_KEY = "phonics_admin_auth";
 
 // ─── 라이선스 키 자동 생성 ───
 function generateLicenseKey(schoolName: string): string {
     const year = new Date().getFullYear();
-    const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const arr = new Uint8Array(4);
+    crypto.getRandomValues(arr);
+    const rand = Array.from(arr, b => b.toString(36)).join('').substring(0, 4).toUpperCase();
     const prefix = schoolName.replace(/[^가-힣a-zA-Z]/g, "").substring(0, 2).toUpperCase() || "SC";
     return `PHONICS-${year}-${prefix}-${rand}`;
 }
@@ -35,10 +38,10 @@ function PinScreen({ onSuccess }: { onSuccess: () => void }) {
     const [shake, setShake] = useState(false);
 
     const handleDigit = (d: string) => {
-        if (pin.length >= 4) return;
+        if (pin.length >= PIN_LENGTH) return;
         const next = pin + d;
         setPin(next);
-        if (next.length === 4) {
+        if (next.length === PIN_LENGTH) {
             setTimeout(() => {
                 if (next === ADMIN_PIN) {
                     sessionStorage.setItem(PIN_KEY, "1");
@@ -68,14 +71,14 @@ function PinScreen({ onSuccess }: { onSuccess: () => void }) {
                     <Key className="w-8 h-8 text-indigo-600" />
                 </div>
                 <h1 className="text-2xl font-black text-slate-800 mb-1">관리자 로그인</h1>
-                <p className="text-sm text-slate-400 font-bold mb-6">4자리 PIN 번호를 입력하세요</p>
+                <p className="text-sm text-slate-400 font-bold mb-6">{PIN_LENGTH}자리 PIN 번호를 입력하세요</p>
 
                 {/* PIN 표시 */}
-                <div className="flex justify-center gap-3 mb-6">
-                    {[0,1,2,3].map(i => (
+                <div className="flex justify-center gap-2 mb-6">
+                    {Array.from({ length: PIN_LENGTH }, (_, i) => (
                         <div
                             key={i}
-                            className={`w-12 h-12 rounded-full border-4 flex items-center justify-center transition-all ${
+                            className={`w-10 h-10 rounded-full border-4 flex items-center justify-center transition-all ${
                                 i < pin.length
                                     ? error ? "border-red-400 bg-red-400" : "border-indigo-400 bg-indigo-400"
                                     : "border-slate-200 bg-slate-50"

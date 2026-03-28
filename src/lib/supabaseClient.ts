@@ -105,9 +105,11 @@ export function isCloudEnabled(): boolean {
  */
 export function generateClassCode(): string {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 혼동 문자 제외 (0/O, 1/I/L)
+    const randomBytes = new Uint8Array(6);
+    crypto.getRandomValues(randomBytes);
     let code = '';
     for (let i = 0; i < 6; i++) {
-        code += chars[Math.floor(Math.random() * chars.length)];
+        code += chars[randomBytes[i] % chars.length];
         if (i === 3) code += '-'; // A8F3-K9 형식
     }
     return code;
