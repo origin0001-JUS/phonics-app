@@ -183,7 +183,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex-1 flex flex-col pt-6 pb-8 px-6 relative z-10">
+    <main className="flex-1 flex flex-col pt-6 pb-8 px-6 relative z-10 max-w-lg mx-auto w-full">
       {/* Top Bar Navigation */}
       <header className="flex justify-between items-center mb-4">
         <Link
@@ -301,7 +301,7 @@ export default function Home() {
       </div>
 
       {/* Main Action Buttons */}
-      <div className="mt-auto">
+      <div className="mt-8 md:mt-10">
         <h2 className="text-center text-xl font-black text-[#2e5c8e] dark:text-sky-300 mb-3 drop-shadow-sm">
           Learning Through Play
         </h2>
