@@ -12,29 +12,40 @@
 
 ## 최근 핸드오프 (Latest Handoff)
 
-- **From**: Antigravity (ElevenLabs TTS 재생성 완료)
-- **When**: 2026-03-27 (KST)
+- **From**: Claude Code (gstack QA + 버그 수정)
+- **When**: 2026-03-29 (KST)
 - **Branch**: `master` (배포 브랜치)
+- **최신 커밋**: `fec1618`
 
-### 이번 세션에서 완료한 것
-- [x] **TTS-1**: Phoneme 개별 발음 전수 재생성 (v2 패치)
-  - **문제**: ElevenLabs가 단일 문자를 letter name(A, B, C...)으로 읽는 문제 해결
-  - **해결**: 프롬프트를 `kuh.`, `huh.`, `mmmmmm.`, `nnnnnn.` 등 순수 음가 유도형으로 전면 교체
-  - **모델 업그레이드**: `eleven_multilingual_v2` 사용으로 한국어/영어 혼용 환경에서도 안정적인 영어 음가 추출
-  - 모든 onset/rime 170개 파일 재생성 완료
-- [x] **TTS-2**: 개별 단어 발음 수정 (`pan.mp3`, `fed.mp3`)
-- [x] **TTS-3**: Word Gallery 오디오 전수 감사 (audit-audio.ts) — 407/407 (100% 완료)
+### 이번 세션에서 완료한 것 (Claude Code)
+- [x] **QA-1**: gstack 브라우저 기반 전체 QA 수행 (건강 점수 78/100)
+  - 홈, 온보딩, 유닛 선택, 레슨 Unit 01 (6개 스텝), 리뷰 페이지 테스트
+  - TTS 품질 집중 점검: 335개 단어 100% MP3 커버리지 확인
+  - 반응형 레이아웃 (모바일/태블릿/데스크탑) 검증
+- [x] **QA-FIX-1**: `tan.mp3` 생성 — Word Family Builder -an 패밀리 보너스 단어 404 에러 수정
+- [x] **QA-FIX-2**: `core_ih.mp3` 재생성 — 0.28초→1.11초 (다른 모음과 동일 수준으로 길이 조정)
+- [x] **QA-FIX-3**: 태블릿 홈 레이아웃 수정 — `mt-auto` → `mt-8 md:mt-10` + `max-w-lg` 적용
 - [x] **빌드 확인**: `npm run build` 성공
+
+### 이번 세션에서 확인된 것 (문제 없음)
+- 단어 이미지 533개 전부 정상 (QA 초기 오탐 → 로딩 지연이었음)
+- TTS fallback (SpeechSynthesis) 정상 동작
+- 오디오 캐싱 정상
+- phoneme onset/rime 오디오 전부 정상 재생
+- 콘솔 에러 없음 (tan.mp3 수정 후)
 
 ### 블로커 / 주의사항
 - Supabase SQL (`docs/supabase/setup_v2_licensing.sql`) 아직 미실행
-- 배포 후 실기기 재테스트 필요 (특히 새롭게 생성된 phoneme 발음들)
+- 립싱크 영상 일부 단어만 존재 (별도 고민 예정)
+- `core_ih.bak.mp3` 백업 파일 남아있음 (삭제 가능)
 
 ### 다음 에이전트의 할 일
 1. `git pull` 실행
-2. Vercel 배포 확인
-3. 실기기 재테스트 (phoneme 발음이 자연스러운지, n/r/s 등이 letter name으로 나오지 않는지)
+2. Vercel 배포 확인 (phonics-app-one.vercel.app)
+3. 립싱크 영상 확장 방안 결정
 4. Supabase SQL 실행 및 라이선스 시스템 실제 연동 테스트
+5. 실기기 재테스트 (TTS 음질, Say & Check STT 동작)
+6. 완료 시 이 파일 업데이트 후 커밋/푸시
 
 ---
 
@@ -66,8 +77,8 @@
 
 | 에이전트 | 상태 | 현재 작업 | 블로커 |
 |----------|------|----------|--------|
-| **Antigravity** | [작업 완료] | TTS 발음 재생성 및 전수조사 완료 | — |
-| **Claude Code** | [작업 완료] | 실기기 QA 버그 6건 수정 완료 | — |
+| **Antigravity** | [대기] | — | — |
+| **Claude Code** | [작업 완료] | gstack QA + TTS/레이아웃 수정 3건 | — |
 | **Claude Web** | [대기] | — | — |
 
 ---
