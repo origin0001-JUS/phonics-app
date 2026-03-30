@@ -147,3 +147,62 @@ src/
 - `npm run dev` — Dev server on port 4000
 - `npm run build` — Production build
 - `npm run generate-tts` — Batch generate TTS audio (requires GOOGLE_APPLICATION_CREDENTIALS)
+
+## 통합 워크플로우 규칙 (GStack + Superpowers + GSD)
+
+설치된 프레임워크: GStack(기획·QA·보안·배포), GSD(스코핑·실행), Superpowers(품질)
+
+### 사용자 의도 판별 → 자동 워크플로우 선택
+
+사용자가 한국어 또는 영어로 자연어 요청을 하면, 아래 규칙으로 의도를 판별하여 적절한 워크플로우를 자동 실행한다.
+
+아이디어 단계 ("어떻게 하면 좋을까", "아이디어", "고민", "브레인스토밍"):
+1. 브레인스토밍 → Superpowers brainstorm
+2. YC 스타일 검증 → /gstack-office-hours
+3. 전략 평가 → /gstack-plan-ceo-review
+
+새 프로젝트 시작 ("새 앱", "새 프로젝트", "처음부터"):
+1. 전체 스코핑 → /gsd:new-project
+2. 디테일 확정 → /gsd:discuss-phase
+3. 아키텍처 확정 → /gstack-plan-eng-review
+4. 이후 "기능 추가" 워크플로우로 이어서 진행
+
+기능 추가/개선 ("만들어줘", "추가해줘", "개선해줘", "구현해줘"):
+1. 기획 검증 → /gstack-plan-ceo-review
+2. 모호한 부분 확정 → /gsd:discuss-phase
+3. 실행 계획 → /gsd:plan-phase
+4. 자동 구현 → /gsd:execute-phase
+5. 시각적 QA → /gstack-qa (랩탑에서만, VM에서는 건너뜀)
+6. 보안 점검 → /gstack-cso
+7. 배포 → /gstack-ship (사용자 승인 후에만)
+
+간단한 수정/버그 ("버그", "안 돼", "오류", "수정해줘", "바꿔줘"):
+→ /gsd:quick --discuss 로 바로 처리 후 /gstack-qa로 확인
+
+코드 리뷰 ("리뷰해줘", "코드 봐줘", "품질 확인"):
+→ /gstack-review
+
+보안 점검 ("보안", "취약점", "해킹"):
+→ /gstack-cso
+
+기존 코드 파악 ("코드 분석", "구조 파악", "현재 상태"):
+→ /gsd:map-codebase
+
+배포 ("배포", "릴리스", "출시"):
+→ /gstack-ship
+
+### Superpowers TDD 적용 기준
+- 프로토타입/MVP 단계: TDD 끄기 (빠른 결과 확인 우선)
+- 금융 앱/BaaS 시뮬레이터: TDD 반드시 켜기 (계산 정확성이 생명)
+- 파닉스 앱 초기 개발: TDD 끄기 (립싱크·TTS 등 시각적 확인 먼저)
+- 파닉스 앱 학습 로직: TDD 켜기 (SM-2, ts-fsrs 정확성 검증)
+- 사용자가 "꼼꼼하게", "정확하게", "테스트 포함" 요청 시: TDD 켜기
+- 사용자가 "빨리", "프로토", "일단 돌아가게" 요청 시: TDD 끄기
+- 판단이 애매하면 사용자에게 "TDD 적용할까요?" 물어본다
+
+### 공통 규칙
+- 한국어 입력이 기본이다. 모든 응답과 보고를 한국어로 한다
+- QA(5단계)와 보안(6단계)은 기능 추가 시 절대 건너뛰지 않는다
+- 각 단계 전환 시 사용자에게 "N단계 완료, 다음은 OO입니다" 형태로 보고한다
+- 사용자가 "그냥 빨리 해줘"라고 해도 보안 점검은 생략하지 않는다
+- 작업 완료 시 HANDOFF.md를 업데이트하고 git commit & push 한다 (기존 핸드오프 프로토콜 Rule #13~16 준수)
