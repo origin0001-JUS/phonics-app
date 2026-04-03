@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phoneme Audio 전수 청취 감사</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f8; padding: 16px; max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.4rem; margin-bottom: 8px; }
+.summary { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.summary .counts { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.summary .count-badge { padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; }
+.tab-bar { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+.tab-btn { padding: 8px 16px; border: 2px solid #e2e8f0; border-radius: 20px; background: #fff; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: all 0.15s; }
+.tab-btn.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+.tab-btn:hover { border-color: #3b82f6; }
+.card { background: #fff; border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); display: flex; align-items: center; gap: 12px; transition: all 0.15s; }
+.card.ng { border-left: 4px solid #ef4444; }
+.card.warn { border-left: 4px solid #f59e0b; }
+.card.ok { border-left: 4px solid #22c55e; }
+.card.ok-guess { border-left: 4px solid #86efac; }
+.card .info { flex: 1; min-width: 0; }
+.card .filename { font-weight: 700; font-size: 0.95rem; }
+.card .meta { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+.card .transcript { font-size: 0.85rem; color: #334155; margin-top: 2px; }
+.card .transcript em { color: #ef4444; font-style: normal; font-weight: 600; }
+.play-btn { width: 44px; height: 44px; border-radius: 50%; border: none; background: #3b82f6; color: #fff; font-size: 1.2rem; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.play-btn:hover { background: #2563eb; transform: scale(1.1); }
+.play-btn.playing { background: #ef4444; }
+.verdict-btns { display: flex; gap: 4px; flex-shrink: 0; }
+.verdict-btns button { padding: 6px 12px; border-radius: 8px; border: 2px solid #e2e8f0; background: #fff; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: all 0.15s; }
+.verdict-btns .v-ok.selected { background: #22c55e; color: #fff; border-color: #22c55e; }
+.verdict-btns .v-ng.selected { background: #ef4444; color: #fff; border-color: #ef4444; }
+.export-bar { position: sticky; bottom: 0; background: #fff; padding: 12px; border-radius: 12px 12px 0 0; box-shadow: 0 -2px 12px rgba(0,0,0,0.1); display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+.export-bar button { padding: 10px 20px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
+.export-bar .btn-export { background: #3b82f6; color: #fff; }
+.export-bar .btn-autoplay { background: #8b5cf6; color: #fff; }
+.export-bar .btn-stop { background: #ef4444; color: #fff; }
+.hidden { display: none; }
+.progress { font-size: 0.85rem; color: #64748b; }
+</style>
+</head>
+<body>
+
+<h1>Phoneme Audio 전수 청취 감사</h1>
+<p style="color:#64748b; font-size:0.85rem; margin-bottom:12px;">각 파일을 듣고 OK/NG를 체크하세요. 자동 재생 버튼으로 연속 듣기 가능.</p>
+
+<div class="summary">
+  <strong>감사 현황</strong>
+  <div class="counts" id="counts"></div>
+</div>
+
+<div class="tab-bar" id="tabs"></div>
+<div id="cards"></div>
+
+<div class="export-bar">
+  <div>
+    <span class="progress" id="progress">체크: 0 / 0</span>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn-autoplay" id="autoplayBtn" onclick="startAutoplay()">&#9654; 자동 재생</button>
+    <button class="btn-stop hidden" id="stopBtn" onclick="stopAutoplay()">&#9632; 정지</button>
+    <button class="btn-export" onclick="exportResults()">결과 내보내기 (CSV)</button>
+  </div>
+</div>
+
+<script>
+const AUDIO_BASE = '/assets/audio/phonemes/';
+
+// Embedded audit data - will be filled by build
+const AUDIT_DATA = [{"file":"core_ae.mp3","phoneme":"core_ae","type":"core","transcript":"A","cls":"정상","duration_s":1.09,"speech_start_s":0,"speech_end_s":1.1,"leading_silence_s":0,"trailing_silence_s":0},{"file":"core_ar.mp3","phoneme":"core_ar","type":"core","transcript":"Ah.","cls":"정상","duration_s":0.65,"speech_start_s":0,"speech_end_s":0.26,"leading_silence_s":0,"trailing_silence_s":0.39},{"file":"core_aw.mp3","phoneme":"core_aw","type":"core","transcript":"Ox.","cls":"정상","duration_s":0.35,"speech_start_s":0,"speech_end_s":0.3,"leading_silence_s":0,"trailing_silence_s":0.05},{"file":"core_ay.mp3","phoneme":"core_ay","type":"core","transcript":"I","cls":"정상","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.72,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"core_ch.mp3","phoneme":"core_ch","type":"core","transcript":"Cha.","cls":"정상","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.26,"leading_silence_s":0,"trailing_silence_s":0.41},{"file":"core_ee.mp3","phoneme":"core_ee","type":"core","transcript":"� Pharaoh","cls":"확실히_NG","duration_s":0.86,"speech_start_s":0,"speech_end_s":11.66,"leading_silence_s":0,"trailing_silence_s":0},{"file":"core_eh.mp3","phoneme":"core_eh","type":"core","transcript":"E","cls":"정상","duration_s":0.85,"speech_start_s":0,"speech_end_s":0.84,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"core_er.mp3","phoneme":"core_er","type":"core","transcript":"Urgh!","cls":"정상","duration_s":0.96,"speech_start_s":0,"speech_end_s":0.96,"leading_silence_s":0,"trailing_silence_s":0},{"file":"core_eye.mp3","phoneme":"core_eye","type":"core","transcript":"I","cls":"정상","duration_s":0.65,"speech_start_s":0,"speech_end_s":0.26,"leading_silence_s":0,"trailing_silence_s":0.39},{"file":"core_ih.mp3","phoneme":"core_ih","type":"core","transcript":"Aye. Aye.","cls":"확실히_NG","duration_s":1.11,"speech_start_s":0,"speech_end_s":0.76,"leading_silence_s":0,"trailing_silence_s":0.35},{"file":"core_j.mp3","phoneme":"core_j","type":"core","transcript":"Sure.","cls":"확실히_NG","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.72,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"core_ng.mp3","phoneme":"core_ng","type":"core","transcript":"NOOO!","cls":"확실히_NG","duration_s":0.91,"speech_start_s":0,"speech_end_s":0.84,"leading_silence_s":0,"trailing_silence_s":0.07},{"file":"core_oh.mp3","phoneme":"core_oh","type":"core","transcript":"Oh.","cls":"정상","duration_s":0.65,"speech_start_s":0,"speech_end_s":0.84,"leading_silence_s":0,"trailing_silence_s":0},{"file":"core_oo.mp3","phoneme":"core_oo","type":"core","transcript":"Oh.","cls":"정상","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.72,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"core_or.mp3","phoneme":"core_or","type":"core","transcript":"or","cls":"정상","duration_s":0.65,"speech_start_s":0,"speech_end_s":0.64,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"core_ow.mp3","phoneme":"core_ow","type":"core","transcript":"Ow.","cls":"정상","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.34,"leading_silence_s":0,"trailing_silence_s":0.39},{"file":"core_oy.mp3","phoneme":"core_oy","type":"core","transcript":"Oi.","cls":"정상","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.28,"leading_silence_s":0,"trailing_silence_s":0.39},{"file":"core_sh.mp3","phoneme":"core_sh","type":"core","transcript":"Shhh!","cls":"정상","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.86,"leading_silence_s":0,"trailing_silence_s":0},{"file":"core_th.mp3","phoneme":"core_th","type":"core","transcript":"D dad","cls":"확실히_NG","duration_s":0.91,"speech_start_s":0,"speech_end_s":1.08,"leading_silence_s":0,"trailing_silence_s":0},{"file":"core_th_v.mp3","phoneme":"core_th_v","type":"core","transcript":"So","cls":"확실히_NG","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.8,"leading_silence_s":0,"trailing_silence_s":0},{"file":"core_uh.mp3","phoneme":"core_uh","type":"core","transcript":"Up.","cls":"정상","duration_s":0.35,"speech_start_s":0,"speech_end_s":0.28,"leading_silence_s":0,"trailing_silence_s":0.07},{"file":"core_you.mp3","phoneme":"core_you","type":"core","transcript":"You.","cls":"정상","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.28,"leading_silence_s":0,"trailing_silence_s":0.39},{"file":"onset_b.mp3","phoneme":"onset_b","type":"onset","transcript":"Bah.","cls":"정상","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.32,"leading_silence_s":0,"trailing_silence_s":0.41},{"file":"onset_bl.mp3","phoneme":"onset_bl","type":"onset","transcript":"Blur.","cls":"정상","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.82,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"onset_br.mp3","phoneme":"onset_br","type":"onset","transcript":"Bruh.","cls":"정상","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.72,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"onset_c.mp3","phoneme":"onset_c","type":"onset","transcript":"Cool.","cls":"정상","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.38},{"file":"onset_ch.mp3","phoneme":"onset_ch","type":"onset","transcript":"Cha.","cls":"정상","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.84,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_cl.mp3","phoneme":"onset_cl","type":"onset","transcript":"Claw.","cls":"정상","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.38},{"file":"onset_cr.mp3","phoneme":"onset_cr","type":"onset","transcript":"C.R.U.H.","cls":"정상","duration_s":0.91,"speech_start_s":0,"speech_end_s":0.56,"leading_silence_s":0,"trailing_silence_s":0.35},{"file":"onset_d.mp3","phoneme":"onset_d","type":"onset","transcript":"Duh.","cls":"정상","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.42},{"file":"onset_dr.mp3","phoneme":"onset_dr","type":"onset","transcript":"druh","cls":"정상","duration_s":0.96,"speech_start_s":0,"speech_end_s":0.96,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_f.mp3","phoneme":"onset_f","type":"onset","transcript":"Fuff.","cls":"정상","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.44,"leading_silence_s":0,"trailing_silence_s":0.29},{"file":"onset_fl.mp3","phoneme":"onset_fl","type":"onset","transcript":"Fleur.","cls":"정상","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.82,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"onset_fr.mp3","phoneme":"onset_fr","type":"onset","transcript":"through.","cls":"확실히_NG","duration_s":0.96,"speech_start_s":0,"speech_end_s":0.96,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_g.mp3","phoneme":"onset_g","type":"onset","transcript":"Gah.","cls":"정상","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.44,"leading_silence_s":0,"trailing_silence_s":0.34},{"file":"onset_gl.mp3","phoneme":"onset_gl","type":"onset","transcript":"Gluh.","cls":"정상","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.82,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"onset_gr.mp3","phoneme":"onset_gr","type":"onset","transcript":"grew.","cls":"정상","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.5},{"file":"onset_h.mp3","phoneme":"onset_h","type":"onset","transcript":"Huh.","cls":"정상","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.68,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_j.mp3","phoneme":"onset_j","type":"onset","transcript":"Yeah.","cls":"확실히_NG","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.72,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"onset_k.mp3","phoneme":"onset_k","type":"onset","transcript":"Cool.","cls":"확실히_NG","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.43},{"file":"onset_l.mp3","phoneme":"onset_l","type":"onset","transcript":"Blue","cls":"정상","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.72,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"onset_m.mp3","phoneme":"onset_m","type":"onset","transcript":"Mmm.","cls":"정상","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.44,"leading_silence_s":0,"trailing_silence_s":0.34},{"file":"onset_n.mp3","phoneme":"onset_n","type":"onset","transcript":"Hmm.","cls":"확실히_NG","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.42},{"file":"onset_p.mp3","phoneme":"onset_p","type":"onset","transcript":"Poor.","cls":"정상","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.72,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"onset_pl.mp3","phoneme":"onset_pl","type":"onset","transcript":"Pluh.","cls":"정상","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.48,"leading_silence_s":0,"trailing_silence_s":0.3},{"file":"onset_pr.mp3","phoneme":"onset_pr","type":"onset","transcript":"Prue.","cls":"정상","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.78,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_r.mp3","phoneme":"onset_r","type":"onset","transcript":"Huhh...","cls":"확실히_NG","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.76,"leading_silence_s":0,"trailing_silence_s":0.02},{"file":"onset_s.mp3","phoneme":"onset_s","type":"onset","transcript":"Sust.","cls":"정상","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.48,"leading_silence_s":0,"trailing_silence_s":0.35},{"file":"onset_sh.mp3","phoneme":"onset_sh","type":"onset","transcript":"Shhh!","cls":"정상","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.8,"leading_silence_s":0,"trailing_silence_s":0.03},{"file":"onset_sk.mp3","phoneme":"onset_sk","type":"onset","transcript":"SCUR.","cls":"확실히_NG","duration_s":0.91,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_sl.mp3","phoneme":"onset_sl","type":"onset","transcript":"Slá.","cls":"정상","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.5,"leading_silence_s":0,"trailing_silence_s":0.33},{"file":"onset_sm.mp3","phoneme":"onset_sm","type":"onset","transcript":"Sum.","cls":"확실히_NG","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.84,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_sn.mp3","phoneme":"onset_sn","type":"onset","transcript":"Sin.","cls":"확실히_NG","duration_s":0.96,"speech_start_s":0,"speech_end_s":0.96,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_sp.mp3","phoneme":"onset_sp","type":"onset","transcript":"Spa.","cls":"정상","duration_s":0.91,"speech_start_s":0,"speech_end_s":0.48,"leading_silence_s":0,"trailing_silence_s":0.43},{"file":"onset_spr.mp3","phoneme":"onset_spr","type":"onset","transcript":"Spru.","cls":"정상","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.44,"leading_silence_s":0,"trailing_silence_s":0.39},{"file":"onset_st.mp3","phoneme":"onset_st","type":"onset","transcript":"Star.","cls":"정상","duration_s":0.96,"speech_start_s":0,"speech_end_s":0.96,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_str.mp3","phoneme":"onset_str","type":"onset","transcript":"Strah.","cls":"정상","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.84,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_sw.mp3","phoneme":"onset_sw","type":"onset","transcript":"Soir.","cls":"확실히_NG","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.86,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_t.mp3","phoneme":"onset_t","type":"onset","transcript":"2","cls":"확실히_NG","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.78,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_th.mp3","phoneme":"onset_th","type":"onset","transcript":"Duh!","cls":"확실히_NG","duration_s":0.78,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"onset_thr.mp3","phoneme":"onset_thr","type":"onset","transcript":"Through.","cls":"정상","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.44,"leading_silence_s":0,"trailing_silence_s":0.39},{"file":"onset_tr.mp3","phoneme":"onset_tr","type":"onset","transcript":"True.","cls":"정상","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.43},{"file":"onset_v.mp3","phoneme":"onset_v","type":"onset","transcript":"VV.","cls":"정상","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.48,"leading_silence_s":0,"trailing_silence_s":0.38},{"file":"onset_w.mp3","phoneme":"onset_w","type":"onset","transcript":"Voix.","cls":"확실히_NG","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.27},{"file":"onset_wh.mp3","phoneme":"onset_wh","type":"onset","transcript":"Wah.","cls":"확실히_NG","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.3,"leading_silence_s":0,"trailing_silence_s":0.37},{"file":"onset_z.mp3","phoneme":"onset_z","type":"onset","transcript":"Zzzzzzzz","cls":"정상","duration_s":0.83,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ab.mp3","phoneme":"rime_ab","type":"rime","transcript":"Ab.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.34,"leading_silence_s":0,"trailing_silence_s":0.39},{"file":"rime_ack.mp3","phoneme":"rime_ack","type":"rime","transcript":"ACK.","cls":"정상_추정","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.27},{"file":"rime_ad.mp3","phoneme":"rime_ad","type":"rime","transcript":"Add.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.37},{"file":"rime_ade.mp3","phoneme":"rime_ade","type":"rime","transcript":"AID.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ag.mp3","phoneme":"rime_ag","type":"rime","transcript":"Ag.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.34,"leading_silence_s":0,"trailing_silence_s":0.39},{"file":"rime_ail.mp3","phoneme":"rime_ail","type":"rime","transcript":"aisle","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ain.mp3","phoneme":"rime_ain","type":"rime","transcript":"Ein","cls":"정상_추정","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.86,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_aint.mp3","phoneme":"rime_aint","type":"rime","transcript":"ain't.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ait.mp3","phoneme":"rime_ait","type":"rime","transcript":"Ayet","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.58,"leading_silence_s":0,"trailing_silence_s":0.25},{"file":"rime_ake.mp3","phoneme":"rime_ake","type":"rime","transcript":"Aika.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.38,"leading_silence_s":0,"trailing_silence_s":0.4},{"file":"rime_ale.mp3","phoneme":"rime_ale","type":"rime","transcript":"Ale.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.43},{"file":"rime_alk.mp3","phoneme":"rime_alk","type":"rime","transcript":"Auk.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.42},{"file":"rime_am.mp3","phoneme":"rime_am","type":"rime","transcript":"Um...","cls":"확실히_NG","duration_s":0.91,"speech_start_s":0,"speech_end_s":0.92,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_an.mp3","phoneme":"rime_an","type":"rime","transcript":"Anne.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.32,"leading_silence_s":0,"trailing_silence_s":0.41},{"file":"rime_ang.mp3","phoneme":"rime_ang","type":"rime","transcript":"Ang","cls":"정상_추정","duration_s":0.86,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ank.mp3","phoneme":"rime_ank","type":"rime","transcript":"Ankh.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.46,"leading_silence_s":0,"trailing_silence_s":0.27},{"file":"rime_ap.mp3","phoneme":"rime_ap","type":"rime","transcript":"app","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ar.mp3","phoneme":"rime_ar","type":"rime","transcript":"are","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ard.mp3","phoneme":"rime_ard","type":"rime","transcript":"A heart.","cls":"정상_추정","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.48,"leading_silence_s":0,"trailing_silence_s":0.38},{"file":"rime_ark.mp3","phoneme":"rime_ark","type":"rime","transcript":"AHERC","cls":"의심_NG","duration_s":0.91,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_arm.mp3","phoneme":"rime_arm","type":"rime","transcript":"Ahurm.","cls":"정상_추정","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.5,"leading_silence_s":0,"trailing_silence_s":0.36},{"file":"rime_ase.mp3","phoneme":"rime_ase","type":"rime","transcript":"Ice.","cls":"확실히_NG","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.37},{"file":"rime_ash.mp3","phoneme":"rime_ash","type":"rime","transcript":"Ash.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.42,"leading_silence_s":0,"trailing_silence_s":0.36},{"file":"rime_ass.mp3","phoneme":"rime_ass","type":"rime","transcript":"Ass.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.46,"leading_silence_s":0,"trailing_silence_s":0.37},{"file":"rime_at.mp3","phoneme":"rime_at","type":"rime","transcript":"at","cls":"정상_추정","duration_s":0.65,"speech_start_s":0,"speech_end_s":0.5,"leading_silence_s":0,"trailing_silence_s":0.15},{"file":"rime_atch.mp3","phoneme":"rime_atch","type":"rime","transcript":"etch","cls":"의심_NG","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.44,"leading_silence_s":0,"trailing_silence_s":0.29},{"file":"rime_ate.mp3","phoneme":"rime_ate","type":"rime","transcript":"iEat.","cls":"의심_NG","duration_s":0.91,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ave.mp3","phoneme":"rime_ave","type":"rime","transcript":"I've","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.78,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ay.mp3","phoneme":"rime_ay","type":"rime","transcript":"Bye.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.3,"leading_silence_s":0,"trailing_silence_s":0.48},{"file":"rime_each.mp3","phoneme":"rime_each","type":"rime","transcript":"Each.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.84,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_eaf.mp3","phoneme":"rime_eaf","type":"rime","transcript":"AIFF.","cls":"정상_추정","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.86,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_eal.mp3","phoneme":"rime_eal","type":"rime","transcript":"Eel","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.76,"leading_silence_s":0,"trailing_silence_s":0.02},{"file":"rime_eam.mp3","phoneme":"rime_eam","type":"rime","transcript":"Aim.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.42,"leading_silence_s":0,"trailing_silence_s":0.36},{"file":"rime_ean.mp3","phoneme":"rime_ean","type":"rime","transcript":"N.","cls":"정상_추정","duration_s":0.67,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_eat.mp3","phoneme":"rime_eat","type":"rime","transcript":"Eight.","cls":"의심_NG","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.78,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_eck.mp3","phoneme":"rime_eck","type":"rime","transcript":"Ec.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.32,"leading_silence_s":0,"trailing_silence_s":0.41},{"file":"rime_ed.mp3","phoneme":"rime_ed","type":"rime","transcript":"Ed.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.37},{"file":"rime_ee.mp3","phoneme":"rime_ee","type":"rime","transcript":"you","cls":"확실히_NG","duration_s":0.91,"speech_start_s":0,"speech_end_s":0.14,"leading_silence_s":0,"trailing_silence_s":0.77},{"file":"rime_eef.mp3","phoneme":"rime_eef","type":"rime","transcript":"AIFF.","cls":"정상_추정","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.88,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_eek.mp3","phoneme":"rime_eek","type":"rime","transcript":"Eek.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.46,"leading_silence_s":0,"trailing_silence_s":0.32},{"file":"rime_eel.mp3","phoneme":"rime_eel","type":"rime","transcript":"Eel","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.82,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"rime_eep.mp3","phoneme":"rime_eep","type":"rime","transcript":"EAP.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.72,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"rime_eer.mp3","phoneme":"rime_eer","type":"rime","transcript":"Ear.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.78,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_eet.mp3","phoneme":"rime_eet","type":"rime","transcript":"Eight.","cls":"의심_NG","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.82,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"rime_eg.mp3","phoneme":"rime_eg","type":"rime","transcript":"Egg.","cls":"정상_추정","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.34,"leading_silence_s":0,"trailing_silence_s":0.33},{"file":"rime_ell.mp3","phoneme":"rime_ell","type":"rime","transcript":"L.","cls":"정상_추정","duration_s":0.65,"speech_start_s":0,"speech_end_s":0.28,"leading_silence_s":0,"trailing_silence_s":0.37},{"file":"rime_em.mp3","phoneme":"rime_em","type":"rime","transcript":"Um...","cls":"의심_NG","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.86,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_en.mp3","phoneme":"rime_en","type":"rime","transcript":"N.","cls":"정상_추정","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.34,"leading_silence_s":0,"trailing_silence_s":0.33},{"file":"rime_ench.mp3","phoneme":"rime_ench","type":"rime","transcript":"Ench.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.44,"leading_silence_s":0,"trailing_silence_s":0.29},{"file":"rime_ep.mp3","phoneme":"rime_ep","type":"rime","transcript":"app","cls":"확실히_NG","duration_s":0.73,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_erd.mp3","phoneme":"rime_erd","type":"rime","transcript":"Erd.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.48,"leading_silence_s":0,"trailing_silence_s":0.35},{"file":"rime_erk.mp3","phoneme":"rime_erk","type":"rime","transcript":"Urk.","cls":"정상_추정","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.86,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ern.mp3","phoneme":"rime_ern","type":"rime","transcript":"Earn.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.42},{"file":"rime_ess.mp3","phoneme":"rime_ess","type":"rime","transcript":"S.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.42,"leading_silence_s":0,"trailing_silence_s":0.36},{"file":"rime_est.mp3","phoneme":"rime_est","type":"rime","transcript":"Est.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_et.mp3","phoneme":"rime_et","type":"rime","transcript":"at","cls":"확실히_NG","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.56,"leading_silence_s":0,"trailing_silence_s":0.11},{"file":"rime_ib.mp3","phoneme":"rime_ib","type":"rime","transcript":"IBB.","cls":"정상_추정","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.46,"leading_silence_s":0,"trailing_silence_s":0.4},{"file":"rime_ick.mp3","phoneme":"rime_ick","type":"rime","transcript":"Ick.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_id.mp3","phoneme":"rime_id","type":"rime","transcript":"Eid.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.37},{"file":"rime_ig.mp3","phoneme":"rime_ig","type":"rime","transcript":"UGG.","cls":"확실히_NG","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.38,"leading_silence_s":0,"trailing_silence_s":0.4},{"file":"rime_ile.mp3","phoneme":"rime_ile","type":"rime","transcript":"Aisle.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.33},{"file":"rime_im.mp3","phoneme":"rime_im","type":"rime","transcript":"M.","cls":"정상_추정","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.32,"leading_silence_s":0,"trailing_silence_s":0.35},{"file":"rime_in.mp3","phoneme":"rime_in","type":"rime","transcript":"in","cls":"정상_추정","duration_s":0.67,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ine.mp3","phoneme":"rime_ine","type":"rime","transcript":"Ein.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.42},{"file":"rime_ing.mp3","phoneme":"rime_ing","type":"rime","transcript":"Ing.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.32,"leading_silence_s":0,"trailing_silence_s":0.46},{"file":"rime_ink.mp3","phoneme":"rime_ink","type":"rime","transcript":"Inc.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.38,"leading_silence_s":0,"trailing_silence_s":0.35},{"file":"rime_ip.mp3","phoneme":"rime_ip","type":"rime","transcript":"EPP","cls":"의심_NG","duration_s":0.96,"speech_start_s":0,"speech_end_s":0.42,"leading_silence_s":0,"trailing_silence_s":0.54},{"file":"rime_ir.mp3","phoneme":"rime_ir","type":"rime","transcript":"Ugh.","cls":"확실히_NG","duration_s":0.67,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ird.mp3","phoneme":"rime_ird","type":"rime","transcript":"RDE.","cls":"확실히_NG","duration_s":0.78,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_irl.mp3","phoneme":"rime_irl","type":"rime","transcript":"Earl.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.42},{"file":"rime_irst.mp3","phoneme":"rime_irst","type":"rime","transcript":"Oerst.","cls":"정상_추정","duration_s":0.91,"speech_start_s":0,"speech_end_s":0.46,"leading_silence_s":0,"trailing_silence_s":0.45},{"file":"rime_irt.mp3","phoneme":"rime_irt","type":"rime","transcript":"Ort.","cls":"의심_NG","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.84,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_is.mp3","phoneme":"rime_is","type":"rime","transcript":"is","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.38},{"file":"rime_ish.mp3","phoneme":"rime_ish","type":"rime","transcript":"Ish.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.43},{"file":"rime_istle.mp3","phoneme":"rime_istle","type":"rime","transcript":"Eastleigh.","cls":"의심_NG","duration_s":0.91,"speech_start_s":0,"speech_end_s":0.6,"leading_silence_s":0,"trailing_silence_s":0.31},{"file":"rime_it.mp3","phoneme":"rime_it","type":"rime","transcript":"It.","cls":"정상_추정","duration_s":0.65,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ite.mp3","phoneme":"rime_ite","type":"rime","transcript":"Ait.","cls":"의심_NG","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.33},{"file":"rime_ix.mp3","phoneme":"rime_ix","type":"rime","transcript":"X.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.38,"leading_silence_s":0,"trailing_silence_s":0.35},{"file":"rime_oad.mp3","phoneme":"rime_oad","type":"rime","transcript":"Ohodi.","cls":"확실히_NG","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.48,"leading_silence_s":0,"trailing_silence_s":0.38},{"file":"rime_oap.mp3","phoneme":"rime_oap","type":"rime","transcript":"OHP.","cls":"확실히_NG","duration_s":1.01,"speech_start_s":0,"speech_end_s":0.64,"leading_silence_s":0,"trailing_silence_s":0.37},{"file":"rime_oast.mp3","phoneme":"rime_oast","type":"rime","transcript":"Oast.","cls":"정상_추정","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.52,"leading_silence_s":0,"trailing_silence_s":0.34},{"file":"rime_oat.mp3","phoneme":"rime_oat","type":"rime","transcript":"Oat.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.33},{"file":"rime_ob.mp3","phoneme":"rime_ob","type":"rime","transcript":"Ob.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.72,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"rime_od.mp3","phoneme":"rime_od","type":"rime","transcript":"Odd.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.42},{"file":"rime_og.mp3","phoneme":"rime_og","type":"rime","transcript":"Aug.","cls":"의심_NG","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.3,"leading_silence_s":0,"trailing_silence_s":0.37},{"file":"rime_oil.mp3","phoneme":"rime_oil","type":"rime","transcript":"Oil.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.3,"leading_silence_s":0,"trailing_silence_s":0.48},{"file":"rime_oin.mp3","phoneme":"rime_oin","type":"rime","transcript":"Oin.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.46,"leading_silence_s":0,"trailing_silence_s":0.37},{"file":"rime_oint.mp3","phoneme":"rime_oint","type":"rime","transcript":"Oint.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.84,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_oke.mp3","phoneme":"rime_oke","type":"rime","transcript":"Okay.","cls":"정상_추정","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.86,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_om.mp3","phoneme":"rime_om","type":"rime","transcript":"Um.","cls":"확실히_NG","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.32,"leading_silence_s":0,"trailing_silence_s":0.35},{"file":"rime_ong.mp3","phoneme":"rime_ong","type":"rime","transcript":"Ong.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.72,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"rime_ood.mp3","phoneme":"rime_ood","type":"rime","transcript":"Ood.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.43},{"file":"rime_ook.mp3","phoneme":"rime_ook","type":"rime","transcript":"Ook.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ool.mp3","phoneme":"rime_ool","type":"rime","transcript":"All.","cls":"확실히_NG","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.31},{"file":"rime_oom.mp3","phoneme":"rime_oom","type":"rime","transcript":"Oom.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.42,"leading_silence_s":0,"trailing_silence_s":0.36},{"file":"rime_oon.mp3","phoneme":"rime_oon","type":"rime","transcript":"On.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.38},{"file":"rime_oor.mp3","phoneme":"rime_oor","type":"rime","transcript":"or","cls":"정상_추정","duration_s":0.65,"speech_start_s":0,"speech_end_s":0.64,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"rime_oot.mp3","phoneme":"rime_oot","type":"rime","transcript":"Oat.","cls":"확실히_NG","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.42,"leading_silence_s":0,"trailing_silence_s":0.31},{"file":"rime_op.mp3","phoneme":"rime_op","type":"rime","transcript":"Up.","cls":"확실히_NG","duration_s":0.73,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ork.mp3","phoneme":"rime_ork","type":"rime","transcript":"Ork.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.48,"leading_silence_s":0,"trailing_silence_s":0.3},{"file":"rime_orm.mp3","phoneme":"rime_orm","type":"rime","transcript":"Orm.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.44,"leading_silence_s":0,"trailing_silence_s":0.34},{"file":"rime_orn.mp3","phoneme":"rime_orn","type":"rime","transcript":"Orn.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.42,"leading_silence_s":0,"trailing_silence_s":0.36},{"file":"rime_orse.mp3","phoneme":"rime_orse","type":"rime","transcript":"Horse.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.38,"leading_silence_s":0,"trailing_silence_s":0.4},{"file":"rime_ort.mp3","phoneme":"rime_ort","type":"rime","transcript":"ORT.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.78,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ot.mp3","phoneme":"rime_ot","type":"rime","transcript":"Otte.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.82,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"rime_oud.mp3","phoneme":"rime_oud","type":"rime","transcript":"Oud.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.38,"leading_silence_s":0,"trailing_silence_s":0.35},{"file":"rime_ouse.mp3","phoneme":"rime_ouse","type":"rime","transcript":"Aus.","cls":"의심_NG","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.38},{"file":"rime_ow.mp3","phoneme":"rime_ow","type":"rime","transcript":"Ow.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.34,"leading_silence_s":0,"trailing_silence_s":0.39},{"file":"rime_own.mp3","phoneme":"rime_own","type":"rime","transcript":"Own.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.33},{"file":"rime_ox.mp3","phoneme":"rime_ox","type":"rime","transcript":"Ox.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.44,"leading_silence_s":0,"trailing_silence_s":0.39},{"file":"rime_oy.mp3","phoneme":"rime_oy","type":"rime","transcript":"Hoy.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.32,"leading_silence_s":0,"trailing_silence_s":0.46},{"file":"rime_ree.mp3","phoneme":"rime_ree","type":"rime","transcript":"Re-","cls":"정상_추정","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.86,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_rone.mp3","phoneme":"rime_rone","type":"rime","transcript":"Roan.","cls":"정상_추정","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.6,"leading_silence_s":0,"trailing_silence_s":0.26},{"file":"rime_ub.mp3","phoneme":"rime_ub","type":"rime","transcript":"OOBB.","cls":"확실히_NG","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.46},{"file":"rime_ud.mp3","phoneme":"rime_ud","type":"rime","transcript":"Oud.","cls":"정상_추정","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.68,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_ug.mp3","phoneme":"rime_ug","type":"rime","transcript":"UGG.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.38,"leading_silence_s":0,"trailing_silence_s":0.4},{"file":"rime_um.mp3","phoneme":"rime_um","type":"rime","transcript":"Um.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.72,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"rime_un.mp3","phoneme":"rime_un","type":"rime","transcript":"Un.","cls":"정상_추정","duration_s":0.67,"speech_start_s":0,"speech_end_s":0.3,"leading_silence_s":0,"trailing_silence_s":0.37},{"file":"rime_unch.mp3","phoneme":"rime_unch","type":"rime","transcript":"Unch.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.44,"leading_silence_s":0,"trailing_silence_s":0.29},{"file":"rime_unk.mp3","phoneme":"rime_unk","type":"rime","transcript":"Ankh.","cls":"의심_NG","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.46,"leading_silence_s":0,"trailing_silence_s":0.32},{"file":"rime_up.mp3","phoneme":"rime_up","type":"rime","transcript":"Up.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":2,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_urn.mp3","phoneme":"rime_urn","type":"rime","transcript":"Earn.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.42},{"file":"rime_urse.mp3","phoneme":"rime_urse","type":"rime","transcript":"Earths.","cls":"정상_추정","duration_s":0.83,"speech_start_s":0,"speech_end_s":0.82,"leading_silence_s":0,"trailing_silence_s":0.01},{"file":"rime_urtle.mp3","phoneme":"rime_urtle","type":"rime","transcript":"Ertl.","cls":"확실히_NG","duration_s":0.86,"speech_start_s":0,"speech_end_s":0.86,"leading_silence_s":0,"trailing_silence_s":0},{"file":"rime_us.mp3","phoneme":"rime_us","type":"rime","transcript":"Us.","cls":"정상_추정","duration_s":0.73,"speech_start_s":0,"speech_end_s":0.36,"leading_silence_s":0,"trailing_silence_s":0.37},{"file":"rime_ut.mp3","phoneme":"rime_ut","type":"rime","transcript":"Out.","cls":"정상_추정","duration_s":0.78,"speech_start_s":0,"speech_end_s":0.4,"leading_silence_s":0,"trailing_silence_s":0.38}];
+
+let currentFilter = 'all';
+let currentAudio = null;
+let autoplayIndex = -1;
+let autoplayActive = false;
+let verdicts = {}; // file -> 'ok' | 'ng'
+
+// Load saved verdicts from localStorage
+try {
+  const saved = localStorage.getItem('phoneme-audit-verdicts');
+  if (saved) verdicts = JSON.parse(saved);
+} catch(e) {}
+
+function saveVerdicts() {
+  localStorage.setItem('phoneme-audit-verdicts', JSON.stringify(verdicts));
+}
+
+function getFiltered() {
+  if (currentFilter === 'all') return AUDIT_DATA;
+  if (currentFilter === 'unchecked') return AUDIT_DATA.filter(d => !verdicts[d.file]);
+  return AUDIT_DATA.filter(d => d.cls === currentFilter);
+}
+
+function render() {
+  const filtered = getFiltered();
+  const container = document.getElementById('cards');
+  container.innerHTML = '';
+
+  filtered.forEach((d, i) => {
+    const cls = d.cls === '확실히_NG' ? 'ng' : d.cls === '의심_NG' ? 'warn' : d.cls === '정상' ? 'ok' : 'ok-guess';
+    const verdict = verdicts[d.file] || '';
+
+    const card = document.createElement('div');
+    card.className = `card ${cls}`;
+    card.id = `card-${d.file}`;
+    card.innerHTML = `
+      <button class="play-btn" data-file="${d.file}" onclick="playAudio('${d.file}', this)">&#9654;</button>
+      <div class="info">
+        <div class="filename">${d.file} <span style="font-size:0.75rem;color:#94a3b8;">${d.type}</span></div>
+        <div class="transcript">Whisper: <em>"${d.transcript}"</em> &nbsp; 기대: ${d.phoneme.replace(/^(core|onset|rime)_/,'')}</div>
+        <div class="meta">${d.duration_s}s | 발음: ${d.speech_start_s}~${d.speech_end_s}s | 앞공백: ${d.leading_silence_s}s 뒤공백: ${d.trailing_silence_s}s</div>
+      </div>
+      <div class="verdict-btns">
+        <button class="v-ok ${verdict==='ok'?'selected':''}" onclick="setVerdict('${d.file}','ok',this)">OK</button>
+        <button class="v-ng ${verdict==='ng'?'selected':''}" onclick="setVerdict('${d.file}','ng',this)">NG</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  updateProgress();
+}
+
+function playAudio(file, btn) {
+  if (currentAudio) {
+    currentAudio.pause();
+    document.querySelectorAll('.play-btn.playing').forEach(b => { b.classList.remove('playing'); b.innerHTML = '&#9654;'; });
+  }
+  const audio = new Audio(AUDIO_BASE + file);
+  currentAudio = audio;
+  btn.classList.add('playing');
+  btn.innerHTML = '&#9632;';
+  audio.play();
+  audio.onended = () => {
+    btn.classList.remove('playing');
+    btn.innerHTML = '&#9654;';
+    currentAudio = null;
+    if (autoplayActive) playNext();
+  };
+}
+
+function setVerdict(file, verdict, btn) {
+  const card = btn.closest('.card');
+  card.querySelectorAll('.verdict-btns button').forEach(b => b.classList.remove('selected'));
+
+  if (verdicts[file] === verdict) {
+    delete verdicts[file]; // toggle off
+  } else {
+    verdicts[file] = verdict;
+    btn.classList.add('selected');
+  }
+  saveVerdicts();
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = AUDIT_DATA.length;
+  const checked = Object.keys(verdicts).length;
+  const okCount = Object.values(verdicts).filter(v => v === 'ok').length;
+  const ngCount = Object.values(verdicts).filter(v => v === 'ng').length;
+  document.getElementById('progress').textContent = `체크: ${checked}/${total} (OK: ${okCount}, NG: ${ngCount})`;
+
+  // Update summary counts
+  const counts = document.getElementById('counts');
+  const groups = { '확실히_NG': 0, '의심_NG': 0, '정상_추정': 0, '정상': 0 };
+  AUDIT_DATA.forEach(d => { groups[d.cls] = (groups[d.cls]||0) + 1; });
+  const unchecked = AUDIT_DATA.filter(d => !verdicts[d.file]).length;
+
+  counts.innerHTML = `
+    <span class="count-badge" style="background:#fef2f2;color:#dc2626;">확실히 NG: ${groups['확실히_NG']}</span>
+    <span class="count-badge" style="background:#fffbeb;color:#d97706;">의심 NG: ${groups['의심_NG']}</span>
+    <span class="count-badge" style="background:#f0fdf4;color:#16a34a;">정상 추정: ${groups['정상_추정']}</span>
+    <span class="count-badge" style="background:#f0fdf4;color:#15803d;">정상: ${groups['정상']}</span>
+    <span class="count-badge" style="background:#f1f5f9;color:#475569;">미체크: ${unchecked}</span>
+  `;
+}
+
+function renderTabs() {
+  const tabs = document.getElementById('tabs');
+  const tabDefs = [
+    ['all', '전체 (192)'],
+    ['확실히_NG', '확실히 NG'],
+    ['의심_NG', '의심 NG'],
+    ['정상_추정', '정상 추정'],
+    ['정상', '정상'],
+    ['unchecked', '미체크'],
+  ];
+  tabs.innerHTML = tabDefs.map(([key, label]) =>
+    `<button class="tab-btn ${currentFilter===key?'active':''}" onclick="setFilter('${key}')">${label}</button>`
+  ).join('');
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  renderTabs();
+  render();
+}
+
+function startAutoplay() {
+  const filtered = getFiltered();
+  if (filtered.length === 0) return;
+  autoplayActive = true;
+  autoplayIndex = 0;
+  document.getElementById('autoplayBtn').classList.add('hidden');
+  document.getElementById('stopBtn').classList.remove('hidden');
+  playByIndex(0);
+}
+
+function stopAutoplay() {
+  autoplayActive = false;
+  if (currentAudio) currentAudio.pause();
+  document.getElementById('autoplayBtn').classList.remove('hidden');
+  document.getElementById('stopBtn').classList.add('hidden');
+}
+
+function playNext() {
+  autoplayIndex++;
+  const filtered = getFiltered();
+  if (autoplayIndex >= filtered.length) { stopAutoplay(); return; }
+  playByIndex(autoplayIndex);
+}
+
+function playByIndex(idx) {
+  const filtered = getFiltered();
+  const d = filtered[idx];
+  const card = document.getElementById('card-' + d.file);
+  if (card) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const btn = card.querySelector('.play-btn');
+    playAudio(d.file, btn);
+  }
+}
+
+function exportResults() {
+  let csv = '\uFEFF파일명,AI분류,수동판정,Whisper전사,길이,앞공백,뒤공백\n';
+  AUDIT_DATA.forEach(d => {
+    const v = verdicts[d.file] || '미체크';
+    csv += `${d.file},${d.cls},${v},"${d.transcript}",${d.duration_s},${d.leading_silence_s},${d.trailing_silence_s}\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'phoneme-audit-manual-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+// Init
+renderTabs();
+render();
+</script>
+</body>
+</html>
