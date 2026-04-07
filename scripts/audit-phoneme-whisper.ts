@@ -229,14 +229,21 @@ async function main() {
     const args = process.argv.slice(2);
     const onlyNG = args.includes('--only-ng');
     const saveJSON = args.includes('--json');
+    const filesArg = args.find(a => a.startsWith('--files='));
+    const filterIds = filesArg ? filesArg.replace('--files=', '').split(',') : null;
 
     console.log('═══════════════════════════════════════');
     console.log('  Phoneme Audio QA — Whisper 자동 감사');
     console.log('═══════════════════════════════════════\n');
 
-    const files = fs.readdirSync(PHONEME_DIR)
+    let files = fs.readdirSync(PHONEME_DIR)
         .filter(f => f.endsWith('.mp3') && !f.includes('.bak'))
         .sort();
+
+    if (filterIds) {
+        files = files.filter(f => filterIds.some(id => f === `${id}.mp3`));
+        console.log(`🔍 필터 적용: ${filterIds.length}개 ID → ${files.length}개 파일\n`);
+    }
 
     console.log(`📁 감사 대상: ${files.length}개 phoneme 파일\n`);
 
@@ -251,8 +258,25 @@ async function main() {
 
         process.stdout.write(`[${i + 1}/${files.length}] ${file} ... `);
 
+        // Groq Whisper rate limit: 20 RPM → 4초 간격 + 429 재시도
+        if (i > 0) await new Promise(r => setTimeout(r, 4000));
+
         try {
-            const { text, segments, duration } = await transcribeWithWhisper(filePath);
+            let whisperResult;
+            for (let attempt = 0; attempt < 3; attempt++) {
+                try {
+                    whisperResult = await transcribeWithWhisper(filePath);
+                    break;
+                } catch (retryErr: any) {
+                    if (retryErr.message?.includes('429') && attempt < 2) {
+                        console.log(`(429, waiting 10s...)`);
+                        await new Promise(r => setTimeout(r, 10000));
+                        continue;
+                    }
+                    throw retryErr;
+                }
+            }
+            const { text, segments, duration } = whisperResult!;
 
             // Calculate speech timing from segments
             let speechStart = 0;
