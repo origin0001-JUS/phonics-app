@@ -27,11 +27,12 @@ const RESULT_PATH = path.join(PROJECT_ROOT, 'scripts', 'regen-result.json');
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env.local') });
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+// Flash TTS: 무료 tier 분당 10회 가능 (Pro는 무료 tier 불가)
 const API_URL = `https://generativelanguage.googleapis.com/v1alpha/models/gemini-2.5-flash-preview-tts:generateContent?key=${GEMINI_API_KEY}`;
 
-const MAX_RETRIES = 2;
-const RETRY_DELAY_MS = 2000;
-const RATE_LIMIT_DELAY_MS = 1000;
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 10000;         // 500/429 에러 시 10초 대기
+const RATE_LIMIT_DELAY_MS = 25000;    // 무료 tier: 분당 3회 → 요청 간 25초
 
 // ─── System Instruction ───────────────────────────────────────────────
 
@@ -84,21 +85,19 @@ function buildPrompt(entry: NgPhonemeEntry): string {
 // ─── API Call ─────────────────────────────────────────────────────────
 
 async function callGeminiTTS(entry: NgPhonemeEntry): Promise<Buffer> {
-  const prompt = buildPrompt(entry);
+  // Flash TTS는 systemInstruction을 지원하지 않음 → user 프롬프트에 합침
+  const fullPrompt = SYSTEM_INSTRUCTION + '\n\n' + buildPrompt(entry);
 
   const payload = {
-    systemInstruction: {
-      parts: [{ text: SYSTEM_INSTRUCTION }],
-    },
     contents: [
-      { role: 'user', parts: [{ text: prompt }] },
+      { role: 'user', parts: [{ text: fullPrompt }] },
     ],
     generationConfig: {
       responseModalities: ['AUDIO'],
       speechConfig: {
         voiceConfig: {
           prebuiltVoiceConfig: {
-            voiceName: 'Kore',
+            voiceName: 'Aoede',  // Kore가 Flash TTS에서 불안정, Aoede 여성 보이스 사용
           },
         },
       },
@@ -245,7 +244,15 @@ async function main() {
         break;
       } catch (err: any) {
         lastError = err.message || String(err);
-        console.log(`  Error: ${lastError}`);
+        console.log(`  Error: ${lastError.slice(0, 200)}`);
+
+        // 429: parse "retry in Xs" and wait accordingly
+        const retryMatch = lastError.match(/retry in (\d+(?:\.\d+)?)s/i);
+        if (retryMatch) {
+          const waitSec = Math.ceil(parseFloat(retryMatch[1])) + 5;
+          console.log(`  Rate limited — waiting ${waitSec}s...`);
+          await sleep(waitSec * 1000);
+        }
       }
     }
 
