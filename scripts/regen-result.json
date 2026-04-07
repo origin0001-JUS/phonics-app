@@ -1,0 +1,326 @@
+{
+  "timestamp": "2026-04-07T05:36:59.128Z",
+  "dryRun": false,
+  "total": 78,
+  "ok": 74,
+  "failed": 4,
+  "skipped": 0,
+  "results": [
+    {
+      "id": "core_ar",
+      "status": "ok"
+    },
+    {
+      "id": "core_aw",
+      "status": "ok"
+    },
+    {
+      "id": "core_ay",
+      "status": "ok"
+    },
+    {
+      "id": "core_ee",
+      "status": "ok"
+    },
+    {
+      "id": "core_eh",
+      "status": "ok"
+    },
+    {
+      "id": "core_er",
+      "status": "ok"
+    },
+    {
+      "id": "core_ih",
+      "status": "ok"
+    },
+    {
+      "id": "core_j",
+      "status": "ok"
+    },
+    {
+      "id": "core_ng",
+      "status": "ok"
+    },
+    {
+      "id": "core_th",
+      "status": "ok"
+    },
+    {
+      "id": "core_th_v",
+      "status": "ok"
+    },
+    {
+      "id": "core_uh",
+      "status": "ok"
+    },
+    {
+      "id": "onset_bl",
+      "status": "ok"
+    },
+    {
+      "id": "onset_dr",
+      "status": "ok"
+    },
+    {
+      "id": "onset_f",
+      "status": "ok"
+    },
+    {
+      "id": "onset_fr",
+      "status": "ok"
+    },
+    {
+      "id": "onset_gr",
+      "status": "ok"
+    },
+    {
+      "id": "onset_l",
+      "status": "ok"
+    },
+    {
+      "id": "onset_m",
+      "status": "ok"
+    },
+    {
+      "id": "onset_n",
+      "status": "failed",
+      "error": "API 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Model tried to generate text, but it should only be used for TTS. Make sure your instructions are clear to only generate audio from a given text transcript.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n"
+    },
+    {
+      "id": "onset_r",
+      "status": "ok"
+    },
+    {
+      "id": "onset_s",
+      "status": "ok"
+    },
+    {
+      "id": "onset_sh",
+      "status": "ok"
+    },
+    {
+      "id": "onset_sk",
+      "status": "ok"
+    },
+    {
+      "id": "onset_sm",
+      "status": "ok"
+    },
+    {
+      "id": "onset_sn",
+      "status": "ok"
+    },
+    {
+      "id": "onset_st",
+      "status": "ok"
+    },
+    {
+      "id": "onset_th",
+      "status": "ok"
+    },
+    {
+      "id": "onset_v",
+      "status": "ok"
+    },
+    {
+      "id": "onset_w",
+      "status": "ok"
+    },
+    {
+      "id": "onset_wh",
+      "status": "ok"
+    },
+    {
+      "id": "onset_z",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ade",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ail",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ain",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ait",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ake",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ang",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ard",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ark",
+      "status": "ok"
+    },
+    {
+      "id": "rime_arm",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ase",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ate",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ave",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ay",
+      "status": "ok"
+    },
+    {
+      "id": "rime_eaf",
+      "status": "ok"
+    },
+    {
+      "id": "rime_eam",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ean",
+      "status": "ok"
+    },
+    {
+      "id": "rime_eat",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ee",
+      "status": "ok"
+    },
+    {
+      "id": "rime_eef",
+      "status": "ok"
+    },
+    {
+      "id": "rime_eet",
+      "status": "ok"
+    },
+    {
+      "id": "rime_em",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ep",
+      "status": "ok"
+    },
+    {
+      "id": "rime_erk",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ib",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ick",
+      "status": "ok"
+    },
+    {
+      "id": "rime_id",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ig",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ip",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ir",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ird",
+      "status": "ok"
+    },
+    {
+      "id": "rime_irst",
+      "status": "ok"
+    },
+    {
+      "id": "rime_irt",
+      "status": "ok"
+    },
+    {
+      "id": "rime_istle",
+      "status": "ok"
+    },
+    {
+      "id": "rime_oad",
+      "status": "ok"
+    },
+    {
+      "id": "rime_oap",
+      "status": "ok"
+    },
+    {
+      "id": "rime_oil",
+      "status": "ok"
+    },
+    {
+      "id": "rime_oke",
+      "status": "ok"
+    },
+    {
+      "id": "rime_om",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ool",
+      "status": "ok"
+    },
+    {
+      "id": "rime_oon",
+      "status": "ok"
+    },
+    {
+      "id": "rime_oor",
+      "status": "failed",
+      "error": "API 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_requests_per_model_per_day, limit: 100, model: gemini-2.5-flash-tts\\nPlease retry in 18h27m20.229602429s.\",\n    \"status\": \"RESOURCE_EXHAUS"
+    },
+    {
+      "id": "rime_oot",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ot",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ub",
+      "status": "ok"
+    },
+    {
+      "id": "rime_up",
+      "status": "failed",
+      "error": "API 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_requests_per_model_per_day, limit: 100, model: gemini-2.5-flash-tts\\nPlease retry in 18h23m57.32106609s.\",\n    \"status\": \"RESOURCE_EXHAUST"
+    },
+    {
+      "id": "rime_urse",
+      "status": "failed",
+      "error": "API 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_requests_per_model_per_day, limit: 100, model: gemini-2.5-flash-tts\\nPlease retry in 18h23m1.123662907s.\",\n    \"status\": \"RESOURCE_EXHAUST"
+    }
+  ]
+}
