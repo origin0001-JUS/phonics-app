@@ -77,30 +77,94 @@ Produce ONLY this isolated rime syllable. Do not say any full words, spell any l
 // ─── Round 3: 개별 맞춤 프롬프트 (2번 연속 실패한 파일용) ─────────
 // 전략: "단어 X를 말할 때의 Y 부분만 발음해" 방식
 const CUSTOM_PROMPTS: Record<string, string> = {
-  // Core - 미묘한 모음/자음
-  'core_ih': 'Say the word "sit". Now say ONLY the short vowel in the middle — the "ih" sound /ɪ/. It rhymes with "bit", "fit", "kit". Just that short, quick vowel. Not "ee", not "eh" — the sound between them.',
+  // ═══ Round 4: 11개 NG — "어떤 소리인지" 예시 단어와 대조하여 극도로 구체적으로 설명 ═══
+
+  // core_ih: "Yeah"로 잘못 생성 → short i 를 정확히 설명
+  'core_ih': `I need you to say the SHORT I vowel sound. This is the vowel in the middle of these words: "sit", "big", "fish", "pin", "hit".
+Say "sit" out loud in your mind. The vowel between the "s" and the "t" — that is the sound I need.
+It is NOT "ee" (as in "see"), NOT "ay" (as in "say"), NOT "yeah".
+It is a quick, short, relaxed vowel: /ɪ/. Say it once, clearly, for about 0.4 seconds.
+Think of it as a shorter, more relaxed version of "ee". Your mouth is slightly open, tongue is relaxed in the middle.`,
+
+  // core_th_v: "Mmm"로 잘못 생성 → VOICED th를 voiceless와 명확히 대조
+  'core_th_v': `This is the VOICED "th" sound, written as /ð/ in phonetics.
+IMPORTANT: This is different from the voiceless "th" in "thin". This is the BUZZING "th" in "this", "that", "the", "mother", "brother".
+How to make this sound: Put your tongue between your upper and lower teeth. Now HUM — vibrate your vocal cords while air passes over your tongue. You should feel a buzzing vibration.
+Say the word "this" — the VERY FIRST sound, before the "i", is what I need. Just that initial buzzing dental sound.
+It sounds like a buzzing "dh" — NOT "d", NOT "z", NOT "m", NOT silence. It is a voiced dental fricative.
+Hold it for 0.6 seconds. It should buzz like a bee trapped between your teeth.`,
+
+  // onset_bl: "bowl"로 잘못 생성 → 모음 붙이지 말 것 강조
+  'onset_bl': `Say the word "blue". Now I need ONLY the very beginning — the "bl" part — before the "oo" vowel starts.
+It is two consonants blended together: first a quick "b" lip pop, then immediately the "l" with your tongue touching behind your upper teeth.
+The result sounds like "bl—" (cut off). NOT "bull", NOT "bowl", NOT "bul". There should be NO vowel sound at all.
+Same beginning as "black", "blend", "blow". Just the consonant cluster, about 0.2 seconds.`,
+
+  // onset_dr: "Durr"로 잘못 생성 → 모음 없이 블렌드만
+  'onset_dr': `Say the word "drum". Now I need ONLY the very beginning "dr" — before any vowel.
+It is "d" (tongue taps behind upper teeth) immediately followed by "r" (tongue curls back).
+The result sounds like "dr—" (cut off abruptly). NOT "dur", NOT "druh", NOT "durr". No vowel after the r.
+Same beginning as "drop", "drive", "dry". Just the two consonants blended, about 0.2 seconds. Cut it off before any vowel escapes.`,
+
+  // onset_f: 무음으로 생성됨 → "f" 소리를 명확하게
+  'onset_f': `Say the word "fish". The very first sound — before the "i" vowel — is what I need.
+This is the "f" sound /f/. Your upper teeth rest on your lower lip, and you blow air through the gap.
+It sounds like a steady stream of air: "fffffffffff". Like blowing out a candle very gently, with teeth on lip.
+It is the same starting sound as "fun", "five", "food", "fast".
+Hold this continuous breathy sound for about 0.6 seconds. NOT "sh", NOT "p", NOT silence — it is teeth-on-lip air.`,
+
+  // onset_fr: "fur"로 잘못 생성 → 모음 제거 강조
+  'onset_fr': `Say the word "frog". Now I need ONLY the beginning "fr" — before the "o" vowel.
+First: "f" (upper teeth on lower lip, blow air). Immediately followed by: "r" (tongue curls back, voice starts).
+The combined sound is "fr—" (cut off). NOT "fur", NOT "fra", NOT "free". There must be NO vowel.
+Same beginning as "free", "from", "fresh". About 0.3 seconds. Stop before any vowel comes out.`,
+
+  // onset_l: "Ooh"로 잘못 생성 → "l" 소리의 정체를 설명
+  'onset_l': `Say the word "leg". The very first sound — before the "e" vowel — is what I need.
+This is the "l" sound /l/. Touch the TIP of your tongue firmly to the bumpy ridge right behind your upper front teeth. Let your voice flow around the SIDES of your tongue.
+It sounds like "llllllll" — a continuous humming-lateral sound. NOT "oo", NOT "uh", NOT "oh".
+Same first sound as "lip", "let", "love", "light".
+Hold this tongue-on-ridge lateral sound for about 0.6 seconds. Your tongue must stay touching that ridge the whole time.`,
+
+  // onset_n: "Hmmmm"로 잘못 생성 → "n"과 "m"의 차이 강조
+  'onset_n': `Say the word "net". The very first sound — before the "e" vowel — is what I need.
+This is the "n" sound /n/. Press your tongue against the ridge behind your upper front teeth and hum through your NOSE.
+CRITICAL DIFFERENCE from "m": Your LIPS must be OPEN. For "m", lips are closed. For "n", lips are open but tongue blocks the air in your mouth, so air goes through your nose.
+It sounds like "nnnnnnnn". NOT "mmmmm" (that would be lips closed), NOT "hmmm".
+Same first sound as "nap", "nut", "nice", "no".
+Hold it for 0.6 seconds with lips open and tongue on the ridge.`,
+
+  // onset_r: "brrrrr"로 생성 → 트릴이 아닌 미국식 r
+  'onset_r': `Say the word "red". The very first sound — before the "e" vowel — is what I need.
+This is the American English "r" sound /ɹ/. Curl your tongue tip slightly upward and back, WITHOUT touching the roof of your mouth. Let your voice flow smoothly.
+IMPORTANT: This is NOT a trilled/rolled "r" like in Spanish (no "brrr" vibration). It is a smooth, gliding sound.
+It sounds like "rrrr" — a smooth, warm, continuous sound. Same first sound as "run", "rain", "right".
+Hold it for about 0.5 seconds. Smooth, no vibration, no tongue tapping.`,
+
+  // onset_sm: "Tssssssmmmmmm"로 생성 → 깔끔한 sm
+  'onset_sm': `Say the word "small". Now I need ONLY the beginning "sm" — before the "all" part.
+First: a brief "s" hiss (about 0.2 seconds), then smoothly transition to "m" (lips close, nasal hum, about 0.3 seconds).
+The combined blend sounds like "sm—". NOT "ts", NOT a long hissing sound. Just a clean, short s-to-m blend.
+Same beginning as "smile", "smell", "smoke", "smart".
+Total duration about 0.5 seconds. Keep it clean and compact.`,
+
+  // rime_ip: "it"으로 잘못 생성 → "-ip" (p 끝소리) 강조
+  'rime_ip': `Say the word "tip". Now remove the "t" at the beginning. The remaining sound — "-ip" — is what I need.
+It is: short "i" vowel /ɪ/ (like in "sit") + "p" (lips pop closed at the end).
+Listen: "tip" without the "t" = "ip". Same ending as "lip", "ship", "dip", "hip", "zip".
+It rhymes with all those words. The "p" at the end is important — your lips must close with a little pop.
+NOT "it" (that ends with "t"), NOT "id" (that ends with "d"). It ends with "p" — lips together, pop.
+About 0.3 seconds total.`,
+
+  // ═══ 아래는 Round 3에서 통과한 것들 (유지) ═══
   'core_ng': 'Say the word "ring". Now say ONLY the final nasal sound "ng" /ŋ/. It is the humming sound at the back of your throat, like the ending of "sing", "king", "long". Hold it for about 0.7 seconds. It is NOT "n" and NOT "m".',
   'core_th': 'Place your tongue between your teeth and blow air gently. This is the voiceless "th" sound /θ/ as in "thin", "think", "three". It is a continuous fricative — hold it for 0.6 seconds. Do NOT say "t" or "f" — it must be the dental fricative with tongue visible between teeth.',
-  'core_th_v': 'Place your tongue between your teeth and vibrate your vocal cords while blowing air. This is the voiced "th" sound /ð/ as in "this", "that", "the". It is like the voiceless "th" but with voice added. Hold it for 0.6 seconds. Do NOT say "d" or "z".',
   'core_uh': 'Say the word "cup". Now say ONLY the short vowel in the middle — the "uh" sound /ʌ/. It is the same vowel in "bus", "sun", "mud". A short, relaxed, open vowel from the center of your mouth. Hold it for about 0.5 seconds.',
-
-  // Onset - 자음/블렌드
-  'onset_bl': 'Say ONLY the consonant blend "bl" /bl/ as heard at the start of "blue" or "black". Combine the "b" pop with an immediate "l". Do NOT add a vowel after it. Keep it very short — just the blend itself, like you started to say "blue" but stopped before the "oo".',
-  'onset_dr': 'Say ONLY the consonant blend "dr" /dɹ/ as heard at the start of "drum" or "drop". The "d" pops and immediately flows into the "r". Do NOT add a vowel — just the blend. Like starting to say "drum" but stopping before "um".',
-  'onset_f': 'Bite your lower lip gently with your upper teeth and blow air steadily. This is the "f" sound /f/ as in "fish", "fun". It is a continuous voiceless fricative. Hold the steady airflow for about 0.6 seconds. Do NOT say "sh" — teeth must touch lip.',
-  'onset_fr': 'Say ONLY the consonant blend "fr" /fɹ/ as heard at the start of "frog" or "free". Start with the "f" (lip against teeth) and immediately glide into "r". No vowel after. Like starting "frog" but stopping before "og".',
-  'onset_l': 'Touch the tip of your tongue to the ridge behind your upper teeth and let your voice flow around the sides. This is the "l" sound /l/ as in "leg", "lip". Hold the continuous voiced lateral sound for about 0.6 seconds. It should sound like "llllll", NOT "oo" or "uh".',
-  'onset_n': 'Press your tongue against the ridge behind your upper teeth and hum through your nose. This is the "n" sound /n/ as in "net", "nap". Hold the nasal hum for about 0.6 seconds. It should sound like "nnnnnn", NOT "mmm" or "hmm" — your lips should be open.',
-  'onset_r': 'Curl your tongue tip upward without touching the roof of your mouth and let your voice flow. This is the American "r" sound /ɹ/ as in "red", "run". Hold it for about 0.6 seconds. It should sound like a smooth "rrrr", NOT a rolling or trilling r.',
-  'onset_sm': 'Say ONLY the consonant blend "sm" /sm/ as heard at the start of "small" or "smile". Start with the "s" hiss and flow into "m" nasal. Like starting "small" but stopping before "all". Keep it under 0.8 seconds.',
   'onset_w': 'Round your lips tightly into an "oo" shape, then quickly open them while voicing. This is the "w" sound /w/ as in "wet", "win". It is a very brief glide — about 0.3 seconds. Do NOT hold it long or it will sound like "woooo". Quick and short.',
   'onset_wh': 'Say the "w" sound /w/ as heard at the start of "whale" or "when". Round your lips briefly and release. Very short, about 0.3 seconds. In modern American English this sounds the same as "w".',
-
-  // Rime
   'rime_eam': 'Say the word "team". Now say ONLY the ending "-eam" part /iːm/. It sounds like "eem" — a long "ee" vowel followed by "m". Same ending as "dream", "cream", "steam". About 0.6 seconds.',
   'rime_eef': 'Say the word "beef". Now say ONLY the ending "-eef" part /iːf/. It sounds like "eef" — a long "ee" vowel followed by "f". Same ending as "reef". About 0.5 seconds.',
   'rime_ep': 'Say the word "step". Now say ONLY the ending "-ep" part /ɛp/. It sounds like "ep" with a short "e" vowel followed by a "p" pop. Same ending as "pep", "rep". Very short, about 0.3 seconds.',
-  'rime_ip': 'Say the word "tip". Now say ONLY the ending "-ip" part /ɪp/. It sounds like "ip" with a short "i" vowel followed by a "p" pop. Same ending as "lip", "ship", "dip". Very short, about 0.3 seconds.',
   'rime_irt': 'Say the word "dirt". Now say ONLY the ending "-irt" part /ɜːɹt/. It sounds like "ert" — the r-controlled vowel "er" followed by "t". Same ending as "shirt", "skirt". About 0.4 seconds.',
   'rime_oap': 'Say the word "soap". Now say ONLY the ending "-oap" part /oʊp/. It sounds like "ope" — a long "oh" gliding into "p". About 0.4 seconds.',
 };

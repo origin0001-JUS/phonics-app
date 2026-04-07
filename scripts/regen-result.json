@@ -1,13 +1,53 @@
 {
-  "timestamp": "2026-04-07T14:08:05.238Z",
+  "timestamp": "2026-04-07T14:54:43.154Z",
   "dryRun": false,
-  "total": 1,
-  "ok": 1,
+  "total": 11,
+  "ok": 11,
   "failed": 0,
   "skipped": 0,
   "results": [
     {
+      "id": "core_ih",
+      "status": "ok"
+    },
+    {
+      "id": "core_th_v",
+      "status": "ok"
+    },
+    {
+      "id": "onset_bl",
+      "status": "ok"
+    },
+    {
+      "id": "onset_dr",
+      "status": "ok"
+    },
+    {
+      "id": "onset_f",
+      "status": "ok"
+    },
+    {
+      "id": "onset_fr",
+      "status": "ok"
+    },
+    {
+      "id": "onset_l",
+      "status": "ok"
+    },
+    {
+      "id": "onset_n",
+      "status": "ok"
+    },
+    {
       "id": "onset_r",
+      "status": "ok"
+    },
+    {
+      "id": "onset_sm",
+      "status": "ok"
+    },
+    {
+      "id": "rime_ip",
       "status": "ok"
     }
   ]
