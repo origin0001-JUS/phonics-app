@@ -12,40 +12,69 @@
 
 ## 최근 핸드오프 (Latest Handoff)
 
-- **From**: Claude Code (gstack QA + 버그 수정)
-- **When**: 2026-03-29 (KST)
+- **From**: Claude Code (Phoneme TTS 대규모 재생성 + QA)
+- **When**: 2026-04-07 (KST)
 - **Branch**: `master` (배포 브랜치)
-- **최신 커밋**: `fec1618`
+- **최신 커밋**: `cdee8ff` (+ Round 3 진행 중)
 
-### 이번 세션에서 완료한 것 (Claude Code)
-- [x] **QA-1**: gstack 브라우저 기반 전체 QA 수행 (건강 점수 78/100)
-  - 홈, 온보딩, 유닛 선택, 레슨 Unit 01 (6개 스텝), 리뷰 페이지 테스트
-  - TTS 품질 집중 점검: 335개 단어 100% MP3 커버리지 확인
-  - 반응형 레이아웃 (모바일/태블릿/데스크탑) 검증
-- [x] **QA-FIX-1**: `tan.mp3` 생성 — Word Family Builder -an 패밀리 보너스 단어 404 에러 수정
-- [x] **QA-FIX-2**: `core_ih.mp3` 재생성 — 0.28초→1.11초 (다른 모음과 동일 수준으로 길이 조정)
-- [x] **QA-FIX-3**: 태블릿 홈 레이아웃 수정 — `mt-auto` → `mt-8 md:mt-10` + `max-w-lg` 적용
-- [x] **빌드 확인**: `npm run build` 성공
+### 이번 세션에서 완료한 것 (2026-04-07)
 
-### 이번 세션에서 확인된 것 (문제 없음)
-- 단어 이미지 533개 전부 정상 (QA 초기 오탐 → 로딩 지연이었음)
-- TTS fallback (SpeechSynthesis) 정상 동작
-- 오디오 캐싱 정상
-- phoneme onset/rime 오디오 전부 정상 재생
-- 콘솔 에러 없음 (tan.mp3 수정 후)
+#### 1. Vercel 배포 설정 수정
+- [x] `vercel.json` 추가 — `framework: null`, `outputDirectory: out` 설정
+- [x] `phoneme-audit.html` 404 문제 해결 (Next.js 프레임워크 프리셋 → 순수 정적 서빙)
+- 커밋: `bce22ed` → `ccb2afd`
+
+#### 2. Phoneme TTS 대규모 재생성 (V3)
+- [x] **NG 분석**: 수동 QA에서 192개 중 78개 NG 판정 (41%)
+- [x] **재생성 스크립트 개발**: `scripts/regenerate-ng-phonemes.ts` + `scripts/ng-phoneme-data.ts`
+  - Gemini 2.5 Flash TTS + Aoede 보이스 (미국 여성)
+  - 파닉스 컨텍스트 프롬프트: IPA + 예시단어 + "이것은 단어가 아닌 음소 패턴" 명시
+  - Flash TTS `systemInstruction` 미지원 발견 → user prompt에 합침
+  - Kore 보이스 불안정 발견 → Aoede로 변경
+- [x] **Round 1**: 74/78 생성 성공 (4개 일일 quota 소진)
+- [x] **Round 1 수동 QA**: 57/74 OK, 17 NG
+- [x] **Round 2**: 21개 재생성 (Round 1 NG 17 + 미생성 4)
+- [x] **Round 2 수동 QA (Ver2)**: 171/192 OK (89%), 21 NG (11%)
+- [x] **Round 3 진행 중**: 21개 개별 맞춤 프롬프트로 재생성 중
+- 주요 커밋: `1469d35`, `027a097`, `e228803`, `6a99ad9`
+
+#### 3. Whisper QA 파이프라인 개선
+- [x] `audit-phoneme-whisper.ts`에 `--files=` 필터 옵션 추가
+- [x] Groq Whisper 20 RPM 제한 대응 (4초 딜레이 + 429 자동 재시도)
+- 커밋: `29005f9`
+
+#### 4. Phoneme Audit 청취 페이지 업데이트
+- [x] 재생성 파일 Whisper 결과 반영 (Round 1 + 2)
+- [x] "🔄 재생성" 배지 + "재생성됨" 탭 필터 추가
+- [x] 재생성 파일 수동 판정 자동 리셋 (음원 변경 시)
+- [x] CSV 내보내기에 "재생성" 컬럼 추가
+- 커밋: `8ff0521`, `7e574eb`, `cdee8ff`
+
+#### 5. 문서화
+- [x] `docs/tts-version-history.md` — TTS 전체 히스토리 (V1~V3, QA 파이프라인, API 제한, 학습사항)
+- 커밋: `db185de`
+
+### 이전 세션 반영 누락분 (2026-03-29 이후)
+
+#### 2026-03-29 ~ 2026-04-06
+- [x] `67da9d9` — Whisper 기반 phoneme audit 도구 + 청취 페이지 구축
+- [x] `0980094` — 재사용 가능한 워크플로우 템플릿 추가 (GStack+Superpowers+GSD+핸드오프)
+- [x] `dc743be` — 통합 워크플로우 규칙 CLAUDE.md에 추가
 
 ### 블로커 / 주의사항
+- **Phoneme NG 21개 잔존** — Round 3 재생성 진행 중 (core_ih, core_ng, core_th 등 난이도 높은 음소)
 - Supabase SQL (`docs/supabase/setup_v2_licensing.sql`) 아직 미실행
-- 립싱크 영상 일부 단어만 존재 (별도 고민 예정)
-- `core_ih.bak.mp3` 백업 파일 남아있음 (삭제 가능)
+- 립싱크 영상 일부 단어만 존재
+- `core_ih.bak.mp3` 백업 파일 + `phonemes_backup/` 디렉토리 남아있음 (최종 QA 후 정리)
+- Gemini Flash TTS 무료 tier: 일일 100회, 분당 10회 제한
 
 ### 다음 에이전트의 할 일
 1. `git pull` 실행
-2. Vercel 배포 확인 (phonics-app-one.vercel.app)
-3. 립싱크 영상 확장 방안 결정
+2. Round 3 재생성 결과 수동 QA → 여전히 NG이면 Round 4 또는 수동 녹음 검토
+3. 최종 통과된 음원 커밋 + Vercel 배포 확인
 4. Supabase SQL 실행 및 라이선스 시스템 실제 연동 테스트
-5. 실기기 재테스트 (TTS 음질, Say & Check STT 동작)
-6. 완료 시 이 파일 업데이트 후 커밋/푸시
+5. 립싱크 영상 확장 방안 결정
+6. 실기기 재테스트 (TTS 음질, Say & Check STT 동작)
 
 ---
 
@@ -78,7 +107,7 @@
 | 에이전트 | 상태 | 현재 작업 | 블로커 |
 |----------|------|----------|--------|
 | **Antigravity** | [대기] | — | — |
-| **Claude Code** | [작업 완료] | gstack QA + TTS/레이아웃 수정 3건 | — |
+| **Claude Code** | [작업 중] | Phoneme TTS V3 재생성 (Round 3, 21개 NG) | Gemini 일일 100회 제한 |
 | **Claude Web** | [대기] | — | — |
 
 ---

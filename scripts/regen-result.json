@@ -1,93 +1,13 @@
 {
-  "timestamp": "2026-04-07T08:28:35.151Z",
+  "timestamp": "2026-04-07T14:08:05.238Z",
   "dryRun": false,
-  "total": 21,
-  "ok": 21,
+  "total": 1,
+  "ok": 1,
   "failed": 0,
   "skipped": 0,
   "results": [
     {
-      "id": "core_aw",
-      "status": "ok"
-    },
-    {
-      "id": "core_ih",
-      "status": "ok"
-    },
-    {
-      "id": "core_j",
-      "status": "ok"
-    },
-    {
-      "id": "core_ng",
-      "status": "ok"
-    },
-    {
-      "id": "core_th",
-      "status": "ok"
-    },
-    {
-      "id": "core_th_v",
-      "status": "ok"
-    },
-    {
-      "id": "core_uh",
-      "status": "ok"
-    },
-    {
-      "id": "onset_bl",
-      "status": "ok"
-    },
-    {
-      "id": "onset_f",
-      "status": "ok"
-    },
-    {
-      "id": "onset_fr",
-      "status": "ok"
-    },
-    {
-      "id": "onset_l",
-      "status": "ok"
-    },
-    {
-      "id": "onset_n",
-      "status": "ok"
-    },
-    {
-      "id": "onset_st",
-      "status": "ok"
-    },
-    {
-      "id": "onset_th",
-      "status": "ok"
-    },
-    {
-      "id": "rime_ave",
-      "status": "ok"
-    },
-    {
-      "id": "rime_ep",
-      "status": "ok"
-    },
-    {
-      "id": "rime_oap",
-      "status": "ok"
-    },
-    {
-      "id": "rime_oor",
-      "status": "ok"
-    },
-    {
-      "id": "rime_ot",
-      "status": "ok"
-    },
-    {
-      "id": "rime_up",
-      "status": "ok"
-    },
-    {
-      "id": "rime_urse",
+      "id": "onset_r",
       "status": "ok"
     }
   ]
