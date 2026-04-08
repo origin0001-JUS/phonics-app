@@ -1,0 +1,36 @@
+▲ Next.js 16.2.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 26.0s
+  Running TypeScript ...
+  Finished TypeScript in 15.6s ...
+  Collecting page data using 1 worker ...
+  Generating static pages using 1 worker (0/50) ...
+  Generating static pages using 1 worker (12/50) 
+  Generating static pages using 1 worker (24/50) 
+  Generating static pages using 1 worker (37/50) 
+✓ Generating static pages using 1 worker (50/50) in 1378ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /admin
+├ ● /lesson/[unitId]
+│ ├ /lesson/unit_01
+│ ├ /lesson/unit_02
+│ ├ /lesson/unit_03
+│ └ [+34 more paths]
+├ ○ /onboarding
+├ ○ /privacy
+├ ○ /report
+├ ○ /review
+├ ○ /rewards
+├ ○ /settings
+├ ○ /teacher
+└ ○ /units
+
+
+○  (Static)  prerendered as static content
+●  (SSG)     prerendered as static HTML (uses generateStaticParams)
+

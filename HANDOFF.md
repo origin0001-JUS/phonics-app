@@ -12,66 +12,50 @@
 
 ## 최근 핸드오프 (Latest Handoff)
 
-- **From**: Claude Code (Phoneme TTS 대규모 재생성 + QA)
-- **When**: 2026-04-07 (KST)
+- **From**: Claude Code (HANDOFF 동기화 + 빌드 확인)
+- **When**: 2026-04-08 (KST)
 - **Branch**: `master` (배포 브랜치)
-- **최신 커밋**: `cdee8ff` (+ Round 3 진행 중)
+- **최신 커밋**: `8ab9e45`
 
-### 이번 세션에서 완료한 것 (2026-04-07)
+### 이번 세션에서 완료한 것 (2026-04-08)
 
-#### 1. Vercel 배포 설정 수정
-- [x] `vercel.json` 추가 — `framework: null`, `outputDirectory: out` 설정
-- [x] `phoneme-audit.html` 404 문제 해결 (Next.js 프레임워크 프리셋 → 순수 정적 서빙)
-- 커밋: `bce22ed` → `ccb2afd`
+#### HANDOFF 동기화
+- [x] `git pull` — 랩탑에서 작업한 Round 3~4 커밋 반영 확인
+- [x] 빌드 검증 통과 (`npx next build` — 50 pages 정상 생성)
+- [x] HANDOFF.md를 Round 4 결과까지 업데이트
 
-#### 2. Phoneme TTS 대규모 재생성 (V3)
-- [x] **NG 분석**: 수동 QA에서 192개 중 78개 NG 판정 (41%)
-- [x] **재생성 스크립트 개발**: `scripts/regenerate-ng-phonemes.ts` + `scripts/ng-phoneme-data.ts`
-  - Gemini 2.5 Flash TTS + Aoede 보이스 (미국 여성)
-  - 파닉스 컨텍스트 프롬프트: IPA + 예시단어 + "이것은 단어가 아닌 음소 패턴" 명시
-  - Flash TTS `systemInstruction` 미지원 발견 → user prompt에 합침
-  - Kore 보이스 불안정 발견 → Aoede로 변경
-- [x] **Round 1**: 74/78 생성 성공 (4개 일일 quota 소진)
-- [x] **Round 1 수동 QA**: 57/74 OK, 17 NG
-- [x] **Round 2**: 21개 재생성 (Round 1 NG 17 + 미생성 4)
-- [x] **Round 2 수동 QA (Ver2)**: 171/192 OK (89%), 21 NG (11%)
-- [x] **Round 3 진행 중**: 21개 개별 맞춤 프롬프트로 재생성 중
-- 주요 커밋: `1469d35`, `027a097`, `e228803`, `6a99ad9`
+### 이전 세션: 랩탑 Antigravity (2026-04-07)
 
-#### 3. Whisper QA 파이프라인 개선
-- [x] `audit-phoneme-whisper.ts`에 `--files=` 필터 옵션 추가
-- [x] Groq Whisper 20 RPM 제한 대응 (4초 딜레이 + 429 자동 재시도)
-- 커밋: `29005f9`
+#### Round 3: 21개 맞춤 프롬프트 재생성
+- [x] 21개 NG 음소 개별 맞춤 프롬프트로 재생성
+- [x] Audit 페이지에 🔥 R3 탭 필터 추가
+- 커밋: `c1c11d7`, `6d54f60`, `164ca30`
 
-#### 4. Phoneme Audit 청취 페이지 업데이트
-- [x] 재생성 파일 Whisper 결과 반영 (Round 1 + 2)
-- [x] "🔄 재생성" 배지 + "재생성됨" 탭 필터 추가
-- [x] 재생성 파일 수동 판정 자동 리셋 (음원 변경 시)
-- [x] CSV 내보내기에 "재생성" 컬럼 추가
-- 커밋: `8ff0521`, `7e574eb`, `cdee8ff`
+#### Round 4: 11개 ultra-detailed 발음 프롬프트
+- [x] Round 3에서도 NG인 11개에 대해 초정밀 조음 프롬프트로 재생성
+- [x] Audit 페이지에 🔥 R4 탭 추가
+- **Whisper audit 결과**: 11개 중 9 NG / 1 WARN / 1 EMPTY — 사실상 Whisper로는 단독 음소 판별 한계
+- 커밋: `2ddd801`, `8ab9e45`
 
-#### 5. 문서화
-- [x] `docs/tts-version-history.md` — TTS 전체 히스토리 (V1~V3, QA 파이프라인, API 제한, 학습사항)
-- 커밋: `db185de`
-
-### 이전 세션 반영 누락분 (2026-03-29 이후)
-
-#### 2026-03-29 ~ 2026-04-06
-- [x] `67da9d9` — Whisper 기반 phoneme audit 도구 + 청취 페이지 구축
-- [x] `0980094` — 재사용 가능한 워크플로우 템플릿 추가 (GStack+Superpowers+GSD+핸드오프)
-- [x] `dc743be` — 통합 워크플로우 규칙 CLAUDE.md에 추가
+#### 이전 세션: Claude Code (2026-04-07)
+- [x] Vercel 배포 설정 수정 (`vercel.json`, phoneme-audit.html 404 해결)
+- [x] Phoneme TTS V3 재생성 Round 1~2 (192개 중 171 OK, 89%)
+- [x] Whisper QA 파이프라인 개선 (파일 필터, rate limit 대응)
+- [x] Audit 청취 페이지 업데이트 (재생성 배지, 탭 필터, CSV 내보내기)
+- [x] `docs/tts-version-history.md` 작성
+- 상세 내역: 커밋 `bce22ed` ~ `cdee8ff`
 
 ### 블로커 / 주의사항
-- **Phoneme NG 21개 잔존** — Round 3 재생성 진행 중 (core_ih, core_ng, core_th 등 난이도 높은 음소)
+- **Phoneme NG 11개 잔존** — Round 4까지 진행했으나 Whisper가 단독 음소를 제대로 인식 못함. **수동 청취 QA 필요** (audit 페이지에서 직접 들어보고 판정)
+  - 대상: core_ih, core_th_v, onset_bl, onset_dr, onset_f, onset_fr, onset_l, onset_n, onset_r, onset_sm, rime_ip
 - Supabase SQL (`docs/supabase/setup_v2_licensing.sql`) 아직 미실행
 - 립싱크 영상 일부 단어만 존재
 - `core_ih.bak.mp3` 백업 파일 + `phonemes_backup/` 디렉토리 남아있음 (최종 QA 후 정리)
-- Gemini Flash TTS 무료 tier: 일일 100회, 분당 10회 제한
 
-### 다음 에이전트의 할 일
-1. `git pull` 실행
-2. Round 3 재생성 결과 수동 QA → 여전히 NG이면 Round 4 또는 수동 녹음 검토
-3. 최종 통과된 음원 커밋 + Vercel 배포 확인
+### 다음 할 일
+1. **NG 11개 수동 청취 QA** — audit 페이지(`phoneme-audit.html`)에서 직접 들어보고 OK/NG 판정 (사용자)
+2. 수동 QA 후에도 NG이면 → 수동 녹음 또는 다른 TTS 엔진 검토
+3. 최종 통과된 음원 확정 + 백업 파일 정리
 4. Supabase SQL 실행 및 라이선스 시스템 실제 연동 테스트
 5. 립싱크 영상 확장 방안 결정
 6. 실기기 재테스트 (TTS 음질, Say & Check STT 동작)
@@ -107,7 +91,7 @@
 | 에이전트 | 상태 | 현재 작업 | 블로커 |
 |----------|------|----------|--------|
 | **Antigravity** | [대기] | — | — |
-| **Claude Code** | [작업 중] | Phoneme TTS V3 재생성 (Round 3, 21개 NG) | Gemini 일일 100회 제한 |
+| **Claude Code** | [작업 완료] | HANDOFF 동기화 + 빌드 확인 | — |
 | **Claude Web** | [대기] | — | — |
 
 ---
