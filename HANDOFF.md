@@ -12,12 +12,24 @@
 
 ## 최근 핸드오프 (Latest Handoff)
 
-- **From**: Claude Code (HANDOFF 동기화 + 빌드 확인)
-- **When**: 2026-04-08 (KST)
+- **From**: Claude Code (Phoneme TTS 전체 완료)
+- **When**: 2026-04-09 (KST)
 - **Branch**: `master` (배포 브랜치)
-- **최신 커밋**: `8ab9e45`
+- **최신 커밋**: (이번 커밋)
 
-### 이번 세션에서 완료한 것 (2026-04-08)
+### 이번 세션에서 완료한 것 (2026-04-09)
+
+#### Round 5: 단순 단어/음절 전략 (7개)
+- [x] 완전히 다른 프롬프트 전략: "it", "bluh", "fruh" 등 단순 단어/음절
+- [x] 3개 해결 (core_ih, onset_bl, onset_fr), 4개 잔존
+
+#### 최종 4개: AI Studio 수동 생성
+- [x] 사용자가 Google AI Studio에서 직접 생성한 4개 음원 (core_ih, core_th_v, onset_f, onset_l)
+- [x] ffmpeg로 개별 음절 분리 + MP3 변환
+- [x] Audit 페이지 업데이트 + 배포
+- **192개 phoneme 음원 100% 완성**
+
+### 이전 세션 (2026-04-08)
 
 #### HANDOFF 동기화
 - [x] `git pull` — 랩탑에서 작업한 Round 3~4 커밋 반영 확인
@@ -46,19 +58,16 @@
 - 상세 내역: 커밋 `bce22ed` ~ `cdee8ff`
 
 ### 블로커 / 주의사항
-- **Phoneme NG 11개 잔존** — Round 4까지 진행했으나 Whisper가 단독 음소를 제대로 인식 못함. **수동 청취 QA 필요** (audit 페이지에서 직접 들어보고 판정)
-  - 대상: core_ih, core_th_v, onset_bl, onset_dr, onset_f, onset_fr, onset_l, onset_n, onset_r, onset_sm, rime_ip
+- **Phoneme TTS 192개 100% 완성** — Round 1~5 + AI Studio 수동생성으로 전체 완료
+- `phonemes_backup/` 디렉토리 정리 가능 (원본 백업)
 - Supabase SQL (`docs/supabase/setup_v2_licensing.sql`) 아직 미실행
 - 립싱크 영상 일부 단어만 존재
-- `core_ih.bak.mp3` 백업 파일 + `phonemes_backup/` 디렉토리 남아있음 (최종 QA 후 정리)
 
 ### 다음 할 일
-1. **NG 11개 수동 청취 QA** — audit 페이지(`phoneme-audit.html`)에서 직접 들어보고 OK/NG 판정 (사용자)
-2. 수동 QA 후에도 NG이면 → 수동 녹음 또는 다른 TTS 엔진 검토
-3. 최종 통과된 음원 확정 + 백업 파일 정리
-4. Supabase SQL 실행 및 라이선스 시스템 실제 연동 테스트
-5. 립싱크 영상 확장 방안 결정
-6. 실기기 재테스트 (TTS 음질, Say & Check STT 동작)
+1. 백업 파일 정리 (`phonemes_backup/`, `core_ih.bak.mp3`)
+2. Supabase SQL 실행 및 라이선스 시스템 실제 연동 테스트
+3. 립싱크 영상 확장 방안 결정
+4. 실기기 재테스트 (TTS 음질, Say & Check STT 동작)
 
 ---
 
@@ -91,7 +100,7 @@
 | 에이전트 | 상태 | 현재 작업 | 블로커 |
 |----------|------|----------|--------|
 | **Antigravity** | [대기] | — | — |
-| **Claude Code** | [작업 완료] | HANDOFF 동기화 + 빌드 확인 | — |
+| **Claude Code** | [작업 완료] | Phoneme TTS 192개 100% 완성 | — |
 | **Claude Web** | [대기] | — | — |
 
 ---
