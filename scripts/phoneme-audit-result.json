@@ -1,17 +1,17 @@
 {
-  "date": "2026-04-07T14:57:24.441Z",
-  "total": 11,
-  "ok": 0,
-  "ng": 9,
-  "warn": 1,
+  "date": "2026-04-09T02:24:33.941Z",
+  "total": 7,
+  "ok": 3,
+  "ng": 3,
+  "warn": 0,
   "empty": 1,
-  "silence_issues": 0,
+  "silence_issues": 1,
   "results": [
     {
       "file": "core_ih.mp3",
       "phoneme": "core_ih",
       "type": "core",
-      "transcript": "Eh.",
+      "transcript": "it.",
       "expected": [
         "ih",
         "i",
@@ -20,20 +20,19 @@
         "is",
         "ih"
       ],
-      "status": "NG",
-      "reason": "\"Eh.\" ≠ 기대값 [ih, i, it, in, is...]",
-      "duration_s": 0.24,
+      "status": "OK",
+      "duration_s": 0.3,
       "speech_start_s": 0,
-      "speech_end_s": 0.16,
+      "speech_end_s": 0.2,
       "leading_silence_s": 0,
-      "trailing_silence_s": 0.08,
+      "trailing_silence_s": 0.1,
       "silence_issue": false
     },
     {
       "file": "core_th_v.mp3",
       "phoneme": "core_th_v",
       "type": "core",
-      "transcript": "Zzzzzz",
+      "transcript": "See.",
       "expected": [
         "th",
         "the",
@@ -42,19 +41,19 @@
         "them"
       ],
       "status": "NG",
-      "reason": "\"Zzzzzz\" ≠ 기대값 [th, the, this, that, them...]",
-      "duration_s": 1.92,
+      "reason": "\"See.\" ≠ 기대값 [th, the, this, that, them...]",
+      "duration_s": 2.74,
       "speech_start_s": 0,
-      "speech_end_s": 1.92,
+      "speech_end_s": 1.84,
       "leading_silence_s": 0,
-      "trailing_silence_s": 0,
-      "silence_issue": false
+      "trailing_silence_s": 0.9,
+      "silence_issue": true
     },
     {
       "file": "onset_bl.mp3",
       "phoneme": "onset_bl",
       "type": "onset",
-      "transcript": "ball",
+      "transcript": "blah.",
       "expected": [
         "bluh",
         "bl",
@@ -62,33 +61,12 @@
         "blah",
         "blue"
       ],
-      "status": "NG",
-      "reason": "\"ball\" ≠ 기대값 [bluh, bl, bla, blah, blue...]",
-      "duration_s": 0.7,
+      "status": "OK",
+      "duration_s": 0.27,
       "speech_start_s": 0,
-      "speech_end_s": 0.56,
+      "speech_end_s": 0.2,
       "leading_silence_s": 0,
-      "trailing_silence_s": 0.14,
-      "silence_issue": false
-    },
-    {
-      "file": "onset_dr.mp3",
-      "phoneme": "onset_dr",
-      "type": "onset",
-      "transcript": "Durr.",
-      "expected": [
-        "druh",
-        "dr",
-        "dra",
-        "drah"
-      ],
-      "status": "NG",
-      "reason": "\"Durr.\" ≠ 기대값 [druh, dr, dra, drah...]",
-      "duration_s": 0.61,
-      "speech_start_s": 0,
-      "speech_end_s": 0.62,
-      "leading_silence_s": 0,
-      "trailing_silence_s": 0,
+      "trailing_silence_s": 0.07,
       "silence_issue": false
     },
     {
@@ -105,9 +83,9 @@
       ],
       "status": "EMPTY",
       "reason": "Whisper가 아무것도 인식 못함 (무음 또는 너무 짧음)",
-      "duration_s": 1.63,
+      "duration_s": 2.44,
       "speech_start_s": 0,
-      "speech_end_s": 1.63,
+      "speech_end_s": 2.44,
       "leading_silence_s": 0,
       "trailing_silence_s": 0,
       "silence_issue": false
@@ -116,27 +94,26 @@
       "file": "onset_fr.mp3",
       "phoneme": "onset_fr",
       "type": "onset",
-      "transcript": "fur",
+      "transcript": "Frustration.",
       "expected": [
         "fruh",
         "fr",
         "fra",
         "frah"
       ],
-      "status": "NG",
-      "reason": "\"fur\" ≠ 기대값 [fruh, fr, fra, frah...]",
-      "duration_s": 1,
+      "status": "OK",
+      "duration_s": 0.41,
       "speech_start_s": 0,
-      "speech_end_s": 1,
+      "speech_end_s": 0.38,
       "leading_silence_s": 0,
-      "trailing_silence_s": 0,
+      "trailing_silence_s": 0.03,
       "silence_issue": false
     },
     {
       "file": "onset_l.mp3",
       "phoneme": "onset_l",
       "type": "onset",
-      "transcript": "Ooooooh...",
+      "transcript": "The.",
       "expected": [
         "lll",
         "l",
@@ -146,10 +123,10 @@
         "le"
       ],
       "status": "NG",
-      "reason": "\"Ooooooh...\" ≠ 기대값 [lll, l, la, luh, ll...]",
-      "duration_s": 1.76,
+      "reason": "\"The.\" ≠ 기대값 [lll, l, la, luh, ll...]",
+      "duration_s": 0.31,
       "speech_start_s": 0,
-      "speech_end_s": 1.76,
+      "speech_end_s": 0.32,
       "leading_silence_s": 0,
       "trailing_silence_s": 0,
       "silence_issue": false
@@ -158,7 +135,7 @@
       "file": "onset_n.mp3",
       "phoneme": "onset_n",
       "type": "onset",
-      "transcript": "Hmm.",
+      "transcript": "Mmm.",
       "expected": [
         "nnn",
         "n",
@@ -168,69 +145,12 @@
         "ne"
       ],
       "status": "NG",
-      "reason": "\"Hmm.\" ≠ 기대값 [nnn, n, na, nuh, nn...]",
-      "duration_s": 1.89,
+      "reason": "\"Mmm.\" ≠ 기대값 [nnn, n, na, nuh, nn...]",
+      "duration_s": 0.96,
       "speech_start_s": 0,
-      "speech_end_s": 1.9,
+      "speech_end_s": 0.84,
       "leading_silence_s": 0,
-      "trailing_silence_s": 0,
-      "silence_issue": false
-    },
-    {
-      "file": "onset_r.mp3",
-      "phoneme": "onset_r",
-      "type": "onset",
-      "transcript": "Oh.",
-      "expected": [
-        "rrr",
-        "r",
-        "ra",
-        "ruh",
-        "rr",
-        "re"
-      ],
-      "status": "NG",
-      "reason": "\"Oh.\" ≠ 기대값 [rrr, r, ra, ruh, rr...]",
-      "duration_s": 0.8,
-      "speech_start_s": 0,
-      "speech_end_s": 0.8,
-      "leading_silence_s": 0,
-      "trailing_silence_s": 0,
-      "silence_issue": false
-    },
-    {
-      "file": "onset_sm.mp3",
-      "phoneme": "onset_sm",
-      "type": "onset",
-      "transcript": "Hmm.",
-      "expected": [
-        "smm",
-        "sm",
-        "sma",
-        "smuh"
-      ],
-      "status": "NG",
-      "reason": "\"Hmm.\" ≠ 기대값 [smm, sm, sma, smuh...]",
-      "duration_s": 1.04,
-      "speech_start_s": 0,
-      "speech_end_s": 0.66,
-      "leading_silence_s": 0,
-      "trailing_silence_s": 0.38,
-      "silence_issue": false
-    },
-    {
-      "file": "rime_ip.mp3",
-      "phoneme": "rime_ip",
-      "type": "rime",
-      "transcript": "If.",
-      "expected": [],
-      "status": "WARN",
-      "reason": "기대값 매핑 없음, transcript: \"If.\"",
-      "duration_s": 0.18,
-      "speech_start_s": 0,
-      "speech_end_s": 0.18,
-      "leading_silence_s": 0,
-      "trailing_silence_s": 0,
+      "trailing_silence_s": 0.12,
       "silence_issue": false
     }
   ]

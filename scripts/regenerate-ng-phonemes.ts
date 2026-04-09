@@ -77,28 +77,16 @@ Produce ONLY this isolated rime syllable. Do not say any full words, spell any l
 // ─── Round 3: 개별 맞춤 프롬프트 (2번 연속 실패한 파일용) ─────────
 // 전략: "단어 X를 말할 때의 Y 부분만 발음해" 방식
 const CUSTOM_PROMPTS: Record<string, string> = {
-  // ═══ Round 4: 11개 NG — "어떤 소리인지" 예시 단어와 대조하여 극도로 구체적으로 설명 ═══
+  // ═══ Round 5: 단순 단어/음절 전략 — TTS가 이해하는 방식으로 ═══
 
-  // core_ih: "Yeah"로 잘못 생성 → short i 를 정확히 설명
-  'core_ih': `I need you to say the SHORT I vowel sound. This is the vowel in the middle of these words: "sit", "big", "fish", "pin", "hit".
-Say "sit" out loud in your mind. The vowel between the "s" and the "t" — that is the sound I need.
-It is NOT "ee" (as in "see"), NOT "ay" (as in "say"), NOT "yeah".
-It is a quick, short, relaxed vowel: /ɪ/. Say it once, clearly, for about 0.4 seconds.
-Think of it as a shorter, more relaxed version of "ee". Your mouth is slightly open, tongue is relaxed in the middle.`,
+  // core_ih: previously generated "Yeah" and "Eh" — need short i as in "sit"
+  'core_ih': `Say the word "it" — just the word "it", nothing else. Say it once, clearly, at normal speed. The word "it" as in "it is raining". One syllable, very simple.`,
 
-  // core_th_v: "Mmm"로 잘못 생성 → VOICED th를 voiceless와 명확히 대조
-  'core_th_v': `This is the VOICED "th" sound, written as /ð/ in phonetics.
-IMPORTANT: This is different from the voiceless "th" in "thin". This is the BUZZING "th" in "this", "that", "the", "mother", "brother".
-How to make this sound: Put your tongue between your upper and lower teeth. Now HUM — vibrate your vocal cords while air passes over your tongue. You should feel a buzzing vibration.
-Say the word "this" — the VERY FIRST sound, before the "i", is what I need. Just that initial buzzing dental sound.
-It sounds like a buzzing "dh" — NOT "d", NOT "z", NOT "m", NOT silence. It is a voiced dental fricative.
-Hold it for 0.6 seconds. It should buzz like a bee trapped between your teeth.`,
+  // core_th_v: previously generated "Mmm" and "Zzzzzz" — need voiced th as in "this"
+  'core_th_v': `Say the word "the" very slowly. Stretch out the first consonant sound for about one second before saying the vowel. The word "the" as in "the cat". I want to hear that initial buzzing consonant sound clearly. Say "thhhhhhe" with a long buzzing start.`,
 
-  // onset_bl: "bowl"로 잘못 생성 → 모음 붙이지 말 것 강조
-  'onset_bl': `Say the word "blue". Now I need ONLY the very beginning — the "bl" part — before the "oo" vowel starts.
-It is two consonants blended together: first a quick "b" lip pop, then immediately the "l" with your tongue touching behind your upper teeth.
-The result sounds like "bl—" (cut off). NOT "bull", NOT "bowl", NOT "bul". There should be NO vowel sound at all.
-Same beginning as "black", "blend", "blow". Just the consonant cluster, about 0.2 seconds.`,
+  // onset_bl: previously generated "bowl" and "ball" — need just "bl" blend
+  'onset_bl': `Say "bluh" — one quick syllable, like the beginning of "blue" with a very short neutral vowel. Say it once, quickly, in about 0.3 seconds. Just "bluh".`,
 
   // onset_dr: "Durr"로 잘못 생성 → 모음 없이 블렌드만
   'onset_dr': `Say the word "drum". Now I need ONLY the very beginning "dr" — before any vowel.
@@ -106,33 +94,17 @@ It is "d" (tongue taps behind upper teeth) immediately followed by "r" (tongue c
 The result sounds like "dr—" (cut off abruptly). NOT "dur", NOT "druh", NOT "durr". No vowel after the r.
 Same beginning as "drop", "drive", "dry". Just the two consonants blended, about 0.2 seconds. Cut it off before any vowel escapes.`,
 
-  // onset_f: 무음으로 생성됨 → "f" 소리를 명확하게
-  'onset_f': `Say the word "fish". The very first sound — before the "i" vowel — is what I need.
-This is the "f" sound /f/. Your upper teeth rest on your lower lip, and you blow air through the gap.
-It sounds like a steady stream of air: "fffffffffff". Like blowing out a candle very gently, with teeth on lip.
-It is the same starting sound as "fun", "five", "food", "fast".
-Hold this continuous breathy sound for about 0.6 seconds. NOT "sh", NOT "p", NOT silence — it is teeth-on-lip air.`,
+  // onset_f: previously generated silence — need "f" fricative
+  'onset_f': `Make the sound "ffffffffff" — a long continuous hissing sound with your top teeth touching your bottom lip. Like the sound of air leaking from a tire, but with teeth on lip. Just this one continuous sound for about one second: "fffffffff".`,
 
-  // onset_fr: "fur"로 잘못 생성 → 모음 제거 강조
-  'onset_fr': `Say the word "frog". Now I need ONLY the beginning "fr" — before the "o" vowel.
-First: "f" (upper teeth on lower lip, blow air). Immediately followed by: "r" (tongue curls back, voice starts).
-The combined sound is "fr—" (cut off). NOT "fur", NOT "fra", NOT "free". There must be NO vowel.
-Same beginning as "free", "from", "fresh". About 0.3 seconds. Stop before any vowel comes out.`,
+  // onset_fr: previously generated "fur" — need just "fr" blend
+  'onset_fr': `Say "fruh" — one quick syllable, like the beginning of "frog" with a tiny neutral vowel at the end. Say it once, quickly, in about 0.3 seconds. Just "fruh".`,
 
-  // onset_l: "Ooh"로 잘못 생성 → "l" 소리의 정체를 설명
-  'onset_l': `Say the word "leg". The very first sound — before the "e" vowel — is what I need.
-This is the "l" sound /l/. Touch the TIP of your tongue firmly to the bumpy ridge right behind your upper front teeth. Let your voice flow around the SIDES of your tongue.
-It sounds like "llllllll" — a continuous humming-lateral sound. NOT "oo", NOT "uh", NOT "oh".
-Same first sound as "lip", "let", "love", "light".
-Hold this tongue-on-ridge lateral sound for about 0.6 seconds. Your tongue must stay touching that ridge the whole time.`,
+  // onset_l: previously generated "Ooh" — need "l" sound
+  'onset_l': `Say "luh" — one quick syllable. The "l" sound followed by a very brief neutral vowel. Like the beginning of the word "love" but cut very short. Say it once in about 0.3 seconds.`,
 
-  // onset_n: "Hmmmm"로 잘못 생성 → "n"과 "m"의 차이 강조
-  'onset_n': `Say the word "net". The very first sound — before the "e" vowel — is what I need.
-This is the "n" sound /n/. Press your tongue against the ridge behind your upper front teeth and hum through your NOSE.
-CRITICAL DIFFERENCE from "m": Your LIPS must be OPEN. For "m", lips are closed. For "n", lips are open but tongue blocks the air in your mouth, so air goes through your nose.
-It sounds like "nnnnnnnn". NOT "mmmmm" (that would be lips closed), NOT "hmmm".
-Same first sound as "nap", "nut", "nice", "no".
-Hold it for 0.6 seconds with lips open and tongue on the ridge.`,
+  // onset_n: previously generated "Hmm" — need "n" sound
+  'onset_n': `Say "nuh" — one quick syllable. The "n" sound followed by a very brief neutral vowel. Like the beginning of the word "nut" but cut very short. Say it once in about 0.3 seconds. NOT "muh" — your tongue must touch behind your upper teeth.`,
 
   // onset_r: "brrrrr"로 생성 → 트릴이 아닌 미국식 r
   'onset_r': `Say the word "red". The very first sound — before the "e" vowel — is what I need.

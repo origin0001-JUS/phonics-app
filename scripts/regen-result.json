@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-04-07T14:54:43.154Z",
+  "timestamp": "2026-04-09T02:22:37.096Z",
   "dryRun": false,
-  "total": 11,
-  "ok": 11,
+  "total": 7,
+  "ok": 7,
   "failed": 0,
   "skipped": 0,
   "results": [
@@ -19,10 +19,6 @@
       "status": "ok"
     },
     {
-      "id": "onset_dr",
-      "status": "ok"
-    },
-    {
       "id": "onset_f",
       "status": "ok"
     },
@@ -36,18 +32,6 @@
     },
     {
       "id": "onset_n",
-      "status": "ok"
-    },
-    {
-      "id": "onset_r",
-      "status": "ok"
-    },
-    {
-      "id": "onset_sm",
-      "status": "ok"
-    },
-    {
-      "id": "rime_ip",
       "status": "ok"
     }
   ]
