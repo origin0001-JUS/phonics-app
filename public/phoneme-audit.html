@@ -108,6 +108,7 @@ function getFiltered() {
   if (currentFilter === 'regenerated') return AUDIT_DATA.filter(d => d.regenerated);
   if (currentFilter === 'round3') return AUDIT_DATA.filter(d => d.round3);
   if (currentFilter === 'round4') return AUDIT_DATA.filter(d => d.round4);
+  if (currentFilter === 'round5') return AUDIT_DATA.filter(d => d.round5);
   return AUDIT_DATA.filter(d => d.cls === currentFilter);
 }
 
@@ -126,7 +127,7 @@ function render() {
     card.innerHTML = `
       <button class="play-btn" data-file="${d.file}" onclick="playAudio('${d.file}', this)">&#9654;</button>
       <div class="info">
-        <div class="filename">${d.file} <span style="font-size:0.75rem;color:#94a3b8;">${d.type}</span>${d.round4 ? ' <span style="font-size:0.7rem;background:#fde2e2;color:#dc2626;padding:1px 6px;border-radius:8px;margin-left:4px;">🔥 R4</span>' : d.round3 ? ' <span style="font-size:0.7rem;background:#fef3c7;color:#d97706;padding:1px 6px;border-radius:8px;margin-left:4px;">🔥 R3</span>' : d.regenerated ? ' <span style="font-size:0.7rem;background:#dbeafe;color:#2563eb;padding:1px 6px;border-radius:8px;margin-left:4px;">🔄 재생성</span>' : ''}</div>
+        <div class="filename">${d.file} <span style="font-size:0.75rem;color:#94a3b8;">${d.type}</span>${d.round5 ? ' <span style="font-size:0.7rem;background:#e0e7ff;color:#4f46e5;padding:1px 6px;border-radius:8px;margin-left:4px;">⚡ R5</span>' : d.round4 ? ' <span style="font-size:0.7rem;background:#fde2e2;color:#dc2626;padding:1px 6px;border-radius:8px;margin-left:4px;">🔥 R4</span>' : d.round3 ? ' <span style="font-size:0.7rem;background:#fef3c7;color:#d97706;padding:1px 6px;border-radius:8px;margin-left:4px;">🔥 R3</span>' : d.regenerated ? ' <span style="font-size:0.7rem;background:#dbeafe;color:#2563eb;padding:1px 6px;border-radius:8px;margin-left:4px;">🔄 재생성</span>' : ''}</div>
         <div class="transcript">Whisper: <em>"${d.transcript}"</em> &nbsp; 기대: ${d.phoneme.replace(/^(core|onset|rime)_/,'')}</div>
         <div class="meta">${d.duration_s}s | 발음: ${d.speech_start_s}~${d.speech_end_s}s | 앞공백: ${d.leading_silence_s}s 뒤공백: ${d.trailing_silence_s}s</div>
       </div>
@@ -206,6 +207,7 @@ function renderTabs() {
     ['regenerated', '재생성됨 ()'],
     ['round3', '🔥 Round 3 (21)'],
     ['round4', '🔥 Round 4 (11)'],
+    ['round5', '⚡ Round 5 (7)'],
     ['unchecked', '미체크'],
   ];
   tabs.innerHTML = tabDefs.map(([key, label]) =>
