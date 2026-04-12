@@ -92,9 +92,17 @@ export function getSupabase(): SupabaseClient | null {
 }
 
 /**
- * Supabase 연결 가능 여부
+ * 앱 모드: "open" (지인 공유용) | "school" (학교 배포용, 기본값)
+ */
+export function getAppMode(): "open" | "school" {
+    return process.env.NEXT_PUBLIC_APP_MODE === "open" ? "open" : "school";
+}
+
+/**
+ * Supabase 연결 가능 여부 (school 모드 + 환경변수 필요)
  */
 export function isCloudEnabled(): boolean {
+    if (getAppMode() === "open") return false;
     return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
 
